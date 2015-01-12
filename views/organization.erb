@@ -1,0 +1,126 @@
+<div class="page-header">
+  <h1>
+    <a href="/">Organizations</a> &rang; <%=h @org.name %>
+  </h1>
+</div>
+
+<div role="tabpanel">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#findings" aria-controls="findings" role="tab" data-toggle="tab">Findings</a></li>
+    <li role="presentation"><a href="#members" aria-controls="members" role="tab" data-toggle="tab">Members</a></li>
+    <li role="presentation"><a href="#repos" aria-controls="repos" role="tab" data-toggle="tab">Repositories</a></li>
+  </ul>
+
+  <div class="tab-content">
+    <div role="tabpanel" class="tab-pane active" id="findings">
+      <table id="blob_table" class="table table-condensed table-hover">
+        <thead>
+          <tr>
+            <th colspan="3" style="text-align:right">
+              <form class="form-inline" role="quick-filter">
+                <div class="form-group">
+                  <div class="input-group">
+                    <div class="input-group-addon input-sm"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
+                    <input type="search" class="form-control input-sm" id="quick_filter" placeholder="Quick filter...">
+                  </div>
+                </div>
+              </form>
+            </th>
+          </tr>
+          <tr>
+            <th>Path</th>
+            <th>Repository</th>
+            <th style="width:100px;text-align:right">Size</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @blobs_with_findings.each do |blob| %>
+            <tr data-blob-id="<%=h blob.id %>">
+              <td><%=format_path(blob.path) %></td>
+              <td><a href="/repos/<%=h blob.repo.id %>"><%=h blob.repo.full_name %></a></td>
+              <td style="text-align:right"><%=h number_to_human_size(blob.size) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="members">
+      <div class="row">
+        <div class="col-md-2">
+          <div class="thumbnail user-thumbnail" data-username="<%=h @org.name %>" data-type="org">
+            <img src="<%=h @org.avatar_url %>" alt="<%=h @org.name %>" class="avatar" />
+            <div class="caption" style="text-align:center">
+              <small><%=h @org.name %></small>
+            </div>
+            <% if @org.repos.findings.all(:user => nil).count.zero? %>
+              <div class="findings-batch positive">0 findings</div>
+            <% else %>
+              <div class="findings-batch negative"><%=h Gitrob::Util.pluralize(@org.repos.all(:user => nil).findings.count, 'finding', 'findings') %></div>
+            <% end %>
+          </div>
+        </div>
+
+        <% @org.users.each do |user| %>
+          <div class="col-md-2">
+            <div class="thumbnail user-thumbnail" data-username="<%=h user.username %>" data-type="user">
+              <img src="<%=h user.avatar_url %>" alt="<%=h user.name %>" class="avatar" />
+              <div class="caption" style="text-align:center">
+                <small><%=h user.name %></small>
+              </div>
+              <% if user.findings.count.zero? %>
+                <div class="findings-batch positive">0 findings</div>
+              <% else %>
+                <div class="findings-batch negative"><%=h Gitrob::Util.pluralize(user.findings.count, 'finding', 'findings') %></div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <div role="tabpanel" class="tab-pane" id="repos">
+      <table class="table table-striped table-hover table-condensed">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Website</th>
+            <th style="width:50px;text-align:right">Findings</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @repos.each do |repository| %>
+            <% if repository.findings.count.zero? %>
+              <tr>
+            <% else %>
+              <tr class="warning">
+            <% end %>
+              <td><strong><a href="/repos/<%=h repository.id %>"><%=h repository.full_name %></a></strong></td>
+              <td><%=h repository.description %></td>
+              <td><%=h repository.website %></td>
+              <td style="text-align:center"><strong><%=h repository.findings.count %></strong></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div id="blob_modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body"></div>
+    </div>
+  </div>
+</div>
+
+<div id="user_modal" class="modal fade" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body"></div>
+    </div>
+
+  </div>
+</div>

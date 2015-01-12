@@ -1,0 +1,258 @@
+#!/usr/bin/env ruby
+# coding: utf-8
+
+require 'gitrob'
+
+class App
+  include Methadone::Main
+
+  leak_exceptions true
+
+  main do
+    Thread.abort_on_exception = true
+    Paint.mode = 0 if options.include?('no-color')
+
+    puts Paint[Gitrob::banner, :bright, :blue] unless options.include?('no-banner')
+    Gitrob::status("Starting Gitrob version #{Gitrob::VERSION} at #{Time.now.strftime("%Y-%m-%d %I:%S %Z")}")
+
+    if !Gitrob::agreement_accepted?
+      puts Gitrob::agreement
+      print Paint["\n\nDo you agree to the terms of use? [y/n]: ", :bright, :green]
+      choice = $stdin.gets.chomp
+      if %w{y yes}.include?(choice)
+        Gitrob::agreement_accepted
+      else
+        Gitrob::fatal("Exiting Gitrob.")
+      end
+    end
+
+    if !Gitrob::configured? || options.include?('configure')
+      Gitrob::status("Starting Gitrob configuration wizard\n\n")
+
+      hostname = ask("#{Paint[" Enter PostgreSQL hostname:", :bright, :white]} ") { |q| q.default = "localhost" }
+      port     = ask("#{Paint[" Enter PostgreSQL port:", :bright, :white]} ", Integer) { |q| q.default = 5432; q.in = 1..65535 }
+      username = ask("#{Paint[" Enter PostgreSQL username:", :bright, :white]} ")
+      password = ask("#{Paint[" Enter PostgreSQL password for #{username} (masked):", :bright, :white]} ") { |q| q.echo = 'x' }
+      database = ask("#{Paint[" Enter PostgreSQL database name:", :bright, :white]} ") { |q| q.default = 'gitrob' }
+
+      access_tokens = Array.new
+      while access_tokens.uniq.empty?
+        access_tokens = ask(Paint[" Enter GitHub access tokens (blank line to stop):", :bright, :white],
+                          lambda { |ans| ans =~ /[a-f0-9]{40}/ ? ans : nil } ) do |q|
+          q.gather = ""
+        end
+      end
+
+      config = {
+        'sql_connection_uri'   => "postgres://#{username}:#{password}@#{hostname}:#{port}/#{database}",
+        'github_access_tokens' => access_tokens.uniq
+      }
+
+      Gitrob::task("Saving configuration to file...") do
+        Gitrob::save_configuration!(config)
+      end
+
+      exit unless options['organization']
+    end
+
+    Gitrob::task("Loading configuration...") do
+      Gitrob::load_configuration!
+    end
+
+    Gitrob::task("Preparing SQL database...") do
+      Gitrob::prepare_database!
+    end
+
+    if options['reset-db']
+      Gitrob::task("Resetting database tables...") do
+        DataMapper::auto_migrate!
+      end
+      exit
+    end
+
+    if options['delete']
+      Gitrob::delete_organization(options['delete'])
+      exit
+    end
+
+    if options['start-server']
+      Gitrob::status("Starting web application on http://#{options['bind-address']}:#{options['port']}/...")
+      puts "\n\n"
+      Gitrob::WebApp.run!(:port => options['port'].to_i, :bind => options['bind-address'])
+      exit
+    end
+
+    org_name    = options['organization']
+    repo_count  = 0
+    members     = Array.new
+    http_client = Gitrob::Github::HttpClient.new({:access_tokens => Gitrob::configuration['github_access_tokens']})
+    observers   = Gitrob::Observers.constants.collect { |c| Gitrob::Observers::const_get(c) }
+
+    Gitrob::task("Loading file patterns...") do
+      Gitrob::Observers::SensitiveFiles::load_patterns!
+    end
+
+    begin
+      org = Gitrob::Github::Organization.new(org_name, http_client)
+
+      Gitrob::delete_organization(org.login)
+
+      Gitrob::task("Collecting organization repositories...") do
+        repo_count = org.repositories.count
+      end
+    rescue Gitrob::Github::HttpClient::ClientError => e
+      if e.status == 404
+        Gitrob::fatal("Cannot find GitHub organization with that name; exiting.")
+      else
+        raise e
+      end
+    end
+
+    Gitrob::task("Collecting organization members...") do
+      members = org.members
+    end
+
+    progress = Gitrob::ProgressBar.new("Collecting member repositories...",
+      :total => members.count
+    )
+    thread_pool = Thread.pool(options['threads'].to_i)
+
+    members.each do |member|
+      thread_pool.process do
+        if member.repositories.count > 0
+          repo_count += member.repositories.count
+          progress.log("Collected #{Gitrob::Util::pluralize(member.repositories.count, 'repository', 'repositories')} from #{Paint[member.username, :bright, :white]}")
+        end
+        progress.increment
+      end
+    end
+
+    thread_pool.shutdown
+
+    if repo_count.zero?
+      Gitrob::fatal("Organization has no repositories to check; exiting.")
+    end
+
+    progress = Gitrob::ProgressBar.new("Processing repositories...",
+      :total => repo_count
+    )
+
+    db_org = org.save_to_database!
+    thread_pool = Thread.pool(options['threads'].to_i)
+
+    org.repositories.each do |repo|
+      thread_pool.process do
+        begin
+          if repo.contents.count > 0
+            db_repo  = repo.save_to_database!(db_org)
+            findings = 0
+
+            repo.contents.each do |blob|
+              db_blob = blob.to_model(db_org, db_repo)
+
+              observers.each do |observer|
+                observer.observe(db_blob)
+              end
+
+              db_blob.findings.each do |f|
+                db_blob.findings_count += 1
+                findings += 1
+                f.organization = db_org
+                f.repo         = db_repo
+              end
+
+              db_blob.save
+            end
+            progress.log("Processed #{Gitrob::Util::pluralize(repo.contents.count, 'file', 'files')} from #{Paint[repo.full_name, :bright, :white]} with #{findings.zero? ? 'no findings' : Paint[Gitrob::Util.pluralize(findings, 'finding', 'findings'), :yellow]}")
+          end
+          progress.increment
+        rescue Exception => e
+          progress.log_error("Encountered error when processing #{Paint[repo.full_name, :bright, :white]} (#{e.class.name})")
+          progress.increment
+        end
+      end
+    end
+
+    org.members.each do |member|
+      thread_pool.process do
+        begin
+          db_user = member.save_to_database!(db_org)
+
+          member.repositories.each do |repo|
+            if repo.contents.count > 0
+              db_repo  = repo.save_to_database!(db_org, db_user)
+              findings = 0
+
+              repo.contents.each do |blob|
+                db_blob = blob.to_model(db_org, db_repo)
+
+                observers.each do |observer|
+                  observer.observe(db_blob)
+                end
+
+                db_blob.findings.each do |f|
+                  db_blob.findings_count += 1
+                  findings += 1
+                  f.organization = db_org
+                  f.repo         = db_repo
+                  f.user         = db_user
+                end
+
+                db_blob.save
+              end
+              progress.log("Processed #{Gitrob::Util::pluralize(repo.contents.count, 'file', 'files')} from #{Paint[repo.full_name, :bright, :white]} with #{findings.zero? ? 'no findings' : Paint[Gitrob::Util.pluralize(findings, 'finding', 'findings'), :yellow]}")
+            end
+            progress.increment
+          end
+        rescue Exception => e
+          progress.log_error("Encountered error when processing #{Paint[repo.full_name, :bright, :white]} (#{e.class.name})")
+          progress.increment
+        end
+      end
+    end
+
+    thread_pool.shutdown
+
+    if !options.include?('no-server')
+      Gitrob::status("Starting web application on port #{options['port']}...")
+      Gitrob::status("Browse to http://#{options['bind-address']}:#{options['port']}/ to see results!")
+      puts "\n\n"
+      Gitrob::WebApp.run!(:port => options[:port].to_i, :bind => options['bind-address'])
+      exit
+    end
+  end
+
+  version Gitrob::VERSION
+  description "Reconnaissance tool for GitHub organizations."
+
+  options['bind-address'] = '127.0.0.1'
+  options['port']         = 9393
+  options['threads']      = 3
+
+  on('-o', '--organization NAME', "Name of GitHub organization")
+  on('-s', '--start-server', "Start web server, don't run any checks")
+  on('-p', '--port PORT', "Port to bind web server to")
+  on('-b', '--bind-address ADDRESS', "Address to bind web server to")
+  on('-t', '--threads THREADS', "Number of threads to use")
+  on('--delete NAME', "Delete an organization in the database")
+  on('--reset-db', "Resets the database")
+  on('--configure', "Start configuration wizard")
+  on('--no-server', "Don't start the server when finished")
+  on('--no-color', "Don't colorize output")
+  on('--no-banner', "Don't print Gitrob banner")
+
+  begin
+    go!
+  rescue Gitrob::Github::HttpClient::MissingAccessTokensError
+    Gitrob::fatal("Configuration file does not contain any GitHub access tokens. Run Gitrob with --configure flag to set it up.")
+  rescue Gitrob::Github::HttpClient::AccessTokensDepletedError
+    Gitrob::fatal("All GitHub access tokens under rate limiting. Go have a cup of coffee and try again.")
+  rescue Gitrob::Github::HttpClient::RequestError => e
+    Gitrob::fatal("A request to the GitHub API failed: #{e.message}")
+  rescue Interrupt
+    print "\b\b\n"; # Remove ^C from screen
+    Gitrob::fatal("Caught interrupt; exiting.")
+  rescue => e
+    Gitrob::fatal("An error occurred: #{e.class.name}: #{e.message}")
+  end
+end

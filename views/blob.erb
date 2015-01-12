@@ -1,0 +1,22 @@
+<div id="blob">
+<% if @blob.findings.count.zero? %>
+  <div class="alert alert-info" role="alert">
+    <strong>No findings</strong>
+  </div>
+<% else %>
+  <% @blob.findings.each do |finding| %>
+    <div class="alert alert-warning" role="alert">
+      <strong><%=h finding.caption %></strong>
+      <% if finding.description %>
+        <p><%=h finding.description %></p>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
+</div>
+
+<pre class="prettyprint">
+<%=h @blob.content %>
+</pre>
+
+<p class="pull-right"><a href="<%=h @blob.url %>" target="_blank">View file on GitHub</a></p>

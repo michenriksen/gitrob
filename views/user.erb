@@ -1,0 +1,51 @@
+<h1><img src="<%=h @user.avatar_url %>" alt="<%= @user.name %>" width="64" height="64" /> <strong><%=h @user.name %></strong></h1>
+
+<h2>Basic Information</h2>
+<table class="table user-details">
+  <tr>
+    <th>Name:</th>
+    <td><%=h @user.name %></td>
+    <th>Username:</th>
+    <td><%=h @user.username %> (<a href="http://www.namechecklist.com/#!<%=h @user.username %>" target="_blank" title="Find other sites where this username is taken">elsewhere</a>)</td>
+    <th>E-mail:</th>
+    <td><%=h @user.email || "None" %></td>
+  </tr>
+  <tr>
+    <th>Location:</th>
+    <td><%=h @user.location || "Unknown" %></td>
+    <th>Website:</th>
+    <td><%=h @user.website || "None" %></td>
+    <th>Bio:</th>
+    <td><%=h @user.bio %></td>
+  </tr>
+</table>
+
+<% if @user.repos.count.zero? %>
+  <div class="alert alert-info" role="alert">
+    <strong><%=h @user.name %> has no public repositories.</strong>
+  </div>
+<% else %>
+  <h2>Repositories</h2>
+  <table class="table table-striped table-hover table-condensed user-repositories">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Description</th>
+        <th style="width:50px;text-align:right">Findings</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @repos.each do |repository| %>
+        <% if repository.findings.count.zero? %>
+          <tr>
+        <% else %>
+          <tr class="warning">
+        <% end %>
+          <td><strong><a href="/repos/<%=h repository.id %>"><%=h repository.name %></a></strong></td>
+          <td><%=h repository.description %></td>
+          <td style="text-align:center"><strong><%=h repository.findings.count %></strong></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
