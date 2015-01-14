@@ -245,13 +245,13 @@ RSpec.describe Gitrob::Observers::SensitiveFiles do
     end
 
     it 'detects irrsi IRC client configuration files' do
-      ['.irrsi/config',
-       'irrsi/config',
-       'config/.irrsi/config'
+      ['.irssi/config',
+       'irssi/config',
+       'config/.irssi/config'
       ].each do |path|
         blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
         described_class.observe(blob)
-        expect(blob.findings.first.caption).to eq("Irrsi IRC client configuration file")
+        expect(blob.findings.first.caption).to eq("Irssi IRC client configuration file")
       end
     end
 
