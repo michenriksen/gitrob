@@ -114,8 +114,8 @@
     {
         "part": "path",
         "type": "regex",
-        "pattern": "\\.?irrsi\\/config\\z",
-        "caption": "Irrsi IRC client configuration file",
+        "pattern": "\\.?irssi\\/config\\z",
+        "caption": "Irssi IRC client configuration file",
         "description": null
     },
     {
