@@ -1,22 +1,22 @@
 [
     {
         "part": "filename",
-        "type": "match",
-        "pattern": "id_rsa",
+        "type": "regex",
+        "pattern": "\\A.*_rsa\\z",
         "caption": "Private SSH key",
         "description": null
     },
     {
         "part": "filename",
-        "type": "match",
-        "pattern": "id_ed25519",
+        "type": "regex",
+        "pattern": "\\A.*_ed25519\\z",
         "caption": "Private SSH key",
         "description": null
     },
     {
         "part": "filename",
-        "type": "match",
-        "pattern": "id_ecdsa",
+        "type": "regex",
+        "pattern": "\\A.*_ecdsa\\z",
         "caption": "Private SSH key",
         "description": null
     },
