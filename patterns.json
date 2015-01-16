@@ -9,6 +9,13 @@
     {
         "part": "filename",
         "type": "match",
+        "pattern": "id_dsa",
+        "caption": "Private SSH key",
+        "description": null
+    },
+    {
+        "part": "filename",
+        "type": "match",
         "pattern": "id_ed25519",
         "caption": "Private SSH key",
         "description": null
