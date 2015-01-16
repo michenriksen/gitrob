@@ -9,6 +9,13 @@
     {
         "part": "filename",
         "type": "regex",
+        "pattern": "\\A.*_dsa\\z",
+        "caption": "Private SSH key",
+        "description": null
+    },
+    {
+        "part": "filename",
+        "type": "regex",
         "pattern": "\\A.*_ed25519\\z",
         "caption": "Private SSH key",
         "description": null
