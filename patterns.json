@@ -231,6 +231,13 @@
         "description": "Might contain database credentials."
     },
     {
+        "part": "filename",
+        "type": "match",
+        "pattern": "settings.py",
+        "caption": "Django framework configuration file",
+        "description": "Might contain database credentials, hostnames, secret keys."
+    },
+    {
         "part": "extension",
         "type": "match",
         "pattern": "kdb",
