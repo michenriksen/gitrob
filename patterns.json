@@ -231,6 +231,13 @@
         "description": "Might contain database credentials, online storage system credentials, secret key, etc."
     },
     {
+        "part": "filename",
+        "type": "regex",
+        "pattern": "\\A(.*)?config(\.inc)?\.php\\z",
+        "caption": "PHP config file",
+        "description": "Might contain several credentials or keys."
+    },
+    {
         "part": "extension",
         "type": "match",
         "pattern": "kdb",
