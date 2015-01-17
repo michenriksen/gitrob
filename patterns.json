@@ -233,7 +233,7 @@
     {
         "part": "filename",
         "type": "regex",
-        "pattern": "\\A(.*)?config(\.inc)?\.php\\z",
+        "pattern": "\\A(.*)?config(\\.inc)?\\.php\\z",
         "caption": "PHP config file",
         "description": "Might contain several credentials or keys."
     },
