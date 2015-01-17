@@ -242,6 +242,10 @@ class App
   on('--no-banner', "Don't print Gitrob banner")
 
   begin
+    if ARGV.empty?
+      Gitrob::fatal("No options given; see gitrob --help for options.")
+    end
+
     go!
   rescue Gitrob::Github::HttpClient::MissingAccessTokensError
     Gitrob::fatal("Configuration file does not contain any GitHub access tokens. Run Gitrob with --configure flag to set it up.")
