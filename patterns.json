@@ -313,5 +313,26 @@
         "pattern": "password",
         "caption": "Contains word: password",
         "description": null
+    },
+    {
+        "part": "filename",
+        "type": "regex",
+        "pattern": "private.*key",
+        "caption": "Contains word: private key",
+        "description": null
+    },
+    {
+        "part": "filename",
+        "type": "match",
+        "pattern": "jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin.xml",
+        "caption": "Jenkins publish over SSH plugin file",
+        "description": null
+    },
+    {
+        "part": "filename",
+        "type": "match",
+        "pattern": "credentials.xml",
+        "caption": "Jenkins file credentials.xml",
+        "description": null
     }
 ]
