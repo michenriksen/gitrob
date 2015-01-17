@@ -58,14 +58,21 @@ RSpec.describe Gitrob::Observers::SensitiveFiles do
 
     it 'detects private keys' do
       ['id_rsa',
+       'production_rsa',
        '.ssh/id_rsa',
        'ssh/id_rsa',
        'privatekeys/id_rsa',
+       'id_dsa',
+       'key_dsa',
+       '.ssh/id_dsa',
+       'privatekeys/id_dsa',
        'id_ed25519',
+       'user_ed25519',
        '.ssh/id_ed25519',
        'privatekeys/id_ed25519',
        '.ssh/id_ecdsa',
        'id_ecdsa',
+       'jenkins_ecdsa',
        'ssh/id_ecdsa',
        'privatekeys/id_ecdsa'
       ].each do |path|
