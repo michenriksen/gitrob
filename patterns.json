@@ -235,7 +235,7 @@
         "type": "match",
         "pattern": "settings.py",
         "caption": "Django configuration file",
-        "description": "Might contain database credentials, online storage system credentials, secret key, etc."
+        "description": "Might contain database credentials, online storage system credentials, secret keys, etc."
     },
     {
         "part": "extension",

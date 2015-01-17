@@ -445,6 +445,16 @@ RSpec.describe Gitrob::Observers::SensitiveFiles do
       end
     end
 
+    it 'detects Django settings files' do
+      ['settings.py',
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("Django configuration file")
+        expect(blob.findings.first.description).to eq("Might contain database credentials, online storage system credentials, secret keys, etc.")
+      end
+    end
+
     it 'detects KeePass database files' do
       ['keepass.kdb',
        'secret/pwd.kdb'
