@@ -455,6 +455,19 @@ RSpec.describe Gitrob::Observers::SensitiveFiles do
       end
     end
 
+    it 'detects PHP configuration files' do
+      ['config.php',
+       'config/config.inc.php',
+       'db_config.php',
+       'secret_config.inc.php'
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("PHP configuration file")
+        expect(blob.findings.first.description).to eq("Might contain credentials and keys.")
+      end
+    end
+
     it 'detects KeePass database files' do
       ['keepass.kdb',
        'secret/pwd.kdb'

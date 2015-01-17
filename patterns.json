@@ -241,8 +241,8 @@
         "part": "filename",
         "type": "regex",
         "pattern": "\\A(.*)?config(\\.inc)?\\.php\\z",
-        "caption": "PHP config file",
-        "description": "Might contain several credentials or keys."
+        "caption": "PHP configuration file",
+        "description": "Might contain credentials and keys."
     },
     {
         "part": "extension",
