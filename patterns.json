@@ -309,15 +309,15 @@
     },
     {
         "part": "filename",
-        "type": "regex",
-        "pattern": "jenkins\\.plugins\\.publish_over_ssh\\.BapSshPublisherPlugin\\.xml\\z",
+        "type": "match",
+        "pattern": "jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin.xml",
         "caption": "Jenkins publish over SSH plugin file",
         "description": null
     },
     {
         "part": "filename",
-        "type": "regex",
-        "pattern": "credentials\\.xml\\z",
+        "type": "match",
+        "pattern": "credentials.xml",
         "caption": "Jenkins file credentials.xml",
         "description": null
     }
