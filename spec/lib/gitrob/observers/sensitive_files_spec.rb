@@ -571,5 +571,36 @@ RSpec.describe Gitrob::Observers::SensitiveFiles do
         expect(blob.findings.first.caption).to eq("Contains word: password")
       end
     end
+
+    it 'detects files containing wordis: private, key' do
+      ['privatekey.asc',
+       'super_private_key.asc',
+       'private/private_keys.tar.gz'
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.last.caption).to eq("Contains words: private, key")
+      end
+    end
+
+    it 'detects Jenkins publish over ssh plugin configuration files' do
+      ['jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin.xml',
+       'jenkins/jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin.xml'
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("Jenkins publish over SSH plugin file")
+      end
+    end
+
+    it 'detects Jenkins credentials files' do
+      ['credentials.xml',
+       'jenkins/credentials.xml'
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("Potential Jenkins credentials file")
+      end
+    end
   end
 end

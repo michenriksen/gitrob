@@ -318,7 +318,7 @@
         "part": "filename",
         "type": "regex",
         "pattern": "private.*key",
-        "caption": "Contains word: private key",
+        "caption": "Contains words: private, key",
         "description": null
     },
     {
@@ -332,7 +332,7 @@
         "part": "filename",
         "type": "match",
         "pattern": "credentials.xml",
-        "caption": "Jenkins file credentials.xml",
+        "caption": "Potential Jenkins credentials file",
         "description": null
     }
 ]
