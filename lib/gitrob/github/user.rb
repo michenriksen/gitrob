@@ -37,15 +37,7 @@ module Gitrob
       end
 
       def repositories
-        if !@repositories
-          @repositories = []
-          response = JSON.parse(http_client.do_get("/users/#{username}/repos").body)
-          response.each do |repo|
-            next if repo['fork']
-            @repositories << Repository.new(username, repo['name'], http_client)
-          end
-        end
-        @repositories
+        @repositories ||= recursive_repositories
       end
 
       def to_model(organization)
@@ -66,6 +58,20 @@ module Gitrob
       end
 
     private
+
+      def recursive_repositories(page = 1)
+        repositories = Array.new
+        response = http_client.do_get("/users/#{username}/repos?page=#{page.to_i}")
+        JSON.parse(response.body).each do |repo|
+          next if repo['fork']
+          repositories << Repository.new(username, repo['name'], http_client)
+        end
+
+        if response.headers.include?('link') && response.headers['link'].include?('rel="next"')
+          repositories += recursive_repositories(page + 1)
+        end
+        repositories
+      end
 
       def info
         if !@info
