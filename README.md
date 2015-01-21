@@ -20,7 +20,7 @@ All of the members, repositories and files will be saved to a PostgreSQL databas
 
 ## Installation
 
-Gitrob is written in Ruby and requires at least version 1.9.3 or above, except for version 2.2.0 which is currently not compatible. If you are on an older version, it is very easy to install newer versions with [RVM](http://rvm.io/). If you are installing Gitrob on [Kali](http://www.kali.org/), you are almost good to go, you just need to update Bundler with `gem install bundler`. It might also be necessary to install a PostgreSQL dependency with `apt-get install postgresql-server-dev-9.1` in a terminal.
+Gitrob is written in Ruby and requires at least version 1.9.3 or above, except for version 2.2.0 which is currently not compatible. If you are on an older version, it is very easy to install newer versions with [RVM](http://rvm.io/). If you are installing Gitrob on [Kali](http://www.kali.org/), you are almost good to go, you just need to update Bundler with `gem install bundler`. It might also be necessary to install a PostgreSQL dependency with `apt-get install postgresql-server-dev-9.1` and a Ruby dependency with `apt-get install ruby1.9.1-dev` in a terminal.
 
 Gitrob is a Ruby gem, so installation is a simple `gem install gitrob` in a terminal. This will automatically install all the code dependencies as well.
 
