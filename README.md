@@ -32,6 +32,16 @@ When everything is ready, simply run `gitrob --configure` and you will be presen
 
 When everything is set up, you can start analyzing organizations by running `gitrob -o <orgname>` in a terminal. To see options, use `gitrob --help`.
 
+## Database errors
+
+When gitrob configure completed and you get "Preparing SQL database... failed" when starting gitrob for the first time then do this.
+
+1. Become the postgres user and log in to postgresql (psql -U postgres)
+2. Create the gitrob database (CREATE DATABASE gitrob;)
+3. Verify it is created (\l)
+4. Quit postgresql (\q)
+5. Re-init the database (gitrob --reset-db)
+
 ## Contributing
 
 Gitrob should be considered Beta and there is probably a good amount of bugs. Bug reports and suggestions for improvements are welcome!
