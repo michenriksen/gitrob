@@ -36,8 +36,8 @@
     },
     {
         "part": "extension",
-        "type": "match",
-        "pattern": "key",
+        "type": "regex",
+        "pattern": "\\Akey(pair)?\\z",
         "caption": "Potential cryptographic private key",
         "description": null
     },

@@ -93,10 +93,12 @@ RSpec.describe Gitrob::Observers::SensitiveFiles do
       end
     end
 
-    it 'detects files with .key extension' do
+    it 'detects files with .key(pair) extension' do
       ['privatekey.key',
        'keys/privatekey.key',
        '.secret.key',
+       'production.keypair',
+       'keys/privatekey.keypair'
       ].each do |path|
         blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
         described_class.observe(blob)
