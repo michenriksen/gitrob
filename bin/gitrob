@@ -95,8 +95,6 @@ class App
     begin
       org = Gitrob::Github::Organization.new(org_name, http_client)
 
-      Gitrob::delete_organization(org.login)
-
       Gitrob::task("Collecting organization repositories...") do
         repo_count = org.repositories.count
       end
