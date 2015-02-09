@@ -341,5 +341,47 @@
         "pattern": "credentials.xml",
         "caption": "Potential Jenkins credentials file",
         "description": null
+    },
+    {
+        "part": "filename",
+        "type": "regex",
+        "pattern": "\\A\\.?htpasswd\\z",
+        "caption": "Apache htpasswd file",
+        "description": null
+    },
+    {
+        "part": "filename",
+        "type": "regex",
+        "pattern": "\\A\\.?netrc\\z",
+        "caption": "Configuration file for auto-login process",
+        "description": "Might contain username and password."
+    },
+    {
+        "part": "extension",
+        "type": "match",
+        "pattern": "kwallet",
+        "caption": "KDE Wallet Manager database file",
+        "description": null
+    },
+    {
+        "part": "filename",
+        "type": "match",
+        "pattern": "LocalSettings.php",
+        "caption": "Potential MediaWiki configuration file",
+        "description": null
+    },
+    {
+        "part": "extension",
+        "type": "match",
+        "pattern": "tblk",
+        "caption": "Tunnelblick VPN configuration file",
+        "description": null
+    },
+    {
+        "part": "path",
+        "type": "regex",
+        "pattern": "\\A\\.?gem/credentials\\z",
+        "caption": "Rubygems credentials file",
+        "description": "Might contain API key for a rubygems.org account."
     }
 ]

@@ -615,5 +615,75 @@ RSpec.describe Gitrob::Observers::SensitiveFiles do
         expect(blob.findings.first.caption).to eq("Potential Jenkins credentials file")
       end
     end
+
+    it 'detects Apache htpasswd files' do
+      ['.htpasswd',
+       'htpasswd',
+       'public/htpasswd',
+       'admin/.htpasswd'
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("Apache htpasswd file")
+      end
+    end
+
+    it 'detects netrc files' do
+      ['.netrc',
+       'netrc',
+       'dotfiles/.netrc',
+       'homefolder/netrc'
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("Configuration file for auto-login process")
+        expect(blob.findings.first.description).to eq("Might contain username and password.")
+      end
+    end
+
+    it 'detects KDE Wallet Manager files' do
+      ['wallet.kwallet',
+       '.wallet.kwallet',
+       'dotfiles/secret.kwallet',
+       'homefolder/creds.kwallet'
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("KDE Wallet Manager database file")
+      end
+    end
+
+    it 'detects MediaWiki configuration files' do
+      ['LocalSettings.php',
+       'mediawiki/LocalSettings.php',
+       'configs/LocalSettings.php'
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("Potential MediaWiki configuration file")
+      end
+    end
+
+    it 'detects Tunnelblick VPN configuration files' do
+      ['vpn.tblk',
+       'secret/tunnel.tblk',
+       'configs/.tunnelblick.tblk'
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("Tunnelblick VPN configuration file")
+      end
+    end
+
+    it 'detects Rubygems credentials files' do
+      ['.gem/credentials',
+       'gem/credentials',
+      ].each do |path|
+        blob = Gitrob::Github::Blob.new(path, 1, repo).to_model(org, repo.to_model(org))
+        described_class.observe(blob)
+        expect(blob.findings.first.caption).to eq("Rubygems credentials file")
+        expect(blob.findings.first.description).to eq("Might contain API key for a rubygems.org account.")
+      end
+    end
   end
 end
