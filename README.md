@@ -26,6 +26,12 @@ Gitrob is a Ruby gem, so installation is a simple `gem install gitrob` in a term
 
 A [PostgreSQL](http://www.postgresql.org/) database is also needed for Gitrob to store its data. Installing PostgreSQL is pretty straight forward; here is an installation guide for [Mac OS X](http://www.gotealeaf.com/blog/how-to-install-postgresql-on-a-mac) and one for [Ubuntu/Debian](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-14-04) based Linux. If you're installing Gitrob on Kali, you already have PostgreSQL installed, however you need to start the server with `service postgresql start` in a terminal.
 
+When PostgreSQL is installed, it's time to create a user and a database for Gitrob. To do so, type the following commands in a terminal:
+
+    sudo su postgres # Not necessary on Mac OS X
+    createuser -s gitrob --pwprompt
+    createdb -O gitrob gitrob
+
 The last thing we need is a GitHub access token in order to be able to talk to their API. The easiest way is to create a [personal access token](https://github.com/settings/applications). If you plan on using Gitrob extensively or on a very big organization, it might be necessary to have multiple access tokens to prevent running into rate limiting, but they need to be from different user accounts.
 
 When everything is ready, simply run `gitrob --configure` and you will be presented with a configuration wizard that asks you for database connection details and GitHub access tokens. All of this configuration can be changed by running the same command again. The configuration will be saved in `~/.gitrobrc` - and yes, Gitrob is looking for this file too so watch out.
