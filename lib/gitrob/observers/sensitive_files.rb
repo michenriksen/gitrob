@@ -10,6 +10,7 @@ module Gitrob
       VALID_TYPES = %w(match regex)
 
       def self.observe(blob)
+        return if !blob.size || blob.size.zero?
         patterns.each do |pattern|
           check_blob(blob, pattern)
         end
