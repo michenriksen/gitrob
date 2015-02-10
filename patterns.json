@@ -383,5 +383,12 @@
         "pattern": "\\A\\.?gem/credentials\\z",
         "caption": "Rubygems credentials file",
         "description": "Might contain API key for a rubygems.org account."
+    },
+    {
+        "part": "filename",
+        "type": "regex",
+        "pattern": "\\A*\\.pubxml(\\.user)?\\z",
+        "caption": "Potential MSBuild publish profile",
+        "description": null
     }
 ]
