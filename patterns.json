@@ -341,5 +341,12 @@
         "pattern": "credentials.xml",
         "caption": "Potential Jenkins credentials file",
         "description": null
+    },
+    {
+        "part": "filename",
+        "type": "regex",
+        "pattern": "\\A*\\.pubxml(\\.user)?\\z",
+        "caption": "Potential MSBuild publish profile",
+        "description": null
     }
 ]
