@@ -345,7 +345,7 @@
     {
         "part": "filename",
         "type": "regex",
-        "pattern": "*\\.pubxml(\\.user)?",
+        "pattern": "\\A*\\.pubxml(\\.user)?\\z",
         "caption": "Potential MSBuild publish profile",
         "description": null
     }
