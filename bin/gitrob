@@ -35,6 +35,13 @@ class App
       password = ask("#{Paint[" Enter PostgreSQL password for #{username} (masked):", :bright, :white]} ") { |q| q.echo = 'x' }
       database = ask("#{Paint[" Enter PostgreSQL database name:", :bright, :white]} ") { |q| q.default = 'gitrob' }
 
+      github_base_uri = ask("#{Paint[" Enter GitHub URL:", :bright, :white]} ") { |q| q.default = 'https://github.com' }
+      if github_base_uri == "https://github.com"
+        github_api_uri = "https://api.github.com"
+      else
+        github_api_uri = ask("#{Paint[" Enter GitHub API URL:", :bright, :white]} ") { |q| q.default = URI::join(github_base_uri,'/api/','v3').to_s }
+      end
+
       access_tokens = Array.new
       while access_tokens.uniq.empty?
         access_tokens = ask(Paint[" Enter GitHub access tokens (blank line to stop):", :bright, :white],
@@ -45,6 +52,8 @@ class App
 
       config = {
         'sql_connection_uri'   => "postgres://#{username}:#{password}@#{hostname}:#{port}/#{database}",
+        'github_base_url' => github_base_uri,
+        'github_api_url' => github_api_uri,
         'github_access_tokens' => access_tokens.uniq
       }
 
