@@ -1,5 +1,7 @@
+
 module Gitrob
   class Blob
+
     include DataMapper::Resource
 
     property :id,             Serial
@@ -15,7 +17,7 @@ module Gitrob
     belongs_to :organization
 
     def url
-      "https://github.com/#{URI.escape(owner_name)}/#{URI.escape(repo.name)}/blob/master/#{URI.escape(path)}"
+      URI::HTTPS.build({:host => URI(repo.url).host, :path => "/" + URI.escape(owner_name) + "/" + URI.escape(repo.name) + "/blob/master/" + URI.escape(path)}).to_s
     end
 
     def owner_name
@@ -29,7 +31,15 @@ module Gitrob
   private
 
     def fetch_content
-      HTTParty.get("https://raw.githubusercontent.com/#{URI.escape(owner_name)}/#{URI.escape(repo.name)}/master/#{URI.escape(path)}").body
+
+      if URI(repo.url).host == "github.com"
+        blob_content_url = URI::HTTPS.build({:host => "raw.githubusercontent.com", :path => "/" + URI.escape(owner_name) + "/" + URI.escape(repo.name) + "/master/" + URI.escape(path)}).to_s
+      else
+        blob_content_url = URI::HTTPS.build({:host => URI(repo.url).host, :path => "/" + URI.escape(owner_name) + "/" + URI.escape(repo.name) + "/raw/master/" + URI.escape(path)}).to_s
+      end
+
+      HTTParty.get(blob_content_url).body
+      
     end
   end
 end

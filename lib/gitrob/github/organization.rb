@@ -28,7 +28,7 @@ module Gitrob
       end
 
       def url
-        "https://github.com/#{name}"
+        URI::join("#{http_client.github_base_uri}/", "/#{name}")
       end
 
       def avatar_url

@@ -2,7 +2,6 @@ module Gitrob
   module Github
     class HttpClient
       include HTTParty
-      base_uri 'https://api.github.com'
 
       class HttpError < StandardError; end
       class ConnectionError < HttpError; end
@@ -48,7 +47,15 @@ module Gitrob
           :retries => DEFAULT_RETRIES
         }.merge(options)
         raise MissingAccessTokensErrors.new("No access tokens given") unless @config[:access_tokens]
+        
+        raise MissingGitHubAPIURI.new("No GitHub Base URI given") unless @config[:github_base_uri]
+        @github_base_uri = @config[:github_base_uri]
+
+        raise MissingGitHubAPIURI.new("No GitHub API URI given") unless @config[:github_api_uri]
+        @github_api_uri = @config[:github_api_uri]
+        
         default_timeout = @config[:timeout]
+        self.class.base_uri @github_api_uri
       end
 
       def do_get(path, params=nil, options={})
@@ -66,6 +73,9 @@ module Gitrob
       def do_delete(path, params=nil, options={})
         do_request(:delete, path, {:query => params}.merge(options))
       end
+
+      attr_reader :github_base_uri
+      attr_reader :github_api_uri
 
     private
 
@@ -122,6 +132,7 @@ module Gitrob
       def access_tokens
         @config[:access_tokens]
       end
+
     end
   end
 end

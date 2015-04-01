@@ -5,7 +5,11 @@ module Gitrob
       attr_reader :owner, :name, :http_client
       def initialize(owner, name, http_client)
         @owner, @name, @http_client = owner, name, http_client
+        
+        @github_base_uri = http_client.github_base_uri
       end
+
+      attr_reader :github_base_uri
 
       def contents
         if !@contents

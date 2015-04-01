@@ -20,7 +20,7 @@ module Gitrob
       end
 
       def url
-        "https://github.com/#{URI.escape(repository.owner)}/#{URI.escape(repository.name)}/blob/master/#{URI.escape(path)}"
+        "#{repository.github_base_uri}/#{URI.escape(repository.owner)}/#{URI.escape(repository.name)}/blob/master/#{URI.escape(path)}"
       end
 
       def to_model(organization, repository)
