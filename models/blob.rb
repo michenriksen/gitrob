@@ -6,6 +6,7 @@ module Gitrob
     property :path,           String,  :length => 1024, :index => true
     property :filename,       String,  :length => 255,  :index => true
     property :extension,      String,  :length => 255,  :index => true
+    property :status,         String,  :length => 10,   :index => true, :default => 'unknown'
     property :size,           Integer, :index => true
     property :findings_count, Integer, :index => true,  :default => 0
     property :created_at,     DateTime
@@ -24,6 +25,10 @@ module Gitrob
 
     def content
       @content ||= fetch_content
+    end
+
+    def file_name
+      filename
     end
 
   private

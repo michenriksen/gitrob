@@ -12,7 +12,8 @@
         <th>Repositories</th>
         <th>Members</th>
         <th>Findings</th>
-        <th style="text-align:right">Creation date</th>
+        <th>Creation date</th>
+        <th style="text-align:right">Operations</th>
       </tr>
     </thead>
     <tbody>
@@ -24,7 +25,11 @@
           <td><%=h org.repos.count %></td>
           <td><%=h org.users.count %></td>
           <td><%=h org.findings.count %></td>
-          <td style="text-align:right"><%= org.created_at.strftime("%e %b %Y %H:%M") %></td>
+          <td><%= org.created_at.strftime("%e %b %Y %H:%M") %></td>
+          <td style="text-align:right">
+            <button class="updateorg" id="<%=h org.id %>" style="background-color:#00AAFF; border:0; color:white">Update</button>
+            <button class="deleteorg" id="<%=h org.id %>" style="background-color:#C72525; border:0; color:white">Delete</button>
+          </td>
         </tr>
       <% end %>
     </tbody>

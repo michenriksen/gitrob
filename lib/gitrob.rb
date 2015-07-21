@@ -1,5 +1,6 @@
 require 'json'
 require 'cgi'
+require 'time'
 
 require 'methadone'
 require 'highline/import'
@@ -9,6 +10,8 @@ require 'ruby-progressbar'
 require 'paint'
 require 'sinatra/base'
 require 'data_mapper'
+require 'tilt/erb'
+require 'net/smtp'
 
 require 'gitrob/version'
 require 'gitrob/util'
@@ -28,6 +31,203 @@ require "#{File.dirname(__FILE__)}/../models/blob"
 require "#{File.dirname(__FILE__)}/../models/finding"
 
 module Gitrob
+
+  def self.scan_org(orgname, threadnum, operation, org_id = nil)
+    org_name    = orgname
+    repo_count  = 0
+    members     = Array.new
+    http_client = Gitrob::Github::HttpClient.new({:access_tokens => Gitrob::configuration['github_access_tokens']})
+    observers   = Gitrob::Observers.constants.collect { |c| Gitrob::Observers::const_get(c) }
+    updated_repo_count = 0
+    new_repo_count = 0
+    total_update_findings = 0
+
+    Gitrob::task("Loading file patterns...") do
+      Gitrob::Observers::SensitiveFiles::load_patterns!
+    end
+
+    begin
+      org = Gitrob::Github::Organization.new(org_name, http_client)
+
+      Gitrob::task("Collecting organization repositories...") do
+        repo_count = org.repositories(operation, org_id).count
+      end
+    rescue Gitrob::Github::HttpClient::ClientError => e
+      if e.status == 404
+        Gitrob::fatal("Cannot find GitHub organization with that name; exiting.")
+      else
+        raise e
+      end
+    end
+
+    Gitrob::task("Collecting organization members...") do
+      members = org.members(operation, org_id)
+    end
+
+    progress = Gitrob::ProgressBar.new("Collecting member repositories...",
+      :total => members.count
+    )
+
+    thread_pool = Thread.pool(threadnum)
+
+    members.each do |member|
+      thread_pool.process do
+        if member.repositories(operation, org_id).count > 0
+          repo_count += member.repositories(operation, org_id).count
+          progress.log("Collected #{Gitrob::Util::pluralize(member.repositories(operation, org_id).count, 'repository', 'repositories')} from #{Paint[member.username, :bright, :white]}")
+        else
+          progress.log("Skipped #{Paint[member.username, :bright, :white]}")
+        end
+        progress.increment
+      end
+    end
+
+    thread_pool.shutdown
+
+     if repo_count.zero?
+      Gitrob::fatal("Organization has no repositories to check; exiting.")
+    end
+
+    progress = Gitrob::ProgressBar.new("Processing repositories...",
+      :total => repo_count
+    )
+
+    if operation == 'update'
+      db_org = Gitrob::Organization.get(org_id)
+    else
+      db_org = org.save_to_database!
+    end
+
+    thread_pool = Thread.pool(threadnum)
+
+    org.repositories(operation, org_id).each do |repo|
+      thread_pool.process do
+        begin
+          if repo.contents.count > 0
+
+            if repo.exists
+              db_repo = db_org.repos.first(:name => repo.name)
+              updated_repo_count += 1
+            else
+              db_repo  = repo.save_to_database!(db_org)
+              new_repo_count += 1
+            end
+
+            findings = 0
+      
+            repo.contents.each do |blob|
+              db_blob = blob.to_model(db_org, db_repo)
+
+              observers.each do |observer|
+                observer.observe(db_blob)
+              end
+
+              db_blob.findings.each do |f|
+                db_blob.findings_count += 1
+                findings += 1
+                f.organization = db_org
+                f.repo         = db_repo
+              end
+
+              if repo.exists
+                oldBlob = db_repo.blobs.first(:filename => blob.filename)
+                if !oldBlob.nil?
+                  oldBlob.destroy
+                  db_blob.attributes = {:status => 'updated'}
+                end
+                db_repo.attributes = {:created_at => DateTime.now}
+                db_repo.save
+              end
+              db_blob.save
+            end
+            total_update_findings += findings
+            progress.log("Processed #{Gitrob::Util::pluralize(repo.contents.count, 'file', 'files')} from #{Paint[repo.full_name, :bright, :white]} with #{findings.zero? ? 'no findings' : Paint[Gitrob::Util.pluralize(findings, 'finding', 'findings'), :yellow]}")
+          end
+          progress.increment
+        rescue Exception => e
+          progress.log_error("Encountered error when processing #{Paint[repo.full_name, :bright, :white]} (#{e.class.name})")
+          progress.increment
+        end
+      end
+    end
+
+    org.members(operation, org_id).each do |member|
+      thread_pool.process do
+        begin
+          if member.exists
+            db_user = db_org.users.first(:username => member.username)
+          else
+            db_user = member.save_to_database!(db_org)
+          end
+
+          member.repositories(operation, org_id).each do |repo|
+
+            if repo.exists
+              db_repo = db_user.repos.first(:name => repo.name)
+              updated_repo_count += 1
+            else
+              db_repo  = repo.save_to_database!(db_org, db_user)
+              new_repo_count += 1
+            end
+
+            if repo.contents.count > 0
+              findings = 0
+
+              repo.contents.each do |blob|
+                db_blob = blob.to_model(db_org, db_repo)
+
+                observers.each do |observer|
+                  observer.observe(db_blob)
+                end
+
+                db_blob.findings.each do |f|
+                  db_blob.findings_count += 1
+                  findings += 1
+                  f.organization = db_org
+                  f.repo         = db_repo
+                  f.user         = db_user
+                end
+
+                if repo.exists
+                  oldBlob = db_repo.blobs.first(:filename => blob.filename)
+                  if !oldBlob.nil?
+                    oldBlob.destroy
+                    db_blob.attributes = {:status => 'updated'}
+                  end
+                  db_repo.attributes = {:created_at => DateTime.now}
+                  db_repo.save
+                end
+                db_blob.save
+              end
+              total_update_findings += findings
+              progress.log("Processed #{Gitrob::Util::pluralize(repo.contents.count, 'file', 'files')} from #{Paint[repo.full_name, :bright, :white]} with #{findings.zero? ? 'no findings' : Paint[Gitrob::Util.pluralize(findings, 'finding', 'findings'), :yellow]}")
+            end
+            progress.increment
+          end
+        rescue Exception => e
+          progress.log_error("Encountered error when processing #{Paint[member.username, :bright, :white]} (#{e.class.name})")
+          progress.increment
+        end
+      end
+    end
+
+    thread_pool.shutdown
+    if operation == 'update'
+      Gitrob::status("Completed...\nNew Repositories: #{new_repo_count}\nUpdated Repositories: #{updated_repo_count}\nFindings from Update: #{total_update_findings}")
+
+      if configuration['smtp_server']
+        msgstr = "From: gitrob\nTo: gitrob.user\nSubject: Gitrob Update\n\n"+
+                 "New Repositories: #{new_repo_count}\n" +
+                 "Updated Repositories: #{updated_repo_count}\n" +
+                 "Findings from Update: #{total_update_findings}"
+
+        Net::SMTP.start(configuration['smtp_server'], configuration['smtp_port']) do |smtp|
+          smtp.send_message msgstr, 'gitrob', configuration['update_emails']
+        end
+      end
+    end
+  end
+
   def self.task(message)
     print " #{Paint['[*]', :bright, :blue]} #{Paint[message, :bright, :white]}"
     yield

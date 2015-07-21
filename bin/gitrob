@@ -29,11 +29,23 @@ class App
     if !Gitrob::configured? || options.include?('configure')
       Gitrob::status("Starting Gitrob configuration wizard\n\n")
 
-      hostname = ask("#{Paint[" Enter PostgreSQL hostname:", :bright, :white]} ") { |q| q.default = "localhost" }
-      port     = ask("#{Paint[" Enter PostgreSQL port:", :bright, :white]} ", Integer) { |q| q.default = 5432; q.in = 1..65535 }
-      username = ask("#{Paint[" Enter PostgreSQL username:", :bright, :white]} ")
-      password = ask("#{Paint[" Enter PostgreSQL password for #{username} (masked):", :bright, :white]} ") { |q| q.echo = 'x' }
-      database = ask("#{Paint[" Enter PostgreSQL database name:", :bright, :white]} ") { |q| q.default = 'gitrob' }
+      hostname   = ask("#{Paint[" Enter PostgreSQL hostname:", :bright, :white]} ") { |q| q.default = "localhost" }
+      port       = ask("#{Paint[" Enter PostgreSQL port:", :bright, :white]} ", Integer) { |q| q.default = 5432; q.in = 1..65535 }
+      username   = ask("#{Paint[" Enter PostgreSQL username:", :bright, :white]} ")
+      password   = ask("#{Paint[" Enter PostgreSQL password for #{username} (masked):", :bright, :white]} ") { |q| q.echo = 'x' }
+      database   = ask("#{Paint[" Enter PostgreSQL database name:", :bright, :white]} ") { |q| q.default = 'gitrob' }
+      smtp_server = ask("#{Paint[" Enter SMTP server for email updates (blank for no email updates):", :bright, :white]} ")
+
+      update_emails = Array.new
+      if smtp_server != ''
+        smtp_port = ask("#{Paint[" Enter SMTP port:", :bright, :white]} ")
+
+        while update_emails.uniq.empty?
+          update_emails = ask(Paint[" Enter emails to receive updates (blank line to stop):", :bright, :white]) do |q|
+            q.gather = ""
+          end
+        end
+      end
 
       access_tokens = Array.new
       while access_tokens.uniq.empty?
@@ -45,7 +57,10 @@ class App
 
       config = {
         'sql_connection_uri'   => "postgres://#{username}:#{password}@#{hostname}:#{port}/#{database}",
-        'github_access_tokens' => access_tokens.uniq
+        'github_access_tokens' => access_tokens.uniq,
+        'smtp_server'          => smtp_server,
+        'smtp_port'            => smtp_port,
+        'update_emails'        => update_emails.uniq
       }
 
       Gitrob::task("Saving configuration to file...") do
@@ -82,134 +97,12 @@ class App
       exit
     end
 
-    org_name    = options['organization']
-    repo_count  = 0
-    members     = Array.new
-    http_client = Gitrob::Github::HttpClient.new({:access_tokens => Gitrob::configuration['github_access_tokens']})
-    observers   = Gitrob::Observers.constants.collect { |c| Gitrob::Observers::const_get(c) }
-
-    Gitrob::task("Loading file patterns...") do
-      Gitrob::Observers::SensitiveFiles::load_patterns!
+    if options['update']
+      Gitrob::scan_org(options['organization'], options['threads'].to_i, 'update', options['update'])
+      exit
     end
 
-    begin
-      org = Gitrob::Github::Organization.new(org_name, http_client)
-
-      Gitrob::task("Collecting organization repositories...") do
-        repo_count = org.repositories.count
-      end
-    rescue Gitrob::Github::HttpClient::ClientError => e
-      if e.status == 404
-        Gitrob::fatal("Cannot find GitHub organization with that name; exiting.")
-      else
-        raise e
-      end
-    end
-
-    Gitrob::task("Collecting organization members...") do
-      members = org.members
-    end
-
-    progress = Gitrob::ProgressBar.new("Collecting member repositories...",
-      :total => members.count
-    )
-    thread_pool = Thread.pool(options['threads'].to_i)
-
-    members.each do |member|
-      thread_pool.process do
-        if member.repositories.count > 0
-          repo_count += member.repositories.count
-          progress.log("Collected #{Gitrob::Util::pluralize(member.repositories.count, 'repository', 'repositories')} from #{Paint[member.username, :bright, :white]}")
-        end
-        progress.increment
-      end
-    end
-
-    thread_pool.shutdown
-
-    if repo_count.zero?
-      Gitrob::fatal("Organization has no repositories to check; exiting.")
-    end
-
-    progress = Gitrob::ProgressBar.new("Processing repositories...",
-      :total => repo_count
-    )
-
-    db_org = org.save_to_database!
-    thread_pool = Thread.pool(options['threads'].to_i)
-
-    org.repositories.each do |repo|
-      thread_pool.process do
-        begin
-          if repo.contents.count > 0
-            db_repo  = repo.save_to_database!(db_org)
-            findings = 0
-
-            repo.contents.each do |blob|
-              db_blob = blob.to_model(db_org, db_repo)
-
-              observers.each do |observer|
-                observer.observe(db_blob)
-              end
-
-              db_blob.findings.each do |f|
-                db_blob.findings_count += 1
-                findings += 1
-                f.organization = db_org
-                f.repo         = db_repo
-              end
-
-              db_blob.save
-            end
-            progress.log("Processed #{Gitrob::Util::pluralize(repo.contents.count, 'file', 'files')} from #{Paint[repo.full_name, :bright, :white]} with #{findings.zero? ? 'no findings' : Paint[Gitrob::Util.pluralize(findings, 'finding', 'findings'), :yellow]}")
-          end
-          progress.increment
-        rescue Exception => e
-          progress.log_error("Encountered error when processing #{Paint[repo.full_name, :bright, :white]} (#{e.class.name})")
-          progress.increment
-        end
-      end
-    end
-
-    org.members.each do |member|
-      thread_pool.process do
-        begin
-          db_user = member.save_to_database!(db_org)
-
-          member.repositories.each do |repo|
-            if repo.contents.count > 0
-              db_repo  = repo.save_to_database!(db_org, db_user)
-              findings = 0
-
-              repo.contents.each do |blob|
-                db_blob = blob.to_model(db_org, db_repo)
-
-                observers.each do |observer|
-                  observer.observe(db_blob)
-                end
-
-                db_blob.findings.each do |f|
-                  db_blob.findings_count += 1
-                  findings += 1
-                  f.organization = db_org
-                  f.repo         = db_repo
-                  f.user         = db_user
-                end
-
-                db_blob.save
-              end
-              progress.log("Processed #{Gitrob::Util::pluralize(repo.contents.count, 'file', 'files')} from #{Paint[repo.full_name, :bright, :white]} with #{findings.zero? ? 'no findings' : Paint[Gitrob::Util.pluralize(findings, 'finding', 'findings'), :yellow]}")
-            end
-            progress.increment
-          end
-        rescue Exception => e
-          progress.log_error("Encountered error when processing #{Paint[repo.full_name, :bright, :white]} (#{e.class.name})")
-          progress.increment
-        end
-      end
-    end
-
-    thread_pool.shutdown
+    Gitrob::scan_org(options['organization'], options['threads'].to_i, 'new')
 
     if !options.include?('no-server')
       Gitrob::status("Starting web application on port #{options['port']}...")
@@ -223,11 +116,13 @@ class App
   version Gitrob::VERSION
   description "Reconnaissance tool for GitHub organizations."
 
-  options['bind-address'] = '127.0.0.1'
+  options['bind-address'] = '0.0.0.0'
   options['port']         = 9393
   options['threads']      = 3
 
   on('-o', '--organization NAME', "Name of GitHub organization")
+  on('-x', '--test', "Send Test Email")
+  on('-u', '--update ORG_ID', "Organization ID to be updated")
   on('-s', '--start-server', "Start web server, don't run any checks")
   on('-p', '--port PORT', "Port to bind web server to")
   on('-b', '--bind-address ADDRESS', "Address to bind web server to")

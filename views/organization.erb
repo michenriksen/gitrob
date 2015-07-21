@@ -16,8 +16,22 @@
       <table id="blob_table" class="table table-condensed table-hover">
         <thead>
           <tr>
-            <th colspan="3" style="text-align:right">
+            <th colspan="4" style="text-align:right">
               <form class="form-inline" role="quick-filter">
+                <div class="checkbox">
+                  <label>
+                    <input class="check" type="checkbox" checked="checked" id="okaybox"> Okay  |
+                  </label>
+                  <label>
+                    <input class="check" type="checkbox" checked="checked" id="badbox"> Bad  |
+                  </label>
+                  <label>
+                    <input class="check" type="checkbox" checked="checked" id="unknownbox"> Unknown  |
+                  </label>
+		  <label>
+                    <input class="check" type="checkbox" checked="checked" id="updatedbox"> Updated
+                  </label>
+                </div>
                 <div class="form-group">
                   <div class="input-group">
                     <div class="input-group-addon input-sm"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></div>
@@ -30,15 +44,43 @@
           <tr>
             <th>Path</th>
             <th>Repository</th>
-            <th style="width:100px;text-align:right">Size</th>
+            <th>Size</th>
+            <th style="width:50px;text-align:right">Flag</th>
           </tr>
         </thead>
         <tbody>
           <% @blobs_with_findings.each do |blob| %>
-            <tr data-blob-id="<%=h blob.id %>">
-              <td><%=format_path(blob.path) %></td>
+            <tr class="<%=h blob.status  %>" data-blob-id="<%=h blob.id %>">
+              <td id="blob_cell" data-blob-id="<%=h blob.id %>"><%=format_path(blob.path) %></td>
               <td><a href="/repos/<%=h blob.repo.id %>"><%=h blob.repo.full_name %></a></td>
-              <td style="text-align:right"><%=h number_to_human_size(blob.size) %></td>
+              <td><%=h number_to_human_size(blob.size) %></td>
+              <td style="text-align:right;width:50px;">
+                <select id="<%=h blob.id %>" style="width:50px;">
+                  <% if blob.status == "okay" %>
+                    <option value="okay" selected>Okay</option>
+                  <% else %>
+                    <option value="okay">Okay</option>
+                  <% end %>
+
+                  <% if blob.status == "bad" %>
+                    <option value="bad" selected>Bad</option>
+                  <% else %>
+                    <option value="bad">Bad</option>
+                  <% end %>
+
+                  <% if blob.status == "unknown" %>
+                    <option value="unknown" selected>Unknown</option>
+                  <% else %>
+                    <option value="unknown">Unknown</option>
+                  <% end %>
+
+                  <% if blob.status == "updated" %>
+                    <option value="updated" selected>Updated</option>
+                  <% else %>
+                    <option value="updated">Updated</option>
+                  <% end %>
+                </select>
+              </td>
             </tr>
           <% end %>
         </tbody>

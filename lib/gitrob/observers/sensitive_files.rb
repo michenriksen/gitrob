@@ -60,7 +60,7 @@ module Gitrob
       end
 
       def self.check_blob(blob, pattern)
-        haystack = blob.send(pattern['part'].to_sym)
+        haystack = blob.send(pattern['part'].to_sym) #Problem
         if pattern['type'] == 'match'
           if haystack == pattern['pattern']
             blob.findings.new(

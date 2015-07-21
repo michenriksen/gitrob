@@ -41,14 +41,25 @@ module Gitrob
     end
 
     get '/' do
-      @orgs = Gitrob::Organization.all(:order => [:created_at.desc])
-      erb :index
+      if params['operation'] == 'scan'
+         Gitrob::scan_org(params['orgname'], 2, 'new')
+      else
+         @orgs = Gitrob::Organization.all(:order => [:created_at.desc])
+         erb :index
+      end
     end
 
     get '/orgs/:id' do
       @org = Gitrob::Organization.get(params['id'])
       @blobs_with_findings = @org.blobs.all(:findings_count.gt => 0)
       @repos = @org.repos.all(:order => [:owner_name, :name])
+
+      if params['operation'] == 'delete'
+        @org.destroy
+        @orgs = Gitrob::Organization.all(:order => [:created_at.desc])
+      elsif params['operation'] == 'update'
+        Gitrob::scan_org(@org.username, 3, 'update', params['id'])
+      end
       erb :organization
     end
 
@@ -70,6 +81,11 @@ module Gitrob
 
     get '/ajax/blobs/:id' do
       @blob = Gitrob::Blob.get(params['id'])
+      if params['blobstat'].nil?
+         @blob.update(:status => 'unknown')
+      else
+         @blob.update(:status => params['blobstat'])
+      end
       erb :blob, :layout => false
     end
   end

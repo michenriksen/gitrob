@@ -35,12 +35,12 @@ module Gitrob
         info['avatar_url']
       end
 
-      def repositories
-        @repositories ||= recursive_repositories
+      def repositories(operation = nil, org_id = nil)
+        @repositories ||= recursive_repositories(operation, org_id)
       end
 
-      def members
-        @members ||= recursive_members
+      def members(operation = nil, org_id = nil)
+        @members ||= recursive_members(operation, org_id)
       end
 
       def to_model
@@ -61,29 +61,56 @@ module Gitrob
 
     private
 
-      def recursive_members(page = 1)
+      def recursive_members(operation, org_id, page = 1)
         members = Array.new
         response = http_client.do_get("/orgs/#{name}/members?page=#{page.to_i}")
         JSON.parse(response.body).each do |member|
-          members << User.new(member['login'], http_client)
+          if operation == 'update'
+            currentMember = Gitrob::Organization.get(org_id).users.first(:username => member['login'])
+            op = 'new'
+
+            if !currentMember.nil?
+              op = operation
+            end
+          end
+
+          members << User.new(member['login'], http_client, op)
         end
 
         if response.headers.include?('link') && response.headers['link'].include?('rel="next"')
-          members += recursive_members(page + 1)
+          members += recursive_members(operation, org_id, page + 1)
         end
         members
       end
 
-      def recursive_repositories(page = 1)
+      def recursive_repositories(operation, org_id, page = 1)
         repositories = Array.new
         response = http_client.do_get("/orgs/#{name}/repos?page=#{page.to_i}")
         JSON.parse(response.body).each do |repo|
           next if repo['fork']
-          repositories << Repository.new(name, repo['name'], http_client)
+
+          if operation == 'update'
+            currentRepo = Gitrob::Organization.get(org_id).repos.first(:name => repo['name'])
+            op = 'new'
+
+            if !currentRepo.nil?
+              op = operation
+              lastUpdate = currentRepo.last_update.strftime("%FT%TZ")
+              #Gitrob::status("#{repo['name']} LAST UPDATED: #{lastUpdate}")
+              repoSize = http_client.do_get("/repos/#{name}/#{repo['name']}/stats/commit_activity")
+              next if repoSize.body.nil?
+
+              repoObj = http_client.do_get("/repos/#{name}/#{repo['name']}/commits?since=#{lastUpdate}")
+              #Gitrob::status("#{repoObj.body}")
+              next if repoObj.body == '[]'
+            end
+          end
+
+          repositories << Repository.new(name, repo['name'], http_client, op)
         end
 
         if response.headers.include?('link') && response.headers['link'].include?('rel="next"')
-          repositories += recursive_repositories(page + 1)
+          repositories += recursive_repositories(operation, org_id, page + 1)
         end
         repositories
       end

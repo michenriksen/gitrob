@@ -1,10 +1,11 @@
 module Gitrob
   module Github
     class Blob
-      attr_reader :path, :size, :repository
+      attr_reader :path, :size, :repository, :status
 
       def initialize(path, size, repository)
         @path, @size, @repository = path, size, repository
+        @status = "unknown"
       end
 
       def extension
@@ -29,7 +30,8 @@ module Gitrob
           :filename       => self.filename,
           :extension      => self.extension,
           :size           => self.size,
-          :organization   => organization
+          :organization   => organization,
+          :status         => self.status
         )
       end
 

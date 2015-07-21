@@ -18,5 +18,9 @@ module Gitrob
     def full_name
       [owner_name, name].join('/')
     end
+
+    def last_update
+      created_at
+    end
   end
 end

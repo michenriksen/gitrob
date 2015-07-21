@@ -1,5 +1,48 @@
 $(document).ready(function() {
 
+  $(".updateorg").on('click', function() {
+    var org_id = $(this).attr('id');
+    var data = {operation: 'update'};
+
+    alert("Updating Organization...\nYou can continue to use Gitrob while the database is being updated.");
+
+    $.ajax({
+      async: false,
+      type: 'GET',
+      url: '/orgs/' + org_id,
+      data: data
+    });
+  });
+
+  $(".deleteorg").on('click', function() {
+    var org_id = $(this).attr('id');
+    var data = {operation: 'delete'};
+
+    var conf = confirm("Are you sure you want to delete this organization?\n(This can't be undone!)");
+
+    if (conf) {
+      alert("Deleting Organization...\nPage will refresh when finished.");
+
+      $.ajax({
+        async: false,
+        type: 'GET',
+        url: '/orgs/' + org_id,
+        data: data
+      });
+      
+      location.reload();
+    }
+  });
+
+  $("select").on('change', function() {
+    var blob_status = $(this).val().toString();
+    var blob_id = $(this).attr('id');
+
+    var data = {blobstat: blob_status};
+
+    $.get('/ajax/blobs/' + blob_id, data);
+  });
+
   $(".user-thumbnail").on('click', function(e) {
     e.preventDefault(); e.stopPropagation();
     var username = $(this).attr('data-username');
@@ -13,8 +56,8 @@ $(document).ready(function() {
     });
   });
 
-  $("#blob_table tbody tr").on('click', function(e) {
-    $("#blob_table tbody tr.active").removeClass('active');
+  $("#blob_table tbody tr #blob_cell").on('click', function(e) {
+    $("#blob_table tbody tr #blob_cell.active").removeClass('active');
     $(this).addClass('active loading');
     var blob_id = $(this).attr('data-blob-id');
     var t = $(this)
@@ -56,6 +99,11 @@ $(document).ready(function() {
     }).show();
   });
 
+  $(".check").on('change', function() {
+    var checked = $(this).is(':checked');
+    checkBox($(this).attr('id').slice(0, -3), checked);
+  });
+
   $("#only_with_findings").on('change', function() {
     if ($(this).is(':checked')) {
       onlyBlobsWithFindings();
@@ -68,6 +116,15 @@ $(document).ready(function() {
     onlyBlobsWithFindings();
   }
 });
+
+function checkBox(flag, checked) {
+   if (checked) {
+      $("#blob_table tbody tr." + flag).show();
+   }
+   else {
+      $("#blob_table tbody tr." + flag).hide();
+   }
+}
 
 function onlyBlobsWithFindings() {
   $("#blob_table tbody tr").hide();

@@ -2,9 +2,9 @@ module Gitrob
   module Github
     class Repository
 
-      attr_reader :owner, :name, :http_client
-      def initialize(owner, name, http_client)
-        @owner, @name, @http_client = owner, name, http_client
+      attr_reader :owner, :name, :http_client, :operation
+      def initialize(owner, name, http_client, operation = 'new')
+        @owner, @name, @http_client, @operation = owner, name, http_client, operation
       end
 
       def contents
@@ -23,6 +23,10 @@ module Gitrob
         else
           raise ex
         end
+      end
+
+      def exists
+         operation == 'update'
       end
 
       def full_name
@@ -56,6 +60,7 @@ module Gitrob
       def save_to_database!(organization, user = nil)
         self.to_model(organization, user).tap { |m| m.save }
       rescue DataMapper::SaveFailureError => e
+	Gitrob::status("ERROR")
         puts e.resource.errors.inspect
       end
 
