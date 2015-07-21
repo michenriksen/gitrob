@@ -216,14 +216,35 @@ module Gitrob
       Gitrob::status("Completed...\nNew Repositories: #{new_repo_count}\nUpdated Repositories: #{updated_repo_count}\nFindings from Update: #{total_update_findings}")
 
       if configuration['smtp_server']
-        msgstr = "From: gitrob\nTo: gitrob.user\nSubject: Gitrob Update\n\n"+
-                 "New Repositories: #{new_repo_count}\n" +
-                 "Updated Repositories: #{updated_repo_count}\n" +
-                 "Findings from Update: #{total_update_findings}"
+        send_email_updates
+      end
+    end
+  end
 
-        Net::SMTP.start(configuration['smtp_server'], configuration['smtp_port']) do |smtp|
-          smtp.send_message msgstr, 'gitrob', configuration['update_emails']
-        end
+  def self.send_email_updates
+    msgstr = "From: gitrob\nTo: gitrob.user\nSubject: Gitrob Update\n\n"+
+             "New Repositories: #{new_repo_count}\n" +
+             "Updated Repositories: #{updated_repo_count}\n" +
+             "Findings from Update: #{total_update_findings}"
+
+    if configuration['smtp_scheme'] == 'plain'
+      Net::SMTP.start(configuration['smtp_server'], configuration['smtp_port'], configuration['smtp_domain'],
+                      configuration['smtp_user_name'], configuration['smtp_password'], :plain) do |smtp|
+        smtp.send_message msgstr, 'gitrob', configuration['update_emails']
+      end
+    elsif configuration['smtp_scheme'] == 'login'
+      Net::SMTP.start(configuration['smtp_server'], configuration['smtp_port'], configuration['smtp_domain'],
+                      configuration['smtp_user_name'], configuration['smtp_password'], :login) do |smtp|
+        smtp.send_message msgstr, 'gitrob', configuration['update_emails']
+      end
+    elsif configuration['smtp_scheme'] == 'cram_md5'
+      Net::SMTP.start(configuration['smtp_server'], configuration['smtp_port'], configuration['smtp_domain'],
+                      configuration['smtp_user_name'], configuration['smtp_password'], :cram_md5) do |smtp|
+        smtp.send_message msgstr, 'gitrob', configuration['update_emails']
+      end
+    else
+      Net::SMTP.start(configuration['smtp_server'], configuration['smtp_port']) do |smtp|
+        smtp.send_message msgstr, 'gitrob', configuration['update_emails']
       end
     end
   end

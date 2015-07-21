@@ -38,7 +38,14 @@ class App
 
       update_emails = Array.new
       if smtp_server != ''
-        smtp_port = ask("#{Paint[" Enter SMTP port:", :bright, :white]} ")
+        smtp_port      = ask("#{Paint[" Enter SMTP port:", :bright, :white]} ")
+        smtp_domain    = ask("#{Paint[" Enter SMTP domain (blank for no domain):", :bright, :white]} ")
+        smtp_user_name = ask("#{Paint[" Enter SMTP user name (blank for no authentication):", :bright, :white]} ")
+
+        if smtp_user_name != ''
+          smtp_password  = ask("#{Paint[" Enter SMTP password:", :bright, :white]} ")
+          smtp_scheme    = ask("#{Paint[" Enter SMTP scheme (plain, login, cram_md5):", :bright, :white]} ")
+        end
 
         while update_emails.uniq.empty?
           update_emails = ask(Paint[" Enter emails to receive updates (blank line to stop):", :bright, :white]) do |q|
@@ -60,6 +67,10 @@ class App
         'github_access_tokens' => access_tokens.uniq,
         'smtp_server'          => smtp_server,
         'smtp_port'            => smtp_port,
+        'smtp_domain'          => smtp_domain,
+        'smtp_user_name'       => smtp_user_name,
+        'smtp_password'        => smtp_password,
+        'smtp_scheme'          => smtp_scheme,
         'update_emails'        => update_emails.uniq
       }
 
