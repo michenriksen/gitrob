@@ -132,7 +132,6 @@ class App
   options['threads']      = 3
 
   on('-o', '--organization NAME', "Name of GitHub organization")
-  on('-x', '--test', "Send Test Email")
   on('-u', '--update ORG_ID', "Organization ID to be updated")
   on('-s', '--start-server', "Start web server, don't run any checks")
   on('-p', '--port PORT', "Port to bind web server to")
