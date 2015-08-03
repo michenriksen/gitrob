@@ -216,12 +216,12 @@ module Gitrob
       Gitrob::status("Completed...\nNew Repositories: #{new_repo_count}\nUpdated Repositories: #{updated_repo_count}\nFindings from Update: #{total_update_findings}")
 
       if configuration['smtp_server']
-        send_email_updates
+        send_email_updates(new_repo_count, updated_repo_count, total_update_findings)
       end
     end
   end
 
-  def self.send_email_updates
+  def self.send_email_updates(new_repo_count, updated_repo_count, total_update_findings)
     msgstr = "From: gitrob\nTo: gitrob.user\nSubject: Gitrob Update\n\n"+
              "New Repositories: #{new_repo_count}\n" +
              "Updated Repositories: #{updated_repo_count}\n" +
