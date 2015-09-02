@@ -102,13 +102,13 @@ module Gitrob
 
     template = ERB.new File.new(File.join(File.expand_path('~'),'/.gitrobrc')).read
     config_processed = YAML.load template.result(binding)
-    File.open("#{Dir.home}/.gitrobrc", 'w') { |f| f.write YAML.dump(config_processed) }
+    File.open(, 'w') { |f| f.write YAML.dump(config_processed) }
     
   end
 
   def self.save_configuration!(config)
     @config = config
-    File.open("#{Dir.home}/.gitrobrc", 'w') { |f| f.write YAML.dump(config) }
+    File.open(File.join(File.expand_path('~'),'/.gitrobrc'), 'w') { |f| f.write YAML.dump(config) }
   end
 
   def self.banner
