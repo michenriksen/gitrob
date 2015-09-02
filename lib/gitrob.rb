@@ -96,7 +96,14 @@ module Gitrob
   end
 
   def self.load_configuration!
-    YAML.load_file("#{Dir.home}/.gitrobrc")
+    
+    require 'erb'
+    require 'yaml'
+
+    template = ERB.new File.new(File.join(File.expand_path('~'),'/.gitrobrc')).read
+    config_processed = YAML.load template.result(binding)
+    File.open("#{Dir.home}/.gitrobrc", 'w') { |f| f.write YAML.dump(config_processed) }
+    
   end
 
   def self.save_configuration!(config)
