@@ -96,7 +96,6 @@ module Gitrob
   end
 
   def self.load_configuration!
-    
     require 'erb'
     require 'yaml'
 
