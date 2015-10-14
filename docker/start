@@ -1,0 +1,2 @@
+sleep 5 # wait for db
+dockerize -template docker/gitrobrc.tmpl:/root/.gitrobrc gitrob -o $ORG

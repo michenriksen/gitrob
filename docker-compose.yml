@@ -1,0 +1,14 @@
+postgres:
+    image: postgres:9.1
+    environment:
+        POSTGRES_PASSWORD: mysecretpassword
+gitrob:
+    build: .
+    links:
+        - postgres
+    ports:
+        - 9393
+    environment:
+        DB_PASSWORD: mysecretpassword
+        ACCESS_TOKEN: YOUR_GIT_TOKEN
+        ORG: YOUR_GIT_ORG

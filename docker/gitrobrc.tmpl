@@ -1,0 +1,4 @@
+---
+sql_connection_uri: postgres://{{ .Env.DB_USERNAME }}:{{ .Env.DB_PASSWORD }}@{{ .Env.DB_URL }}:{{ .Env.DB_PORT }}/{{ .Env.DB_DB }}
+github_access_tokens:
+- {{ .Env.ACCESS_TOKEN }}    
