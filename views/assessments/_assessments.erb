@@ -1,0 +1,57 @@
+<table class="table assessments" id="assessments_table" data-refresh-endpoint="/assessments/_table">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Date</th>
+      <th>Repositories</th>
+      <th>Files</th>
+      <th>Findings</th>
+      <th></th>
+    </tr>
+  </thead>
+  <% @assessments.each do |assessment| %>
+    <% if !assessment.finished %>
+      <tr class="assessment-row unfinished">
+    <% else %>
+      <tr class="assessment-row">
+    <% end %>
+      <td class="owners" data-href="/assessments/<%=h assessment.id %>/findings">
+        <% if assessment.owners.count.zero? %>
+          ...
+        <% else %>
+          <% assessment.owners_dataset.limit(10).order(:type).each do |owner| %>
+            <img src="<%=h owner.avatar_url %>" width="30" height="30" alt="<%=h owner.login %>" title="<%=h owner.login %>" class="img-rounded" data-toggle="tooltip" data-placement="bottom" />
+          <% end %>
+          <% if assessment.owners_count > 10 %>
+            <small>and <%= assessment.owners_count - 10 %> more</small>
+          <% end %>
+        <% end %>
+      </td>
+      <td><%=h assessment.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+      <td>
+        <% if !assessment.finished %>
+          <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+        <% else %>
+          <%=h assessment.repositories_count %>
+        <% end %>
+      </td>
+      <td>
+        <% if !assessment.finished %>
+          <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+        <% else %>
+          <%=h assessment.blobs_count %>
+        <% end %>
+      </td>
+      <td>
+        <% if !assessment.finished %>
+          <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+        <% else %>
+          <%=h assessment.findings_count %>
+        <% end %>
+      </td>
+      <td>
+        <a class="btn btn-default btn-xs glyphicon glyphicon-trash delete-assessment" title="Delete assessment" data-toggle="tooltip" data-placement="bottom" href="#" data-assessment-id="<%=h assessment.id %>"></a>
+      </td>
+    </tr>
+  <% end %>
+</table>

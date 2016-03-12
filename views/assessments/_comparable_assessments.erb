@@ -1,0 +1,38 @@
+<% if @assessments.count.zero? %>
+  <div class="alert alert-danger" role="alert">
+    <strong>There are currently no comparable assessments.</strong>
+    <p>Assessments need to have at least one user in common to be comparable.</p>
+  </div>
+<% else %>
+<table class="table assessments comparable-assessments" id="assessments_table">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Date</th>
+        <th>Repositories</th>
+        <th>Files</th>
+        <th>Findings</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @assessments.each do |assessment| %>
+        <tr class="assessment-row">
+          <td class="owners" data-href="/assessments/<%=h assessment.id %>">
+            <% assessment.owners_dataset.limit(10).order(:type).each do |owner| %>
+              <img src="<%=h owner.avatar_url %>" width="30" height="30" alt="<%=h owner.login %>" title="<%=h owner.login %>" class="img-rounded" data-toggle="tooltip" data-placement="bottom" />
+            <% end %>
+            <% if assessment.owners_count > 10 %>
+              <small>and <%= assessment.owners_count - 10 %> more</small>
+            <% end %>
+          </td>
+          <td><%=h assessment.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <td><%=h assessment.repositories_count %></td>
+          <td><%=h assessment.blobs_count %></td>
+          <td><%=h assessment.findings_count %></td>
+          <td><button data-assessment-id="<%=h @assessment.id %>" data-other-assessment-id="<%=h assessment.id %>" class="btn btn-primary btn-success compare-assessments"><span class="glyphicon glyphicon-eye-open"></span> Compare</button></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

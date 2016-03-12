@@ -1,0 +1,46 @@
+<div class="page-header">
+  <div class="pull-right">
+    <ul class="nav nav-pills">
+      <li><a href="/assessments/<%=h @assessment.id %>/findings"><span class="glyphicon glyphicon-flag"></span> Findings</a></li>
+      <li class="active"><a href="/assessments/<%=h @assessment.id %>/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+      <li><a href="/assessments/<%=h @assessment.id %>/repositories"><span class="glyphicon glyphicon-book"></span> Repositories</a></li>
+      <li><a href="/assessments/<%=h @assessment.id %>/compare"><span class="glyphicon glyphicon-eye-open"></span> Compare</a></li>
+    </ul>
+  </div>
+  <h1>Users</h1>
+</div>
+
+<% @owners.each_slice(4) do |owners| %>
+  <div class="row">
+    <% owners.each do |owner| %>
+      <div class="col-md-3 center-text">
+        <div class="owner" data-href="/users/<%=h owner.id %>">
+          <img src="<%=h owner.avatar_url %>" class="img-rounded owner-avatar" alt="<%=h owner.name %>" />
+          <span class="owner-name"><%=h owner.name || owner.login %></span>
+          <div class="owner-counts">
+            <span class="label label-default" title="Repositories" data-toggle="tooltip" data-placement="bottom"><span class="glyphicon glyphicon-book"></span> <%=h owner.repositories_count %></span>
+            <span class="label label-default" title="Files" data-toggle="tooltip" data-placement="bottom"><span class="glyphicon glyphicon-file"></span> <%=h owner.blobs_count %></span>
+            <% if owner.findings_count > 0 %>
+              <span class="label label-danger" title="Flagged files" data-toggle="tooltip" data-placement="bottom"><span class="glyphicon glyphicon-flag"></span> <%=h owner.findings_count %></span>
+            <% else %>
+              <span class="label label-default" title="Flagged files" data-toggle="tooltip" data-placement="bottom"><span class="glyphicon glyphicon-flag"></span> <%=h owner.findings_count %></span>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="user_modal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div id="user_modal_content"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

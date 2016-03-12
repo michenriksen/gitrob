@@ -1,0 +1,37 @@
+<div class="modal-body" id="blob_modal_body">
+  <% if !@blob.flags.count.zero? %>
+    <% @blob.flags.each do |flag| %>
+      <div class="alert alert-warning" role="alert">
+        <% if flag.caption %>
+          <p><strong><%=h flag.caption %></strong></p>
+        <% end %>
+        <% if flag.description %>
+          <p><%=h flag.description %></p>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+  <% if @blob.test_blob? %>
+    <div class="alert alert-warning" role="alert">
+      <strong>Notice:</strong> This file looks like a test related file.
+    </div>
+  <% end %>
+
+  <% if @content %>
+    <pre><code id="blob_content" class="blob-content hljs"><%=h @content %></code></pre>
+  <% else %>
+    <div class="well center-text">
+      <h2>File is too large</h2>
+      <p>The file is too large to be rendered here. Please view it on GitHub.</p>
+      <br />
+      <br />
+      <p><a href="<%=h @blob.html_url %>" class="btn btn-primary btn-lg" target="_blank">View file on GitHub</a></p>
+      <br />
+    </div>
+  <% end %>
+</div>
+<div class="modal-footer">
+  <a href="<%=h @blob.html_url %>" class="btn btn-primary" target="_blank">View file on GitHub</a>
+  <a href="<%=h @blob.history_html_url %>" class="btn btn-primary" target="_blank">View commit history</a>
+  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+</div>

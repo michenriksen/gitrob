@@ -1,0 +1,54 @@
+<div class="row">
+  <div class="col-md-4">
+    <img src="<%=h @owner.avatar_url %>" alt="<%=h @owner.login %>" class="thumbnail owner-avatar" />
+    <% if !@owner.name.to_s.empty? %>
+      <h3><strong><%=h @owner.name %></strong><br /><small><a href="<%=h @owner.html_url %>" target="_blank"><%=h @owner.login %></a></small></h3>
+    <% else %>
+      <h3><strong><a href="<%=h @owner.html_url %>" target="_blank"><%=h @owner.login %></a></strong></h3>
+    <% end %>
+
+    <% if @owner.bio %>
+      <span class="glyphicon glyphicon-user" ></span> <%=h @owner.bio %><br />
+    <% end %>
+
+    <% if @owner.location %>
+      <span class="glyphicon glyphicon-map-marker" ></span> <%=h @owner.location %><br />
+    <% end %>
+
+    <% if @owner.email %>
+      <span class="glyphicon glyphicon-envelope" ></span> <a href="mailto:<%=h @owner.email %>" target="_blank" title="<%=h @owner.email %>"><%=h ellipsisize(@owner.email, 25, 10) %></a><br />
+    <% end %>
+
+    <% if @owner.blog %>
+      <span class="glyphicon glyphicon-link" ></span> <a href="<%=h format_url(@owner.blog) %>" target="_blank" title="<%=h @owner.blog %>"><%=h ellipsisize(@owner.blog, 25, 10) %></a><br />
+    <% end %>
+  </div>
+  <div class="col-md-8">
+    <h2>Repositories</h2>
+
+    <div class="owner-repository-table-container">
+      <table class="table table-condensed table-striped table-hover">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Findings</th>
+          </tr>
+        </thead>
+        <tbody>
+        <% @repositories.each do |repo| %>
+          <% if repo.findings_count.to_i > 0 %>
+            <tr class="danger">
+          <% else %>
+            <tr>
+          <% end %>
+            <td><strong><a href="/repositories/<%=h repo.id %>"><%=h repo.name %></a></strong></td>
+            <td><%=h repo.description %></td>
+            <td class="center-text"><strong><%=h repo.findings_count %></strong></td>
+          </tr>
+        <% end %>
+        </tbody>
+      </table>
+    </tr>
+  </div>
+</div>

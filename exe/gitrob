@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+# :nocov:
+require "gitrob"
+
+Gitrob::CLI.start(ARGV)
+# :nocov:

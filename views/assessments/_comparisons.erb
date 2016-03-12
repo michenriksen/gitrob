@@ -1,0 +1,111 @@
+<% if @primary_comparisons.count.zero? && @secondary_comparisons.count.zero? %>
+  <div class="alert alert-info" role="alert"><strong>No comparisons found.</strong></div>
+<% else %>
+  <table class="table comparisons" id="comparisons_table" data-refresh-endpoint="/assessments/<%=h @assessment.id %>/compare/_comparisons">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Date</th>
+        <th>Users</th>
+        <th>Repositories</th>
+        <th>Files</th>
+        <th>Findings</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @primary_comparisons.each do |comparison| %>
+        <% if !comparison.finished %>
+          <tr class="comparison-row unfinished primary-comparison">
+        <% else %>
+          <tr class="comparison-row primary-comparison">
+        <% end %>
+          <td class="owners" data-href="/comparisons/<%=h comparison.id %>">
+            <% comparison.secondary_assessment.owners_dataset.limit(10).order(:type).each do |owner| %>
+              <img src="<%=h owner.avatar_url %>" width="30" height="30" alt="<%=h owner.login %>" title="<%=h owner.login %>" class="img-rounded" data-toggle="tooltip" data-placement="bottom" />
+            <% end %>
+            <% if comparison.secondary_assessment.owners_count > 10 %>
+              <small>and <%= comparison.secondary_assessment.owners_count - 10 %> more</small>
+            <% end %>
+          </td>
+          <td><%=h comparison.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <td>
+            <% if !comparison.finished %>
+              <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+            <% else %>
+              <%=h comparison.owners_count %>
+            <% end %>
+          </td>
+          <td>
+            <% if !comparison.finished %>
+              <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+            <% else %>
+              <%=h comparison.repositories_count %>
+            <% end %>
+          </td>
+          <td>
+            <% if !comparison.finished %>
+              <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+            <% else %>
+              <%=h comparison.blobs_count %>
+            <% end %>
+          </td>
+          <td>
+            <% if !comparison.finished %>
+              <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+            <% else %>
+              <%=h comparison.findings_count %>
+            <% end %>
+          </td>
+          <td><a class="btn btn-default btn-xs glyphicon glyphicon-trash delete-comparison" title="Delete comparison" data-toggle="tooltip" data-placement="bottom" href="#" data-comparison-id="<%=h comparison.id %>"></a></td>
+        </tr>
+      <% end %>
+      <% @secondary_comparisons.each do |comparison| %>
+        <% if !comparison.finished %>
+          <tr class="comparison-row unfinished secondary-comparison">
+        <% else %>
+          <tr class="comparison-row primary-comparison">
+        <% end %>
+          <td class="owners" data-href="/comparisons/<%=h comparison.id %>">
+            <% comparison.primary_assessment.owners_dataset.limit(10).order(:type).each do |owner| %>
+              <img src="<%=h owner.avatar_url %>" width="30" height="30" alt="<%=h owner.login %>" title="<%=h owner.login %>" class="img-rounded" data-toggle="tooltip" data-placement="bottom" />
+            <% end %>
+            <% if comparison.primary_assessment.owners_count > 10 %>
+              <small>and <%= comparison.primary_assessment.owners_count - 10 %> more</small>
+            <% end %>
+          </td>
+          <td><%=h comparison.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <td>
+            <% if !comparison.finished %>
+              <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+            <% else %>
+              <%=h comparison.owners_count %>
+            <% end %>
+          </td>
+          <td>
+            <% if !comparison.finished %>
+              <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+            <% else %>
+              <%=h comparison.repositories_count %>
+            <% end %>
+          </td>
+          <td>
+            <% if !comparison.finished %>
+              <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+            <% else %>
+              <%=h comparison.blobs_count %>
+            <% end %>
+          </td>
+          <td>
+            <% if !comparison.finished %>
+              <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
+            <% else %>
+              <%=h comparison.findings_count %>
+            <% end %>
+          </td>
+          <td><a class="btn btn-default btn-xs glyphicon glyphicon-trash delete-comparison" title="Delete comparison" data-toggle="tooltip" data-placement="bottom" href="#" data-comparison-id="<%=h comparison.id %>"></a></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

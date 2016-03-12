@@ -1,0 +1,19 @@
+{
+  "login": "acme",
+  "id": 1,
+  "url": "https://api.github.com/orgs/acme",
+  "avatar_url": "https://github.com/images/error/octocat_happy.gif",
+  "description": "A great organization",
+  "name": "acme",
+  "company": "Acme",
+  "blog": "https://acme.com/blog",
+  "location": "Berlin",
+  "email": "dev@acme.com",
+  "public_repos": 2,
+  "public_gists": 0,
+  "followers": 0,
+  "following": 0,
+  "html_url": "https://acme.com/",
+  "created_at": "2008-01-14T04:33:35Z",
+  "type": "Organization"
+}

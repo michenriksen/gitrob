@@ -1,0 +1,22 @@
+<div class="page-header">
+  <div class="pull-right">
+    <ul class="nav nav-pills">
+      <li><a href="/assessments/<%=h @assessment.id %>/findings"><span class="glyphicon glyphicon-flag"></span> Findings</a></li>
+      <li><a href="/assessments/<%=h @assessment.id %>/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+      <li><a href="/assessments/<%=h @assessment.id %>/repositories"><span class="glyphicon glyphicon-book"></span> Repositories</a></li>
+      <li class="active"><a href="/assessments/<%=h @assessment.id %>/compare"><span class="glyphicon glyphicon-eye-open"></span> Compare</a></li>
+    </ul>
+  </div>
+  <h1>Assessment comparison</h1>
+</div>
+
+<h2>Comparisons</h2>
+<div id="comparisons_table_container" data-refresh-endpoint="/assessments/<%=h @assessment.id %>/compare/_comparisons">
+  <%= erb :"assessments/_comparisons" %>
+</div>
+
+<h2>Comparable assessments</h2>
+<div id="assessments_table_container" data-refresh-endpoint="/assessments/<%=h @assessment.id %>/compare/_comparables">
+  <%= erb :"assessments/_comparable_assessments" %>
+</div>
+

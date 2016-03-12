@@ -1,0 +1,49 @@
+<div class="page-header">
+  <h1><%=h @repository.full_name %></h1>
+</div>
+
+<table class="table table-striped table-hover table-condensed" id="blobs_table">
+  <thead>
+    <tr>
+    <th colspan="2">
+      <div class="pull-right">
+        <input type="text" id="quick_filter" class="form-control input-sm quick-filter" placeholder="Quick filter...">
+      </div>
+      <label>
+        <input type="checkbox" id="show_only_flagged_files"> Only show flagged files
+      </label>
+    </th>
+    </tr>
+    <tr>
+      <th class="blob-path">Path</th>
+      <th class="blob-size">Size</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @blobs.each do |blob| %>
+      <% if blob.flags_count > 0 %>
+        <tr class="danger blob-row">
+      <% else %>
+        <tr class="blob-row">
+      <% end %>
+        <td class="blob-path"><a href="/blobs/<%=h blob.id %>" class="blob-link" title="<%=h blob.flags.map(&:caption).join(' - ') %>" data-toggle="tooltip" data-placement="bottom"><%= format_path(blob.path) %></a></td>
+        <td class="blob-size"><%= number_to_human_size(blob.size) %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<div class="modal fade" tabindex="-1" role="dialog" id="blob_modal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="blob_modal_content">
+      <div class="modal-body">
+        <div class="center-text">
+          <img src="/images/blob_spinner.gif" alt="Loading file..." title="Loading file..." />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

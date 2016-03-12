@@ -1,0 +1,130 @@
+body {
+  font-family: Inconsolata, 'Courier New', monospace;
+  font-weight: normal;
+  font-style: normal;
+  font-variant: normal;
+  font-size: 1.3125em;
+  line-height: 1.52381em;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: inherit;
+}
+
+pre {
+  padding: 0px;
+  background-color: inherit;
+  border: none;
+}
+
+footer {
+  font-size: 11px;
+  color: #666;
+}
+
+footer a {
+  color: #666;
+  text-decoration: underline;
+}
+
+.center-text {
+  text-align: center;
+}
+
+table.assessments td, table.comparisons td {
+  text-align: center;
+  vertical-align: middle !important;
+}
+
+table.assessments tr.unfinished td.owners,  table.comparisons tr.unfinished td.owners {
+  cursor: not-allowed !important;
+}
+
+table.assessments tr.unfinished img, table.comparisons tr.unfinished img {
+  opacity: 0.5;
+}
+
+table.assessments td.owners, table.comparisons td.owners {
+  cursor: pointer;
+}
+
+table.assessments td.owners, table.comparisons td.owners {
+  text-align: left;
+}
+
+table.assessments th, table.comparisons th {
+  text-align: center;
+}
+
+table.repositories-table {
+  display: inline-table;
+  word-wrap:break-word;
+}
+
+.repository-name {
+  font-weight: bold;
+}
+
+.blob-size {
+  text-align: right;
+  width: 100px;
+}
+
+.blob-link {
+  color: inherit;
+}
+
+.test-blob .blob-link {
+  color: #666666 !important;
+}
+
+.blob-content {
+  display: block;
+  height: 480px;
+  overflow-y: scroll;
+}
+
+.active-blob-row {
+  background-color: #49515a !important;
+}
+
+.owner {
+  background-image: linear-gradient(#020202, #101112 40%, #191b1d);
+  background-repeat: no-repeat;
+  border: 1px solid rgba(0,0,0,0.6);
+  padding: 10px;
+  margin-bottom: 30px;
+  cursor: pointer;
+}
+
+.owner-name {
+  display: block;
+  font-weight: bold;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.owner-avatar {
+  width: 100%;
+  background-color: #ffffff;
+  display: block;
+}
+
+.owner-repository-table-container {
+  max-height: 500px;
+  overflow-y: scroll;
+}
+
+.noscript {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  display: block;
+  z-index: 9999;
+  width: 100%;
+  height: 100%;
+  color: #c8c8c8;
+  background-color: #272b30;
+  text-align: center;
+  padding-top: 20%;
+}

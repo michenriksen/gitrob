@@ -1,0 +1,34 @@
+#!/usr/bin/env ruby
+
+require "bundler/setup"
+require "awesome_print"
+require "gitrob"
+
+class QueryLogger < Logger
+  def format_message(_severity, _timestamp, _progname, msg)
+    "#{msg}\n".cyan
+  end
+end
+
+DB_MIGRATIONS_PATH   = File.expand_path("../../db/migrations", __FILE__)
+GITROB_CONFIGURATION = Gitrob::CLI::Commands::Configure.load_configuration!
+
+Sequel.extension :migration, :core_extensions
+DB = Sequel.connect(GITROB_CONFIGURATION["sql_connection_uri"])
+Sequel::Migrator.run(DB, DB_MIGRATIONS_PATH)
+Sequel::Model.db = DB
+Sequel::Model.plugin :validation_helpers, :timestamps
+
+require "gitrob/models/assessment"
+require "gitrob/models/github_access_token"
+require "gitrob/models/owner"
+require "gitrob/models/repository"
+require "gitrob/models/blob"
+require "gitrob/models/flag"
+require "gitrob/models/comparison"
+
+DB.logger = QueryLogger.new(STDOUT)
+
+require "irb"
+AwesomePrint.irb!
+IRB.start
