@@ -82,9 +82,15 @@ module Gitrob
       end
 
       def get_repositories(owner)
-        github_client do |client|
-          client.repos.list(
-            :user => owner["login"]).reject { |r| r["fork"] }
+        if owner["type"] == "Organization"
+          github_client do |client|
+            client.repos.list(:org => owner["login"], :type => "sources")
+          end
+        else
+          github_client do |client|
+            client.repos.list(
+              :user => owner["login"]).reject { |r| r["fork"] }
+          end
         end
       end
 

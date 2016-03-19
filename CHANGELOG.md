@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
    on GitHub API clients.
  - Setting GitHub access tokens with `--access-tokens` command option resulted
    in an error.
+ - Analyze command did not collect private repositories from organizations.
 
 ## [1.0.0]
 ### Added
