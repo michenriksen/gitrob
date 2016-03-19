@@ -5,7 +5,7 @@ describe Gitrob::Github::ClientManager do
     {
       :endpoint      => "https://api.example.com",
       :site          => "https://example.com",
-      :verify_ssl    => true,
+      :verify_ssl    => false,
       :access_tokens => %w(
         deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
         deadbabedeadbabedeadbabedeadbabedeadbabe
@@ -51,8 +51,8 @@ describe Gitrob::Github::ClientManager do
 
     it "has SSL verification option given in configuration" do
       subject.each do |client|
-        expect(client.ssl)
-          .to be true
+        expect(client.ssl[:verify])
+          .to be false
       end
     end
 

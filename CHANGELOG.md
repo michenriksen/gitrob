@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Fixed
+ - The `--verify-ssl` command option did not properly set SSL configuration
+   on GitHub API clients.
+ - Setting GitHub access tokens with `--access-tokens` command option resulted
+   in an error.
+
+## [1.0.0]
 ### Added
  - Complete rewrite of Gitrob
  - Analyze arbitrary amount of organizations and users

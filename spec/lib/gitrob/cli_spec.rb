@@ -116,8 +116,8 @@ describe Gitrob::CLI do
         expect(subject.name).to eq("access_tokens")
       end
 
-      it "has a type of array" do
-        expect(subject.type).to eq(:array)
+      it "has a type of string" do
+        expect(subject.type).to eq(:string)
       end
 
       it "is optional" do
@@ -130,7 +130,7 @@ describe Gitrob::CLI do
 
       it "has a description" do
         expect(subject.description)
-          .to eq("GitHub API tokens to use " \
+          .to eq("Comma-separated list of GitHub API tokens to use " \
                  "instead of what has been configured")
       end
 

@@ -25,10 +25,10 @@ module Gitrob
                  :default => 9393,
                  :desc    => "Port to run web server on"
     class_option :access_tokens,
-                 :type    => :array,
+                 :type    => :string,
                  :banner  => "TOKENS",
-                 :desc    => "GitHub API tokens to use " \
-                             "instead of what has been configured"
+                 :desc    => "Comma-separated list of GitHub API tokens to " \
+                             "use instead of what has been configured"
     class_option :color,
                  :type    => :boolean,
                  :default => true,

@@ -36,7 +36,9 @@ module Gitrob
           :oauth_token     => access_token,
           :endpoint        => @config[:endpoint],
           :site            => @config[:site],
-          :ssl             => @config[:verify_ssl],
+          :ssl             => {
+            :verify => @config[:verify_ssl]
+          },
           :user_agent      => USER_AGENT,
           :auto_pagination => true
         )
