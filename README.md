@@ -86,8 +86,6 @@ By default, the server will listen on [localhost:9393](http://localhost:9393). T
 
 See `gitrob help server` for more options.
 
-### Starting the web server
-
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment. Run `bundle exec gitrob` to use the gem in this directory, ignoring other installed copies of this gem.
