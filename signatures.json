@@ -537,5 +537,12 @@
     "pattern": "\\A\\.?npmrc\\z",
     "caption": "NPM configuration file",
     "description": "Might contain credentials for NPM registries"
+  },
+  {
+    "part": "filename",
+    "type": "match",
+    "pattern": "terraform.tfvars",
+    "caption": "Terraform variable config file",
+    "description": "Might contain credentials for terraform providers"
   }
 ]
