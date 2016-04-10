@@ -1226,6 +1226,21 @@ describe Gitrob::BlobObserver do
           .to eq("Might contain credentials for NPM registries")
       end
     end
+
+    it "flags Terraform variable configuration blobs" do
+      [
+        "terraform.tfvars",
+        "project/terraform.tfvars",
+      ].each do |path|
+        blob = create(:blob, :path => path)
+        described_class.observe(blob)
+        expect(blob.flags.count).to be >= 1
+        expect(blob.flags.last.caption)
+          .to eq("Terraform variable config file")
+        expect(blob.flags.last.description)
+          .to eq("Might contain credentials for terraform providers")
+      end
+    end
   end
 
   describe "Signature validation" do
