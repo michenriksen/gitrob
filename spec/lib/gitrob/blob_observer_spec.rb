@@ -1248,6 +1248,70 @@ describe Gitrob::BlobObserver do
       File.expand_path("../../../../signatures.json", __FILE__)
     end
 
+    let(:custom_signatures_file_path) do
+      File.join(Dir.home, ".gitrobsignatures")
+    end
+
+    context "when custom signatures file is present" do
+      it "loads custom signatures" do
+        described_class.unload_signatures
+        allow(described_class).to receive(:custom_signatures?)
+          .and_return(true)
+        expect(File).to receive(:read)
+          .with(custom_signatures_file_path)
+          .and_return('
+            [
+               {
+                 "part": "filename",
+                 "type": "match",
+                 "pattern": "test",
+                 "caption": "Test signature",
+                 "description": "This is a test signature"
+               }
+            ]
+          ')
+        described_class.load_custom_signatures!
+        expect(described_class.signatures.count).to eq(1)
+        signature = described_class.signatures.first
+        expect(signature).to be_a(Gitrob::BlobObserver::Signature)
+        expect(signature.part).to eq("filename")
+        expect(signature.type).to eq("match")
+        expect(signature.pattern).to eq("test")
+        expect(signature.caption).to eq("Test signature")
+        expect(signature.description).to eq("This is a test signature")
+      end
+
+      it "validates custom signatures" do
+        described_class.unload_signatures
+        allow(described_class).to receive(:custom_signatures?)
+          .and_return(true)
+        allow(File).to receive(:read)
+          .with(custom_signatures_file_path)
+          .and_return('
+            [
+               {
+                 "part": "filename",
+                 "type": "match",
+                 "pattern": "test",
+                 "caption": "Test signature",
+                 "description": "This is a test signature"
+               }
+            ]
+          ')
+        expect(described_class).to receive(:validate_signatures!)
+          .with([
+            {
+              "part" => "filename",
+               "type" => "match",
+               "pattern" => "test",
+               "caption" => "Test signature",
+               "description" => "This is a test signature"
+            }
+          ])
+        described_class.load_custom_signatures!
+      end
+    end
+
     context "when Signature file is empty" do
       it "raises CorruptSignaturesError" do
         expect(File).to receive(:read)
@@ -1258,7 +1322,7 @@ describe Gitrob::BlobObserver do
         end
           .to raise_error(
             Gitrob::BlobObserver::CorruptSignaturesError,
-            "Could not parse signature file"
+            "Signature file contains no signatures"
           )
       end
     end
@@ -1312,7 +1376,7 @@ describe Gitrob::BlobObserver do
         end
           .to raise_error(
             Gitrob::BlobObserver::CorruptSignaturesError,
-            "Missing required signature key: part"
+            "Validation failed for Signature #1: Missing required signature key: part"
           )
       end
     end
@@ -1336,7 +1400,7 @@ describe Gitrob::BlobObserver do
         end
           .to raise_error(
             Gitrob::BlobObserver::CorruptSignaturesError,
-            "Missing required signature key: type"
+            "Validation failed for Signature #1: Missing required signature key: type"
           )
       end
     end
@@ -1360,7 +1424,7 @@ describe Gitrob::BlobObserver do
         end
           .to raise_error(
             Gitrob::BlobObserver::CorruptSignaturesError,
-            "Missing required signature key: pattern"
+            "Validation failed for Signature #1: Missing required signature key: pattern"
           )
       end
     end
@@ -1384,7 +1448,7 @@ describe Gitrob::BlobObserver do
         end
           .to raise_error(
             Gitrob::BlobObserver::CorruptSignaturesError,
-            "Missing required signature key: caption"
+            "Validation failed for Signature #1: Missing required signature key: caption"
           )
       end
     end
@@ -1408,7 +1472,7 @@ describe Gitrob::BlobObserver do
         end
           .to raise_error(
             Gitrob::BlobObserver::CorruptSignaturesError,
-            "Missing required signature key: description"
+            "Validation failed for Signature #1: Missing required signature key: description"
           )
       end
     end
@@ -1433,7 +1497,7 @@ describe Gitrob::BlobObserver do
         end
           .to raise_error(
             Gitrob::BlobObserver::CorruptSignaturesError,
-            "Invalid signature part: what"
+            "Validation failed for Signature #1: Invalid signature part: what"
           )
       end
     end
@@ -1458,7 +1522,7 @@ describe Gitrob::BlobObserver do
         end
           .to raise_error(
             Gitrob::BlobObserver::CorruptSignaturesError,
-            "Invalid signature type: what"
+            "Validation failed for Signature #1: Invalid signature type: what"
           )
       end
     end

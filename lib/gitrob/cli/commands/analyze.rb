@@ -40,6 +40,15 @@ module Gitrob
           task("Loading signatures...", true) do
             Gitrob::BlobObserver.load_signatures!
           end
+
+          if Gitrob::BlobObserver.custom_signatures?
+            task("Loading custom signatures...", true) do
+              Gitrob::BlobObserver.load_custom_signatures!
+            end
+            info("Please consider contributing your custom signatures to the " \
+                 "Gitrob project.")
+          end
+          info("Loaded #{Gitrob::BlobObserver.signatures.count} signatures")
         end
 
         def start_web_server

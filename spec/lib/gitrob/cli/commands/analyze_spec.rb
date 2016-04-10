@@ -32,6 +32,10 @@ describe Gitrob::CLI::Commands::Analyze do
             deadbabedeadbabedeadbabedeadbabedeadbabe
           )
         )
+      allow(Gitrob::BlobObserver).to receive(:custom_signatures?)
+        .and_return(false)
+      allow(Gitrob::BlobObserver).to receive(:signatures)
+        .and_return([])
 
       expect_any_instance_of(described_class)
         .to receive(:task)
@@ -39,6 +43,53 @@ describe Gitrob::CLI::Commands::Analyze do
         .and_yield
       expect(Gitrob::BlobObserver).to receive(:load_signatures!)
       described_class.new(target, options)
+    end
+
+    context "When custom signatures are present" do
+      it "loads custom signtures" do
+        stub_db_assessment = spy
+        allow(stub_db_assessment)
+          .to receive(:save)
+        allow_any_instance_of(described_class)
+          .to receive(:gather_owners)
+        allow_any_instance_of(described_class)
+          .to receive(:gather_repositories)
+        allow(Gitrob::Models::Assessment)
+          .to receive(:create)
+          .and_return(stub_db_assessment)
+        allow_any_instance_of(described_class)
+          .to receive(:analyze_repositories)
+        allow(Gitrob::CLI)
+          .to receive(:configuration)
+          .and_return(
+            "github_access_tokens" => %w(
+              deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
+              deadbabedeadbabedeadbabedeadbabedeadbabe
+            )
+          )
+        allow(Gitrob::BlobObserver)
+          .to receive(:custom_signatures?)
+          .and_return(true)
+        allow(Gitrob::BlobObserver).to receive(:signatures)
+          .and_return([])
+
+        allow_any_instance_of(described_class)
+          .to receive(:task)
+          .with("Loading signatures...", true)
+          .and_yield
+        expect_any_instance_of(described_class)
+          .to receive(:task)
+          .with("Loading custom signatures...", true)
+          .and_yield
+        expect(Gitrob::BlobObserver).to receive(:load_custom_signatures!)
+        expect_any_instance_of(described_class)
+          .to receive(:info)
+          .with("Please consider contributing your custom signatures to the Gitrob project.")
+        expect_any_instance_of(described_class)
+          .to receive(:info)
+          .with("Loaded 0 signatures")
+        described_class.new(target, options)
+      end
     end
 
     it "gathers owners" do

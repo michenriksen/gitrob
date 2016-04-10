@@ -86,6 +86,41 @@ By default, the server will listen on [localhost:9393](http://localhost:9393). T
 
 See `gitrob help server` for more options.
 
+### Adding custom signatures
+
+If you want to look for files that are specific to your organisation or projects, it is easy to add custom signatures.
+
+When Gitrob starts it looks for a file at `~/.gitrobsignatures` which it expects to be a JSON document with signatures that follow the same structure as the main [signatures.json](signatures.json) file. Here is an example:
+
+    [
+      {
+        "part": "filename",
+        "type": "match",
+        "pattern": "otr.private_key",
+        "caption": "Pidgin OTR private key",
+        "description": null
+      }
+    ]
+
+ This signature instructs Gitrob to flag files where the filename exactly matches `otr.private_key`. The caption and description are used in the web interface when displaying the findings.
+
+#### Signature keys
+
+ * `part`: Can be one of:
+     * `path`: The complete file path
+     * `filename`: Only the filename
+     * `extension`: Only the file extension
+ * `type`: Can be one of:
+     * `match`: Simple match of part and pattern
+     * `regex`: Regular expression matching of part and pattern
+ * `pattern`: The value or regular expression to match with
+ * `caption`: A short description of the finding
+ * `description`: More detailed description if needed (set to `null` if not).
+
+Have a look at the main [signatures.json](signatures.json) file for more examples of signatures.
+
+**If you think other people can benefit from your custom signatures, please consider contributing them back to the Gitrob project by opening a Pull Request or an Issue. Thanks!**
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment. Run `bundle exec gitrob` to use the gem in this directory, ignoring other installed copies of this gem.
