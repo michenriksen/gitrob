@@ -6,6 +6,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
  - Ability to define custom signatures in `~/.gitrobsignatures`
 
+### New signatures
+ - Terraform variable configuration files (`filename == "terraform.tfvars"`)
+   Thanks to [Alfonso Cabrera](https://github.com/alfonso-cabrera)
+ - Environment configuration files (`filename =~ /\A\.?env\z/`)
+
 ## [1.0.1]
 ### Fixed
  - The `--verify-ssl` command option did not properly set SSL configuration

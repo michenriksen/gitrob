@@ -1241,6 +1241,23 @@ describe Gitrob::BlobObserver do
           .to eq("Might contain credentials for terraform providers")
       end
     end
+
+    it "flags environment configuration files" do
+      [
+        ".env",
+        "env",
+        "project/.env",
+        "project/env",
+      ].each do |path|
+        blob = create(:blob, :path => path)
+        described_class.observe(blob)
+        expect(blob.flags.count).to be >= 1
+        expect(blob.flags.last.caption)
+          .to eq("Environment configuration file")
+        expect(blob.flags.last.description)
+          .to be nil
+      end
+    end
   end
 
   describe "Signature validation" do

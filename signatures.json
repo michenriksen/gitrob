@@ -544,5 +544,12 @@
     "pattern": "terraform.tfvars",
     "caption": "Terraform variable config file",
     "description": "Might contain credentials for terraform providers"
+  },
+  {
+    "part": "filename",
+    "type": "regex",
+    "pattern": "\\A\\.?env\\z",
+    "caption": "Environment configuration file",
+    "description": null
   }
 ]
