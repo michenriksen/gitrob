@@ -4,6 +4,8 @@ module Gitrob
       "../../../signatures.json", __FILE__)
     CUSTOM_SIGNATURES_FILE_PATH = File.join(
       Dir.home, ".gitrobsignatures")
+    DISABLED_SIGNATURES_FILE_PATH = File.join(
+      Dir.home, ".gitrob_disabled_signatures")
 
     REQUIRED_SIGNATURE_KEYS = %w(part type pattern caption description)
     ALLOWED_TYPES           = %w(regex match)
@@ -28,6 +30,22 @@ module Gitrob
     def self.signatures
       load_signatures! unless @signatures
       @signatures
+    end
+
+    def self.disabled_signatures
+      @disabled_signatures
+    end
+
+    def self.disabled_signatures?
+      File.exist?(DISABLED_SIGNATURES_FILE_PATH)
+    end
+
+    def self.disable_signatures!
+      disabled_signatures = JSON.load(File.read(DISABLED_SIGNATURES_FILE_PATH))
+      @disabled_signatures = []
+      disabled_signatures.each do |pattern|
+        @disabled_signatures << @signatures.delete_if { |sig| sig['pattern'] == pattern }
+      end
     end
 
     def self.load_signatures!
