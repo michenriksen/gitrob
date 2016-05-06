@@ -1,13 +1,11 @@
 module Gitrob
   class BlobObserver
-    SIGNATURES_FILE_PATH = File.expand_path(
-      "../../../signatures.json", __FILE__)
-    CUSTOM_SIGNATURES_FILE_PATH = File.join(
-      Dir.home, ".gitrobsignatures")
-    DISABLED_SIGNATURES_FILE_PATH = File.join(
-      Dir.home, ".gitrob_disabled_signatures")
+    SIGNATURES_FILE_PATH = File.expand_path("../../../signatures.json", __FILE__)
+    CUSTOM_SIGNATURES_FILE_PATH = File.join(Dir.home, ".gitrobsignatures")
+    IGNORED_SIGNATURES_FILE_PATH = File.join(Dir.home, ".gitrobignore")
 
     REQUIRED_SIGNATURE_KEYS = %w(part type pattern caption description)
+    REQUIRED_IGNORED_SIGNATURE_KEYS = %w(part type pattern)
     ALLOWED_TYPES           = %w(regex match)
     ALLOWED_PARTS           = %w(path filename extension)
 
@@ -15,6 +13,13 @@ module Gitrob
     class CorruptSignaturesError < StandardError; end
 
     def self.observe(blob)
+      ignored_signatures.each do |signature|
+        if signature.type == "match"
+          return if ignore_with_match_signature?(blob, signature)
+        else
+          return if ignore_with_regex_signature?(blob, signature)
+        end
+      end
       signatures.each do |signature|
         if signature.type == "match"
           observe_with_match_signature(blob, signature)
@@ -32,20 +37,25 @@ module Gitrob
       @signatures
     end
 
-    def self.disabled_signatures
-      @disabled_signatures
+    def self.ignored_signatures
+      @ignored_signatures
     end
 
-    def self.disabled_signatures?
-      File.exist?(DISABLED_SIGNATURES_FILE_PATH)
+    def self.ignored_signatures?
+      File.exist?(IGNORED_SIGNATURES_FILE_PATH)
     end
 
-    def self.disable_signatures!
-      disabled_signatures = JSON.load(File.read(DISABLED_SIGNATURES_FILE_PATH))
-      @disabled_signatures = []
-      disabled_signatures.each do |pattern|
-        @disabled_signatures << @signatures.delete_if { |sig| sig['pattern'] == pattern }
+    def self.load_ignored_signatures!
+      @ignored_signatures = []
+      signatures = JSON.load(File.read(IGNORED_SIGNATURES_FILE_PATH))
+      validate_signatures!(signatures, type: :ignored)
+      signatures.each do |signature|
+        @ignored_signatures << Signature.new(signature)
       end
+    rescue CorruptSignaturesError => e
+      raise e
+    rescue StandardError => e
+      raise CorruptSignaturesError, "Could not parse signature file #{e}"
     end
 
     def self.load_signatures!
@@ -81,14 +91,14 @@ module Gitrob
       raise CorruptSignaturesError, "Could not parse signature file"
     end
 
-    def self.validate_signatures!(signatures)
+    def self.validate_signatures!(signatures, type: :required)
       if !signatures.is_a?(Array) || signatures.empty?
         fail CorruptSignaturesError,
              "Signature file contains no signatures"
       end
       signatures.each_with_index do |signature, index|
         begin
-          validate_signature!(signature)
+          validate_signature!(signature, type)
         rescue CorruptSignaturesError => e
           raise CorruptSignaturesError,
                 "Validation failed for Signature ##{index + 1}: #{e.message}"
@@ -96,17 +106,19 @@ module Gitrob
       end
     end
 
-    def self.validate_signature!(signature)
-      validate_signature_keys!(signature)
+    def self.validate_signature!(signature, type)
+      validate_signature_keys!(signature, type)
       validate_signature_type!(signature)
       validate_signature_part!(signature)
     end
 
-    def self.validate_signature_keys!(signature)
-      REQUIRED_SIGNATURE_KEYS.each do |key|
+    def self.validate_signature_keys!(signature, type)
+      keys = REQUIRED_SIGNATURE_KEYS
+      keys = REQUIRED_IGNORED_SIGNATURE_KEYS if type == :ignored
+      keys.each do |key|
         unless signature.key?(key)
           fail CorruptSignaturesError,
-               "Missing required signature key: #{key}"
+               "Missing required signature key: #{key} #{type}"
         end
       end
     end
@@ -123,6 +135,17 @@ module Gitrob
         fail CorruptSignaturesError,
              "Invalid signature part: #{signature['part']}"
       end
+    end
+
+    def self.ignore_with_match_signature?(blob, signature)
+      haystack = blob.send(signature.part.to_sym)
+      haystack == signature.pattern
+    end
+
+    def self.ignore_with_regex_signature?(blob, signature)
+      haystack = blob.send(signature.part.to_sym)
+      regex    = Regexp.new(signature.pattern, Regexp::IGNORECASE)
+      regex.match(haystack)
     end
 
     def self.observe_with_match_signature(blob, signature)

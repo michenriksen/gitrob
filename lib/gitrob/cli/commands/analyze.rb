@@ -13,7 +13,7 @@ module Gitrob
           @options = options
           @targets = targets.split(",").map(&:strip).uniq
           load_signatures!
-          disable_signatures!
+          load_ignored_signatures!
           create_database_assessment
           gather_owners
           gather_repositories
@@ -37,12 +37,12 @@ module Gitrob
           end
         end
 
-        def disable_signatures!
-          return unless Gitrob::BlobObserver.disabled_signatures?
-          task("Disabling signatures...", true) do
-            Gitrob::BlobObserver.disable_signatures!
+        def load_ignored_signatures!
+          return unless Gitrob::BlobObserver.ignored_signatures?
+          task("Ignoring signatures...", true) do
+            Gitrob::BlobObserver.load_ignored_signatures!
           end
-          info("Disabled #{Gitrob::BlobObserver.disabled_signatures.count} signatures")
+          info("Ignored #{Gitrob::BlobObserver.ignored_signatures.count} signatures")
           info("There are #{Gitrob::BlobObserver.signatures.count} enabled signatures")
         end
 
