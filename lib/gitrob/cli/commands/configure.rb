@@ -1,3 +1,5 @@
+require "uri"
+
 module Gitrob
   class CLI
     module Commands
@@ -102,7 +104,8 @@ module Gitrob
         end
 
         def make_connection_uri(username, password, hostname, port, database)
-          "postgres://#{username}:#{password}@#{hostname}:#{port}/#{database}"
+          str = "postgres://#{username}:#{password}@#{hostname}:#{port}/#{database}"
+          URI::encode(str)
         end
 
         def build_yaml(config)
