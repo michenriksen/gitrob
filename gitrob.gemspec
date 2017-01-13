@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "thin", "~> 1.6"
   spec.add_dependency "pg", "~> 0.18"
   spec.add_dependency "sequel", "~> 4.27"
-  spec.add_dependency "github_api", "~> 0.12"
+  spec.add_dependency "github_api", "= 0.12"
   spec.add_dependency "sucker_punch", "~> 2.0", ">= 2.0.1"
 
   spec.add_development_dependency "bundler", "~> 1.10"
