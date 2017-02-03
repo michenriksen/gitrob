@@ -60,8 +60,6 @@ Analyzing organizations and users is the main feature of Gitrob. The `analyze` c
 
     gitrob analyze acme,johndoe,janedoe
 
-Mixing organizations and users is convenient if you know that a certain user is part of an organization but they do not have their membership public.
-
 When the assessment is finished, the `analyze` command will automatically start up the web server to present the results. This can be avoided by adding the `--no-server` option to the command.
 
 See `gitrob help analyze` for more options.
