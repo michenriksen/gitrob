@@ -44,6 +44,7 @@ module Gitrob
 
     def initialize(*args)
       super
+      Hashie.logger = Logger.new(nil) # Disable warnings from Hashie
       self.class.enable_debugging if options[:debug]
       String.disable_colorization(!options[:color])
       return if help_command?
