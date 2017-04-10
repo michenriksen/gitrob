@@ -121,6 +121,19 @@ Have a look at the main [signatures.json](signatures.json) file for more example
 
 **If you think other people can benefit from your custom signatures, please consider contributing them back to the Gitrob project by opening a Pull Request or an Issue. Thanks!**
 
+### Ignoring signatures
+If you would like to ignore signatures so that you don't see them in any report you can do so by disabling their pattern.
+
+When Gitrob starts it looks for a file at `~/.gitrobignore` which it expects to be a JSON document containing an array of patterns that you want to ignore. Here is an example:
+
+    [
+      {
+        "part": "filename",
+        "type": "match",
+        "pattern": "database.yml"
+      }
+    ]
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment. Run `bundle exec gitrob` to use the gem in this directory, ignoring other installed copies of this gem.

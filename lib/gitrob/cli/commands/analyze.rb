@@ -13,6 +13,7 @@ module Gitrob
           @options = options
           @targets = targets.split(",").map(&:strip).uniq
           load_signatures!
+          load_ignored_signatures!
           create_database_assessment
           gather_owners
           gather_repositories
@@ -34,6 +35,15 @@ module Gitrob
           github_access_tokens.each do |access_token|
             @db_assessment.save_github_access_token(access_token)
           end
+        end
+
+        def load_ignored_signatures!
+          return unless Gitrob::BlobObserver.ignored_signatures?
+          task("Ignoring signatures...", true) do
+            Gitrob::BlobObserver.load_ignored_signatures!
+          end
+          info("Ignored #{Gitrob::BlobObserver.ignored_signatures.count} signatures")
+          info("There are #{Gitrob::BlobObserver.signatures.count} enabled signatures")
         end
 
         def load_signatures!
