@@ -177,6 +177,49 @@ module Gitrob
       erb :"assessments/compare"
     end
 
+    get "/assessments/:id/false_positives" do
+      @assessment = find_assessment(params[:id])
+      @falsePositive = Gitrob::Models::FalsePositive.order(:repository)
+      erb :"assessments/false_positive"
+    end
+
+    get "/assessments/:id/:findingID/false_positives" do
+      @assessment = find_assessment(params[:id])
+
+      @path = Gitrob::Models::Blob.where(:id => params[:findingID]).all
+      @path.each do |p|
+        @fullpath = p.path
+        @sha256 = p.sha256
+        @repo_id = p.repository_id
+      end
+      @repository = Gitrob::Models::Repository.where(:id => @repo_id).all
+      @repository.each do |r|
+        @repo_name = r.full_name  
+      end
+      @falsePositive = Gitrob::Models::FalsePositive.order(:repository)
+      erb :"assessments/false_positive"
+    end
+
+    get "/falsePositive/_table" do
+      @falsePositive = Gitrob::Models::FalsePositive.order(:repository)
+      erb :"assessments/_falsePositiveTable", :layout => false
+    end
+    
+    delete "/false_positive/:id" do
+      @falsePositive = Gitrob::Models::FalsePositive.first(
+        :id       => params[:id].to_i,
+      ) || halt(404)
+      @falsePositive.destroy
+    end
+
+    post "/falsePositive" do
+      @fingerprint = Gitrob::Models::FalsePositive.new
+      @fingerprint.fingerprint = params[:falsePositive][:fingerprint]
+      @fingerprint.path = params[:falsePositive][:path]
+      @fingerprint.repository = params[:falsePositive][:repository]
+      @fingerprint.save
+    end
+
     get "/assessments/:id/compare/_comparables" do
       @assessment = find_assessment(params[:id])
       @assessments = @assessment.comparable_assessments

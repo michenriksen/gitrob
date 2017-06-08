@@ -4,6 +4,7 @@ module Gitrob
       class Analyze < Gitrob::CLI::Command
         module Analysis
           def analyze_repositories
+            loadFalsePositive
             repo_progress_bar do |progress|
               github_data_manager.owners.each do |owner|
                 @db_owner = @db_assessment.save_owner(owner)
@@ -24,7 +25,12 @@ module Gitrob
             findings = 0
             blobs.each do |blob|
               db_blob = @db_assessment.save_blob(blob, db_repo, db_owner)
-              Gitrob::BlobObserver.observe(db_blob)
+
+              #Do a fingerprint comparison before observing blob
+              if !@falsePositiveFingerprints.include? db_blob.sha256
+                Gitrob::BlobObserver.observe(db_blob)
+              end
+              
               if db_blob.flags.count > 0
                 findings += 1
                 @db_assessment.findings_count += 1
@@ -38,6 +44,15 @@ module Gitrob
             report_findings(findings, db_repo, progress)
           rescue => e
             progress.error("#{e.class}: #{e.message}")
+          end
+
+          #Loading false positives from database
+          def loadFalsePositive
+            @falsePositiveFingerprints =[]
+            @loadDatabase = Gitrob::Models::FalsePositive.dataset.all
+            @loadDatabase.each do |e|
+              @falsePositiveFingerprints << e.fingerprint
+            end
           end
 
           def report_findings(finding_count, repo, progress)
