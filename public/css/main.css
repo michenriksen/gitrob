@@ -31,6 +31,14 @@ footer a {
   text-align: center;
 }
 
+.the-table {
+    table-layout: fixed;
+}
+
+.word-wrap {
+    word-wrap: break-word;
+}
+
 table.assessments td, table.comparisons td {
   text-align: center;
   vertical-align: middle !important;
@@ -68,6 +76,11 @@ table.repositories-table {
 .blob-size {
   text-align: right;
   width: 100px;
+}
+
+.blob-false {
+  text-align: right;
+  width: 50px;
 }
 
 .blob-link {

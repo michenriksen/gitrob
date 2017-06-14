@@ -144,6 +144,7 @@ module Gitrob
         require "gitrob/models/blob"
         require "gitrob/models/flag"
         require "gitrob/models/comparison"
+        require "gitrob/models/fingerprint"
       end
     end
 

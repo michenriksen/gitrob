@@ -1,0 +1,48 @@
+<div class="page-header">
+  <div class="pull-right">
+    <ul class="nav nav-pills">
+      <li><a href="/assessments/<%=h @assessment.id %>/findings"><span class="glyphicon glyphicon-flag"></span> Findings</a></li>
+      <li><a href="/assessments/<%=h @assessment.id %>/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+      <li><a href="/assessments/<%=h @assessment.id %>/repositories"><span class="glyphicon glyphicon-book"></span> Repositories</a></li>
+      <li><a href="/assessments/<%=h @assessment.id %>/compare"><span class="glyphicon glyphicon-eye-open"></span> Compare</a></li>
+      <li class="active"><a href="/assessments/<%=h @assessment.id %>/false_positives"><span class="glyphicon"></span> False Positive</a></li>
+    </ul>
+  </div>
+  <h1>Findings</h1>
+</div>
+
+<div id="falsePositive_table_container" data-refresh-endpoint="/falsePositive/_table">
+  <%= erb :"assessments/_falsePositiveTable" %>
+</div>
+
+<form id="new_falsePositive_form">
+  <div class="form-group">
+    <label for="repository">Repository Name</label>
+    <input type="text" class="form-control" id="respository" name="falsePositive[repository]" value="<%=@repo_name%>">
+  </div>
+  <div class="form group">
+    <label for="path">File Path</label>
+    <input type="text" class="form-control" id="path" name="falsePositive[path]" value="<%=@fullpath%>">
+  </div>
+  <div class="form-group">
+    <label for="fingerprint">Fingerprint</label>
+    <input type="text" class="form-control" id="fingerprint" name="falsePositive[fingerprint]" value="<%=@sha256%>">
+  </div>
+  <button type="submit" id="update_falsepositive" class="btn btn-primary">Save</button>
+</form>
+
+
+<div class="modal fade" tabindex="-1" role="dialog" id="blob_modal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content" id="blob_modal_content">
+      <div class="modal-body">
+        <div class="center-text">
+          <img src="/images/blob_spinner.gif" alt="Loading file..." title="Loading file..." />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

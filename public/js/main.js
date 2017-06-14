@@ -17,6 +17,13 @@ $(document).ready(function() {
     }, 5000)
   }
 
+  if ($("#falsePositive_table_container").length === 1) {
+    initializeFalsePositiveTableEvents();
+    setTimeout(function() {
+      refreshFalsePositiveTable();
+    }, 5000)
+  }
+
   $("#new_assessment_button").on("click", function(e) {
     e.preventDefault();
 
@@ -33,16 +40,24 @@ $(document).ready(function() {
 
   $("#new_assessment_form").on("submit", function(e) {
     e.preventDefault();
-
     $.ajax({
       url: "/assessments",
       type: "POST",
       data: $(this).serialize()
     });
-
     $("#new_assessment_modal").modal("hide");
     refreshAssessmentsTable();
+    return false;
+  });
 
+  $("#new_falsePositive_form").on("submit", function (e) {
+    e.preventDefault();
+    $.ajax({
+      url: "/falsePositive",
+      type: "POST",
+      data: $(this).serialize()
+    });
+    refreshFalsePositiveTable();
     return false;
   });
 
@@ -157,6 +172,19 @@ function refreshComparisonsTable() {
   }
 }
 
+function refreshFalsePositiveTable() {
+  var refreshEndpoint = $("#falsePositive_table_container").attr("data-refresh-endpoint");
+  if (typeof refreshEndpoint !== typeof undefined && refreshEndpoint !== false) {
+    $.get(refreshEndpoint, function(result) {
+      $("#falsePositive_table_container").html(result);
+      initializeFalsePositiveTableEvents();
+      setTimeout(function() {
+        refreshFalsePositiveTable();
+      }, 5000)
+    });
+  }
+}
+
 function initializeAssessmentsTableEvents() {
   $("table.assessments").on("click", "td.owners", function(e) {
     e.preventDefault();
@@ -192,6 +220,24 @@ function initializeAssessmentsTableEvents() {
     $(this).closest("tr").fadeOut("fast", function() {
       $(this).remove();
     });
+    return false;
+  });
+}
+
+function initializeFalsePositiveTableEvents() {
+  $("table.falsePositive").on("click", ".delete-fingerprint", function(e) {
+    e.preventDefault();
+
+    if (confirm("Are you sure you want to delete this fingerprint?")) {
+      $.ajax({
+        url: "/false_positive/" + $(this).attr("data-assessment-id"),
+        type: "DELETE"
+      });
+
+      $(this).closest("tr").fadeOut("fast", function() {
+        $(this).remove();
+      });
+    }
     return false;
   });
 }

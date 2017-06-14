@@ -22,7 +22,8 @@ module Gitrob
           @owners << owner
           @repositories_for_owners[owner["login"]] = []
           next unless owner["type"] == "Organization"
-          get_members(owner, thread_pool) if owner["type"] == "Organization"
+          #disable scanning of members in Organization
+          # get_members(owner, thread_pool) if owner["type"] == "Organization"
         end
         @owners = @owners.uniq { |o| o["login"] }
       end

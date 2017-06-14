@@ -1,7 +1,7 @@
 module Gitrob
   module Models
     class Blob < Sequel::Model
-      set_allowed_columns :path, :size, :sha
+      set_allowed_columns :path, :size, :sha, :sha256
 
       SHA_REGEX = /[a-f0-9]{40}/
       TEST_BLOB_INDICATORS = %w(test spec fixture mock stub fake demo sample)

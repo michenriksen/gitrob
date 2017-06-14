@@ -1,0 +1,22 @@
+<table class="table table-hover table-striped table-condensed falsePositive the-table" id="falsePositive_table" data-refresh-endpoint="/falsePositives/_table">
+  <thead>
+    <tr>
+      <th style="width:20%">Repository</th>
+      <th style="width:30%">Path</th>
+      <th style="width:46%">Fingerprint</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @falsePositive.each do |fp| %>
+      <tr>
+        <td class="word-wrap"><%=fp.repository%></td>
+        <td class="word-wrap"><%=fp.path%></td>      
+        <td class="word-wrap"><%=fp.fingerprint%></td>
+        <td>
+          <a class="btn btn-default btn-xs glyphicon glyphicon-trash delete-fingerprint" title="Delete fingerprint" data-toggle="tooltip" data-placement="bottom" href="#" data-assessment-id="<%=h fp.id%>"></a>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
