@@ -12,6 +12,7 @@ module Gitrob
         @unknown_logins          = []
         @owners                  = []
         @repositories            = []
+        @method_counter          = 0
         @repositories_for_owners = {}
         @mutex                   = Mutex.new
       end
@@ -105,7 +106,16 @@ module Gitrob
         end
       end
 
+      def incrementCounter
+        if @counter == 1000
+          sleep 1800
+          @counter = 0
+        end
+        @counter += 1
+      end
+
       def github_client
+        incrementCounter
         client = @client_manager.sample
         yield client
       rescue ::Github::Error::Forbidden => e
