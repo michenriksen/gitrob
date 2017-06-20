@@ -107,11 +107,11 @@ module Gitrob
       end
 
       def incrementCounter
-        if @counter == 1000
+        if @method_counter == 1000
           sleep 1800
-          @counter = 0
+          @method_counter = 0
         end
-        @counter += 1
+        @method_counter += 1
       end
 
       def github_client
