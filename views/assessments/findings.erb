@@ -5,6 +5,7 @@
       <li><a href="/assessments/<%=h @assessment.id %>/users"><span class="glyphicon glyphicon-user"></span> Users</a></li>
       <li><a href="/assessments/<%=h @assessment.id %>/repositories"><span class="glyphicon glyphicon-book"></span> Repositories</a></li>
       <li><a href="/assessments/<%=h @assessment.id %>/compare"><span class="glyphicon glyphicon-eye-open"></span> Compare</a></li>
+      <li><a href="/assessments/<%=h @assessment.id %>/false_positives"><span class="glyphicon"></span> False Positive</a></li>
     </ul>
   </div>
   <h1>Findings</h1>
@@ -13,30 +14,33 @@
 <table class="table table-striped table-hover table-condensed" id="blobs_table">
   <thead>
     <tr>
-    <th colspan="3">
+    <th colspan="4">
       <div class="pull-right">
         <input type="text" id="quick_filter" class="form-control input-sm quick-filter" placeholder="Quick filter...">
       </div>
     </th>
     </tr>
-    <tr>
-      <th class="blob-path">Path</th>
-      <th class="blob-repo">Repository</th>
-      <th class="blob-size">Size</th>
-    </tr>
   </thead>
   <tbody>
+    <tr>
+      <th>Repository</th>
+      <th>Path</th>      
+      <th>Fingerprint</th>
+      <th>Size</th>
+    </tr>
     <% @findings.each do |finding| %>
       <% if finding.test_blob? %>
         <tr class="blob-row test-blob">
       <% else %>
         <tr class="blob-row">
       <% end %>
-        <td class="blob-path"><a href="/blobs/<%=h finding.id %>" class="blob-link" title="<%=h finding.flags.map(&:caption).join(' - ') %>" data-toggle="tooltip" data-placement="bottom"><%= format_path(finding.path) %></a></td>
         <td class="blob-repo"><a href="/repositories/<%=h finding.repository.id %>"><%=h finding.repository.full_name %></a></td>
+        <td class="blob-path"><a href="/blobs/<%=h finding.id %>" class="blob-link" title="<%=h finding.flags.map(&:caption).join(' - ') %>" data-toggle="tooltip" data-placement="bottom"><%= format_path(finding.path) %></a></td>
+        <td class="blob-fingerprint"><a href="/assessments/<%=h @assessment.id %>/<%=finding.id%>/false_positives"><%= finding.sha256%></a></td>
         <td class="blob-size"><%= number_to_human_size(finding.size) %></td>
-      </tr>
+        </tr>
     <% end %>
+  </tbody>
 </table>
 
 <div class="modal fade" tabindex="-1" role="dialog" id="blob_modal">

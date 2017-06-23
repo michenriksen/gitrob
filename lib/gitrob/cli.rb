@@ -80,6 +80,11 @@ module Gitrob
            :type    => :boolean,
            :default => true,
            :desc    => "Verify or don't verify SSL connection (careful here)"
+    # Zendesk - Option to disable / enable org member scan
+    option :scan_org_members,
+           :type    => :boolean,
+           :default => false,
+           :desc    => "Options to enable/disable organiztion members scan"
     def analyze(targets)
       accept_tos
       Gitrob::CLI::Commands::Analyze.start(targets, options)
@@ -144,6 +149,7 @@ module Gitrob
         require "gitrob/models/blob"
         require "gitrob/models/flag"
         require "gitrob/models/comparison"
+        require "gitrob/models/fingerprint"
       end
     end
 

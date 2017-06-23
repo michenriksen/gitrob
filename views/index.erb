@@ -1,10 +1,3 @@
-<div class="page-header">
-  <h1>
-  <button type="button" class="pull-right btn btn-success" id="new_assessment_button"><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> New assessment</button>
-  Assessments
-  </h1>
-</div>
-
 <div id="assessments_table_container" data-refresh-endpoint="/assessments/_table">
   <%= erb :"assessments/_assessments" %>
 </div>
@@ -33,7 +26,7 @@
             </div>
             <div class="form-group">
               <label for="assessment_github_access_tokens">GitHub API access tokens <small>(one per line)</small></label>
-              <textarea class="form-control" id="assessment_github_access_tokens" name="assessment[github_access_tokens]" rows="3"><%=h Gitrob::CLI.configuration["github_access_tokens"].join("\n") %></textarea>
+              <textarea class="form-control" id="assessment_github_access_tokens" name="assessment[github_access_tokens]" rows="3"></textarea>
             </div>
           </form>
         </div>

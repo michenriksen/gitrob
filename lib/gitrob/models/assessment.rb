@@ -1,3 +1,5 @@
+require "digest"
+
 module Gitrob
   module Models
     class Assessment < Sequel::Model
@@ -58,7 +60,19 @@ module Gitrob
         blob.owner.save
         blob.repository.blobs_count += 1
         blob.repository.save
+        blob.sha256 = blob_fingerprint(blob)
         add_blob(blob)
+      end
+
+      #Zendesk - create blob fingerprint
+      def blob_fingerprint(blob)
+        sha = blob.sha
+        path = blob.path
+        repository_name = blob.repository.full_name
+        owner_name = blob.owner.name
+        attributes = sha + path + repository_name + owner_name
+        digest = Digest::SHA256.hexdigest attributes
+        return digest
       end
 
       def save_github_access_token(token)

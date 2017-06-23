@@ -11,6 +11,7 @@ module Gitrob
         def initialize(targets, options)
           Thread.abort_on_exception = true
           @options = options
+          @scan_member = @options[:scan_org_members]
           @targets = targets.split(",").map(&:strip).uniq
           load_signatures!
           create_database_assessment

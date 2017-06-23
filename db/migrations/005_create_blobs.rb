@@ -8,6 +8,7 @@ Sequel.migration do
       String :path
       Integer :size, :index => true
       String :sha, :size => 40, :fixed => true, :index => true
+      String :sha256, :size => 64, :fixed => true, :index => true
       Integer :flags_count, :index => true, :default => 0
       DateTime :updated_at
       DateTime :created_at

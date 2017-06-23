@@ -12,17 +12,21 @@ module Gitrob
         @unknown_logins          = []
         @owners                  = []
         @repositories            = []
+        @method_counter          = 0
         @repositories_for_owners = {}
         @mutex                   = Mutex.new
       end
 
-      def gather_owners(thread_pool)
+      def gather_owners(thread_pool, scan_member)
         @logins.each do |login|
           next unless owner = get_owner(login)
           @owners << owner
           @repositories_for_owners[owner["login"]] = []
           next unless owner["type"] == "Organization"
-          get_members(owner, thread_pool) if owner["type"] == "Organization"
+          #Zendesk - disable scanning of members in Organization
+          if scan_member
+            get_members(owner, thread_pool) if owner["type"] == "Organization"
+          end
         end
         @owners = @owners.uniq { |o| o["login"] }
       end
@@ -104,7 +108,18 @@ module Gitrob
         end
       end
 
+      #Zendesk - Counter so as we won't hit Github Rate Limit
+      def incrementCounter
+        if @method_counter == 1000
+          puts "Job paused for 1 Hour. Max Github request reached."
+          sleep 3600
+          @method_counter = 0
+        end
+        @method_counter += 1
+      end
+
       def github_client
+        incrementCounter
         client = @client_manager.sample
         yield client
       rescue ::Github::Error::Forbidden => e
