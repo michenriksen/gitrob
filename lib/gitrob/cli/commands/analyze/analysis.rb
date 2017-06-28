@@ -28,7 +28,7 @@ module Gitrob
               db_blob = @db_assessment.save_blob(blob, db_repo, db_owner)
 
               #Zendesk - Do a fingerprint comparison before observing blob
-              if !@falsePositiveFingerprints.include? db_blob.sha256
+              if !@falsePositiveFingerprints.to_s.include? db_blob.sha256
                 Gitrob::BlobObserver.observe(db_blob)
               end
               
