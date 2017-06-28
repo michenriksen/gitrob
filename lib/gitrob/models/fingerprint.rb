@@ -11,6 +11,7 @@ module Gitrob
         validates_unique(:fingerprint, :path, :repository)
         validates_presence [:fingerprint, :path, :repository]
         validates_format SHA_REGEX, :fingerprint
+      end
     end
   end
 end
