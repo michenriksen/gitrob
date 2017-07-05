@@ -1,5 +1,6 @@
 require "sinatra/base"
-require "thin"
+require "warden"
+require 'sinatra/flash'
 
 module Gitrob
   class WebApp < Sinatra::Base
@@ -16,6 +17,10 @@ module Gitrob
     set :public_folder, proc { File.join(root, "public") }
     set :views, proc { File.join(root, "views") }
     set :run, proc { false }
+
+    # Warden configuration code
+    enable :sessions
+    register Sinatra::Flash
 
     helpers do
       HUMAN_PREFIXES = %w(TB GB MB KB B).freeze
@@ -94,7 +99,74 @@ module Gitrob
       protect_from_request_forgery!
     end
 
+    use Warden::Manager do |config|
+      config.serialize_into_session{|user| user.id}
+      config.serialize_from_session{|id| Gitrob::Models::GitrobUser.get(id)}
+
+      config.scope_defaults :default,
+        strategies: [:password],
+        action: '/auth/unathenticated'
+      config.failure_app = self
+    end
+
+    Warden::Manager.before_failure do |env,opts|
+      env['REQUEST_METHOD'] = 'GET'
+      env.each do |key, value|
+        env[key]['_method'] = 'get' if key == 'rack.request.form_hash'
+      end
+    end
+
+    Warden::Strategies.add(:password) do
+      def valid?
+        params['user'] && params['user']['username'] && params['user']['password']
+      end
+
+      def authenticate!
+        user = Gitrob::Models::GitrobUser.first(username: params['user']['username'])
+        if user.nil?
+          throw(:warden, message: "The username and passowrd combination is incorrect.")
+        elsif user.authenticate(params['user']['password'])
+          success!(user)
+        else
+          throw(:warden, message: "The username and password combination is incorrect.")
+        end
+      end
+    end  
+
+    get '/auth/login' do
+      erb :"auth/login"
+    end
+
+    get '/auth/logout' do
+      env['warden'].raw_session.inspect
+      env['warden'].logout
+      session[:login] = false
+      flash[:success] = 'Successfully logged out'
+      redirect '/auth/login'
+    end
+
+    post '/auth/login' do
+      env['warden'].authenticate!
+      flash[:success] = "Successfully logged in"
+      session[:login] = true
+      if session[:return_to].nil?
+        redirect '/'
+      else
+        redirect session[:return_to]
+      end
+    end
+
+    get '/auth/unathenticated' do
+      session[:login] = false
+      session[:return_to] = env['warden.options'][:attempted_path] if session[:return_to].nil?
+
+      # Set the error and use a fallback if the message is not defined
+      flash[:error] = env['warden.options'][:message] || "You must log in"
+      redirect '/auth/login'
+    end 
+
     get "/" do
+      env['warden'].authenticate!
       @assessments =
         Gitrob::Models::Assessment
         .where(:deleted => false)
@@ -104,6 +176,7 @@ module Gitrob
     end
 
     get "/assessments/_table" do
+      env['warden'].authenticate!
       @assessments =
         Gitrob::Models::Assessment
         .where(:deleted => false)
@@ -133,10 +206,12 @@ module Gitrob
     end
 
     get "/assessments/:id" do
+      env['warden'].authenticate!
       redirect "/assessments/#{params[:id].to_i}/findings"
     end
 
     delete "/assessments/:id" do
+      env['warden'].authenticate!
       @assessment = Gitrob::Models::Assessment.first(
         :id       => params[:id].to_i,
         :deleted  => false
@@ -147,6 +222,7 @@ module Gitrob
     end
 
     get "/assessments/:id/findings" do
+      env['warden'].authenticate!
       @assessment = find_assessment(params[:id])
       @findings = @assessment.blobs_dataset.where("flags_count != 0")
         .order(:path).eager(:repository, :flags).all
@@ -154,18 +230,21 @@ module Gitrob
     end
 
     get "/assessments/:id/users" do
+      env['warden'].authenticate!
       @assessment = find_assessment(params[:id])
       @owners = @assessment.owners_dataset.order(:type)
       erb :"assessments/users"
     end
 
     get "/assessments/:id/repositories" do
+      env['warden'].authenticate!
       @assessment = find_assessment(params[:id])
       @repositories = @assessment.repositories_dataset.order(:full_name).all
       erb :"assessments/repositories"
     end
 
     get "/assessments/:id/compare" do
+      env['warden'].authenticate!
       @assessment = find_assessment(params[:id])
       @primary_comparisons = @assessment.primary_comparisons_dataset
                                         .order(:created_at)
@@ -177,13 +256,68 @@ module Gitrob
       erb :"assessments/compare"
     end
 
+    #Get request for false_positive table
+    get "/assessments/:id/false_positives" do
+      env['warden'].authenticate!
+      @assessment = find_assessment(params[:id])
+      @falsePositive = Gitrob::Models::FalsePositive.order(:repository)
+      erb :"assessments/false_positive"
+    end
+
+    #Get request for false_positive table
+    get "/assessments/:id/:findingID/false_positives" do
+      env['warden'].authenticate!
+      @assessment = find_assessment(params[:id])
+
+      @path = Gitrob::Models::Blob.where(:id => params[:findingID]).all
+      @path.each do |p|
+        @fullpath = p.path
+        @sha256 = p.sha256
+        @repo_id = p.repository_id
+      end
+      @repository = Gitrob::Models::Repository.where(:id => @repo_id).all
+      @repository.each do |r|
+        @repo_name = r.full_name  
+      end
+      @falsePositive = Gitrob::Models::FalsePositive.order(:repository)
+      erb :"assessments/false_positive"
+    end
+
+    #Get request for false_positive table
+    get "/falsePositive/_table" do
+      env['warden'].authenticate!
+      @falsePositive = Gitrob::Models::FalsePositive.order(:repository)
+      erb :"assessments/_falsePositiveTable", :layout => false
+    end
+
+    #Delete false positive fingerprints
+    delete "/false_positive/:id" do
+      env['warden'].authenticate!
+      @falsePositive = Gitrob::Models::FalsePositive.first(
+        :id       => params[:id].to_i,
+      ) || halt(404)
+      @falsePositive.destroy
+    end
+
+    #Add new false positive fingerprints
+    post "/falsePositive" do
+      env['warden'].authenticate!
+      @fingerprint = Gitrob::Models::FalsePositive.new
+      @fingerprint.fingerprint = params[:falsePositive][:fingerprint]
+      @fingerprint.path = params[:falsePositive][:path]
+      @fingerprint.repository = params[:falsePositive][:repository]
+      @fingerprint.save
+    end
+
     get "/assessments/:id/compare/_comparables" do
+      env['warden'].authenticate!
       @assessment = find_assessment(params[:id])
       @assessments = @assessment.comparable_assessments
       erb :"assessments/_comparable_assessments", :layout => false
     end
 
     get "/assessments/:id/compare/_comparisons" do
+      env['warden'].authenticate!
       @assessment = find_assessment(params[:id])
       @primary_comparisons = @assessment.primary_comparisons_dataset
                                         .order(:created_at)
@@ -195,6 +329,7 @@ module Gitrob
     end
 
     get "/users/:id" do
+      env['warden'].authenticate!
       @owner = Gitrob::Models::Owner.first(:id => params[:id].to_i) || halt(404)
       @assessment = @owner.assessment
       @repositories = @owner.repositories_dataset.order(:name).all
@@ -202,6 +337,7 @@ module Gitrob
     end
 
     get "/repositories/:id" do
+      env['warden'].authenticate!
       @repository = Gitrob::Models::Repository.first(
         :id => params[:id].to_i
       ) || halt(404)
@@ -211,6 +347,7 @@ module Gitrob
     end
 
     get "/blobs/:id" do
+      env['warden'].authenticate!
       @blob = Gitrob::Models::Blob.first(:id => params[:id].to_i) || halt(404)
       @assessment = @blob.assessment
 
@@ -237,6 +374,7 @@ module Gitrob
     end
 
     post "/comparisons" do
+      env['warden'].authenticate!
       @assessment = find_assessment(params[:assessment_id])
       @other_assessment = find_assessment(params[:other_assessment_id])
 
@@ -251,6 +389,7 @@ module Gitrob
     end
 
     get "/comparisons/:id" do
+      env['warden'].authenticate!
       @comparison = find_comparison(params[:id])
       @blobs = @comparison.blobs_dataset.order(:path)
                           .eager(:flags, :repository).all
@@ -260,6 +399,7 @@ module Gitrob
     end
 
     delete "/comparisons/:id" do
+      env['warden'].authenticate!
       @comparison = Gitrob::Models::Comparison.first(
         :id       => params[:id].to_i,
         :deleted  => false

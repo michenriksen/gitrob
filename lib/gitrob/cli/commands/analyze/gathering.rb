@@ -6,7 +6,8 @@ module Gitrob
           def gather_owners
             task("Gathering targets...") do
               thread_pool do |pool|
-                github_data_manager.gather_owners(pool)
+                #Transfer @scan_member variable
+                github_data_manager.gather_owners(pool, @scan_member)
               end
             end
             fatal("No users or organizations " \
