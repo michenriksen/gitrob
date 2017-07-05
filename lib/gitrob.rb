@@ -11,6 +11,7 @@ require "thread/pool"
 require "sequel"
 require "ruby-progressbar"
 require "sucker_punch"
+require "securerandom"
 
 require "gitrob/version"
 require "gitrob/utils"

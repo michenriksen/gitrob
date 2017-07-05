@@ -14,7 +14,18 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body>
+  <body>   
+    <% if flash[:success] %>
+    <div style="color:green;">
+      <%= flash[:success] %>
+    </div>
+    <% end %>
+
+    <% if flash[:error] %>
+    <div style="color:red;">
+      <%= flash[:error] %>
+    </div>
+    <% end %>
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -30,6 +41,11 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
             <li><a href="/">Assessments</a></li>
+            <% if session[:login] == true %>
+              <li><a href="/auth/logout">Log Out</a></li>
+            <% elsif session[:login] == false %>
+              <li><a href="/auth/login">Log In</a></li>
+            <% end %>
           </ul>
         </div>
       </div>
