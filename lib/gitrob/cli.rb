@@ -52,6 +52,7 @@ module Gitrob
       configure unless configured?
       load_configuration
       prepare_database
+      prepare_user
     end
 
     desc "analyze TARGETS", "Analyze one or more organizations or users"
@@ -80,6 +81,11 @@ module Gitrob
            :type    => :boolean,
            :default => true,
            :desc    => "Verify or don't verify SSL connection (careful here)"
+    #Option to disable / enable org member scan
+    option :scan_org_members,
+           :type    => :boolean,
+           :default => false,
+           :desc    => "Options to enable/disable organiztion members scan"
     def analyze(targets)
       accept_tos
       Gitrob::CLI::Commands::Analyze.start(targets, options)
@@ -136,6 +142,27 @@ module Gitrob
         end
       end
 
+      #Create new Gitrob User during first run
+      def prepare_user
+        @gitrobUser = Gitrob::Models::GitrobUser.all
+        if @gitrobUser.count == 0
+          username = "gitrob"
+          random_string = SecureRandom.base64(75)
+          puts "\033[0;31m"
+          puts "============================================================"
+          puts "Password only generated once. Please save it somewhere safe!"
+          puts "Creating new User for Gitrob"
+          puts "Username: " + username
+          puts "Password: " + random_string
+          puts "============================================================"
+          puts "\e[0"
+          @user = Gitrob::Models::GitrobUser.new
+          @user.username = username
+          @user.password = random_string
+          @user.save       
+        end
+      end
+
       def load_models
         require "gitrob/models/assessment"
         require "gitrob/models/github_access_token"
@@ -144,6 +171,8 @@ module Gitrob
         require "gitrob/models/blob"
         require "gitrob/models/flag"
         require "gitrob/models/comparison"
+        require "gitrob/models/fingerprint"
+        require "gitrob/models/gitrob_user"
       end
     end
 
