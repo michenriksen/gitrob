@@ -27,7 +27,7 @@
           <% end %>
         <% end %>
       </td>
-      <td><%=h assessment.created_at.strftime("%d-%m-%Y %H:%M") %></td>
+      <td><%=h assessment.created_at.strftime("%Y-%m-%d %H:%M") %></td>
       <td>
         <% if !assessment.finished %>
           <img src="/images/gear_spinner.gif" alt="In progress..." title="In progress..." data-toggle="tooltip" data-placement="bottom" />
