@@ -4,7 +4,7 @@ module Gitrob
       class Analyze < Gitrob::CLI::Command
         module Analysis
           def analyze_repositories
-            #Zendesk - load false positive fingerprints
+            #Load false positive fingerprints
             loadFalsePositive
             repo_progress_bar do |progress|
               github_data_manager.owners.each do |owner|
@@ -27,7 +27,7 @@ module Gitrob
             blobs.each do |blob|
               db_blob = @db_assessment.save_blob(blob, db_repo, db_owner)
 
-              #Zendesk - Do a fingerprint comparison before observing blob
+              #Do a fingerprint comparison before observing blob
               if !@falsePositiveFingerprints.to_s.include? db_blob.sha256
                 Gitrob::BlobObserver.observe(db_blob)
               end

@@ -6,7 +6,7 @@ module Gitrob
           def gather_owners
             task("Gathering targets...") do
               thread_pool do |pool|
-                #Zendesk - Transfer @scan_member variable
+                #Transfer @scan_member variable
                 github_data_manager.gather_owners(pool, @scan_member)
               end
             end

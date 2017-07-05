@@ -1,4 +1,4 @@
-#Zendesk - FalsePositive Model
+#FalsePositive Model
 module Gitrob
   module Models
     class FalsePositive < Sequel::Model

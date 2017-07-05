@@ -1,4 +1,4 @@
-#Zendesk - Gitrob User Model
+#Gitrob User Model
 module Gitrob
   module Models
     class GitrobUser < Sequel::Model

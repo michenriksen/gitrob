@@ -64,7 +64,7 @@ module Gitrob
         add_blob(blob)
       end
 
-      #Zendesk - create blob fingerprint
+      #create blob fingerprint
       def blob_fingerprint(blob)
         sha = blob.sha
         path = blob.path

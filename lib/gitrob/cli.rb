@@ -81,7 +81,7 @@ module Gitrob
            :type    => :boolean,
            :default => true,
            :desc    => "Verify or don't verify SSL connection (careful here)"
-    # Zendesk - Option to disable / enable org member scan
+    #Option to disable / enable org member scan
     option :scan_org_members,
            :type    => :boolean,
            :default => false,
@@ -142,7 +142,7 @@ module Gitrob
         end
       end
 
-      #Zendesk - Create new Gitrob User
+      #Create new Gitrob User during first run
       def prepare_user
         @gitrobUser = Gitrob::Models::GitrobUser.all
         if @gitrobUser.count == 0

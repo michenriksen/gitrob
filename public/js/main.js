@@ -17,7 +17,7 @@ $(document).ready(function() {
     }, 5000)
   }
 
-  // Zendesk - initialize False Positive Container
+  //Initialize False Positive Container
   if ($("#falsePositive_table_container").length === 1) {
     initializeFalsePositiveTableEvents();
     setTimeout(function() {
@@ -51,7 +51,7 @@ $(document).ready(function() {
     return false;
   });
 
-  // Zendesk - add new false positive submit button event
+  //Add new false positive submit button event
   $("#new_falsePositive_form").on("submit", function (e) {
     e.preventDefault();
     $.ajax({
@@ -187,7 +187,7 @@ function refreshComparisonsTable() {
   }
 }
 
-// Zendesk - refresh table every 5ms
+// Refresh table every 5ms
 function refreshFalsePositiveTable() {
   var refreshEndpoint = $("#falsePositive_table_container").attr("data-refresh-endpoint");
   if (typeof refreshEndpoint !== typeof undefined && refreshEndpoint !== false) {
@@ -240,7 +240,7 @@ function initializeAssessmentsTableEvents() {
   });
 }
 
-// Zendesk - Initialize the false positive table to allow delete button to work
+//Initialize the false positive table to allow delete button to work
 function initializeFalsePositiveTableEvents() {
   $("table.falsePositive").on("click", ".delete-fingerprint", function(e) {
     e.preventDefault();
