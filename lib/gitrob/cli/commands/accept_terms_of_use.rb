@@ -30,7 +30,7 @@ module Gitrob
         private
 
         def terms_of_use_accepted?
-          File.exist?(AGREEMENT_FILE_PATH)
+          ENV.include?("ACCEPT_TOS") || File.exist?(AGREEMENT_FILE_PATH)
         end
 
         def present_terms_of_use

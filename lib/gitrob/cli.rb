@@ -22,7 +22,7 @@ module Gitrob
                  :desc    => "Address to bind web server to"
     class_option :port,
                  :type    => :numeric,
-                 :default => 9393,
+                 :default => ENV['PORT'].to_i || 9393,
                  :desc    => "Port to run web server on"
     class_option :access_tokens,
                  :type    => :string,

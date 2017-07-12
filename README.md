@@ -52,6 +52,16 @@ Gitrob needs to know how to talk to the PostgreSQL database as well as what acce
 
 The configuration wizard will ask you for the information needed to set up Gitrob. All the information is saved to `~/.gitrobrc` and yes, Gitrob will be looking for this file too, so watch out!
 
+#### Environment Variables
+
+Gitrob can also be configured using the following environment variables:
+
+ * **ACCEPT_TOS**: Setting any value will accept the terms of service.
+ * **PORT**: The port gitrob will listen on.
+ * **DATABASE_URL**: URL containing the credentials and hostname of the database server.
+ * **GITHUB_TOKEN**: [Github access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/)
+
+
 ## Usage
 
 ### Analyzing organizations and users
