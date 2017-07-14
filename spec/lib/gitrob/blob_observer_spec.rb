@@ -1258,6 +1258,16 @@ describe Gitrob::BlobObserver do
           .to be nil
       end
     end
+
+    it "flags large files" do
+      blob = create(:blob, :size => 10000000)
+      described_class.observe(blob)
+      expect(blob.flags.count).to be >= 1
+      expect(blob.flags.last.caption)
+        .to eq("File over 10MB")
+      expect(blob.flags.last.description)
+        .to eq("May be an accidental information disclosure")
+    end
   end
 
   describe "Signature validation" do
@@ -1374,30 +1384,6 @@ describe Gitrob::BlobObserver do
       end
     end
 
-    context "when signature is missing part" do
-      let(:signatures) do
-        [{
-          "type" => "match",
-          "pattern" => "pattern",
-          "caption" => "caption",
-          "description" => "description"
-        }]
-      end
-
-      it "raises CorruptSignaturesError" do
-        expect(File).to receive(:read)
-          .with(signatures_file_path)
-          .and_return(JSON.dump(signatures))
-        expect do
-          described_class.load_signatures!
-        end
-          .to raise_error(
-            Gitrob::BlobObserver::CorruptSignaturesError,
-            "Validation failed for Signature #1: Missing required signature key: part"
-          )
-      end
-    end
-
     context "when signature is missing type" do
       let(:signatures) do
         [{
@@ -1418,30 +1404,6 @@ describe Gitrob::BlobObserver do
           .to raise_error(
             Gitrob::BlobObserver::CorruptSignaturesError,
             "Validation failed for Signature #1: Missing required signature key: type"
-          )
-      end
-    end
-
-    context "when signature is missing pattern" do
-      let(:signatures) do
-        [{
-          "part" => "filename",
-          "type" => "match",
-          "caption" => "caption",
-          "description" => "description"
-        }]
-      end
-
-      it "raises CorruptSignaturesError" do
-        expect(File).to receive(:read)
-          .with(signatures_file_path)
-          .and_return(JSON.dump(signatures))
-        expect do
-          described_class.load_signatures!
-        end
-          .to raise_error(
-            Gitrob::BlobObserver::CorruptSignaturesError,
-            "Validation failed for Signature #1: Missing required signature key: pattern"
           )
       end
     end
@@ -1516,6 +1478,24 @@ describe Gitrob::BlobObserver do
             Gitrob::BlobObserver::CorruptSignaturesError,
             "Validation failed for Signature #1: Invalid signature part: what"
           )
+      end
+    end
+
+    context "when signature is missing part" do
+      let(:signatures) do
+        [{
+           "type" => "match",
+           "pattern" => "pattern",
+           "caption" => "caption",
+           "description" => "description"
+         }]
+      end
+
+      it "validates the signatures" do
+        expect(File).to receive(:read)
+                          .with(signatures_file_path)
+                          .and_return(JSON.dump(signatures))
+        described_class.load_signatures!
       end
     end
 

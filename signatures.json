@@ -551,5 +551,11 @@
     "pattern": "\\A\\.?env\\z",
     "caption": "Environment configuration file",
     "description": null
+  },
+  {
+    "type": "size",
+    "greater_than": "10000000",
+    "caption": "File over 10MB",
+    "description": "May be an accidental information disclosure"
   }
 ]
