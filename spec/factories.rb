@@ -69,7 +69,7 @@ FactoryGirl.define do
       ext = %w(sql rb py php go txt md).sample
       "#{dir.join('/')}/#{file}.#{ext}"
     end
-    size { Faker::Number.number(5) }
+    size { Faker::Number.number(3) }
     sha { Digest::SHA1.hexdigest(Random.rand.to_s) }
   end
 

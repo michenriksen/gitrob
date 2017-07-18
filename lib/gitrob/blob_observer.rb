@@ -5,8 +5,8 @@ module Gitrob
     CUSTOM_SIGNATURES_FILE_PATH = File.join(
       Dir.home, ".gitrobsignatures")
 
-    REQUIRED_SIGNATURE_KEYS = %w(part type pattern caption description)
-    ALLOWED_TYPES           = %w(regex match)
+    REQUIRED_SIGNATURE_KEYS = %w(type caption description)
+    ALLOWED_TYPES           = %w(regex match size)
     ALLOWED_PARTS           = %w(path filename extension)
 
     class Signature < OpenStruct; end
@@ -16,6 +16,8 @@ module Gitrob
       signatures.each do |signature|
         if signature.type == "match"
           observe_with_match_signature(blob, signature)
+        elsif signature.type == "size"
+          observe_with_size_signature(blob, signature)
         else
           observe_with_regex_signature(blob, signature)
         end
@@ -81,7 +83,9 @@ module Gitrob
     def self.validate_signature!(signature)
       validate_signature_keys!(signature)
       validate_signature_type!(signature)
-      validate_signature_part!(signature)
+      if signature["part"]
+        validate_signature_part!(signature)
+      end
     end
 
     def self.validate_signature_keys!(signature)
@@ -121,6 +125,15 @@ module Gitrob
       haystack = blob.send(signature.part.to_sym)
       regex    = Regexp.new(signature.pattern, Regexp::IGNORECASE)
       return if regex.match(haystack).nil?
+      blob.add_flag(
+        :caption     => signature.caption,
+        :description => signature.description,
+        :assessment  => blob.assessment
+      )
+    end
+
+    def self.observe_with_size_signature(blob, signature)
+      return if blob.size < signature.greater_than.to_i
       blob.add_flag(
         :caption     => signature.caption,
         :description => signature.description,
