@@ -20,10 +20,16 @@ module Gitrob
         end
 
         def self.configured?
-          File.exist?(CONFIGURATION_FILE_PATH)
+          environment_configured? || File.exist?(CONFIGURATION_FILE_PATH)
         end
 
         def self.load_configuration!
+          if environment_configured?
+            return {
+              "sql_connection_uri"   => ENV['DATABASE_URL'],
+              "github_access_tokens" => [ENV['GITHUB_TOKEN']],
+            }
+          end
           fail ConfigurationFileNotFound \
             unless File.exist?(CONFIGURATION_FILE_PATH)
           fail ConfigurationFileNotReadable \
@@ -31,6 +37,10 @@ module Gitrob
           YAML.load(File.read(CONFIGURATION_FILE_PATH))
         rescue Psych::SyntaxError
           raise ConfigurationFileCorrupt
+        end
+
+        def self.environment_configured?
+          ENV.include?("PORT") && ENV.include?("DATABASE_URL") && ENV.include?("GITHUB_TOKEN")
         end
 
         private
