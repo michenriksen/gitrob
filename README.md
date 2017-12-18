@@ -70,7 +70,9 @@ See `gitrob help analyze` for more options.
 
 Gitrob can analyze organizations and users on custom GitHub Enterprise installations instead of the official GitHub site. The `analyze` command takes several options to control this:
 
-    gitrob analyze johndoe --site=https://github.acme.com --endpoint=https://github.acme.com/api/v3 --access-tokens=token1,token2
+    gitrob analyze johndoe --site=https://github.acme.com --endpoint=https://github.acme.com/api/v3/ --access-tokens=token1,token2
+Note: Be sure to include the end '/' after v3 as files do not pull down if it is not present.
+
 
 See `gitrob help analyze` for more options.
 
