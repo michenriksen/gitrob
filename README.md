@@ -34,6 +34,8 @@ You now have a new PostgreSQL user with the name `gitrob` and with the password 
 
 Gitrob works by querying the [GitHub API](https://developer.github.com/v3/) for interesting information, so you need at least one access token to get up and running. The easiest way is to create a [Personal Access Token](https://github.com/settings/tokens). Press the `Generate new token` button and give the token a description. If you intend on using Gitrob against organizations you're not a member of you don't need to give the token any scopes, as we will only be accessing public data. If you intend to run Gitrob against your own organization, you'll need to check the `read:org` scope to get full coverage.
 
+If you intend to run Gitrob against private repos, you will need to check the `repo` scope.
+
 If you plan on using Gitrob extensively or against a very large organization, it might be necessary to have multiple access tokens to avoid running into rate limiting. These access tokens will have to be from different user accounts.
 
 ### 5. Gitrob
