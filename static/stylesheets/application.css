@@ -1,0 +1,127 @@
+a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+a:hover {
+  color: inherit;
+}
+
+a.btn {
+  text-decoration: none;
+}
+
+code {
+  color: inherit;
+}
+
+footer {
+  border-top: 1px solid #303030;
+  margin-top: 50px;
+  padding: 20px 0px 100px 0px;
+  font-size: 11px;
+}
+
+.navbar a {
+  text-decoration: none;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+
+.progress-bar {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#findings_search {
+  width: 260px;
+}
+
+#table_findings td.col-path {
+  color: #ccc;
+}
+
+#table_findings td.col-path strong {
+  color: #fff;
+}
+
+#table_findings .col-action {
+  width: 50px;
+}
+
+#table_findings .col-action .badge {
+  width: 100%;
+}
+
+#table_findings .col-commit {
+  width: 70px;
+  text-align: right;
+}
+
+#table_findings .col-repository {
+  width: 200px;
+  text-align: right;
+}
+
+#table_findings tr.test-related {
+  opacity: 0.4;
+}
+
+.spinner {
+  display: block;
+  margin: 25px auto 10px auto;
+}
+
+tr.table-selected {
+  background-color: #375a7f !important;
+}
+
+#modal_file .alert-secondary {
+  color: #ccc
+}
+
+#modal_file .alert-secondary strong {
+  color: #fff;
+}
+
+.finding-meta-table {
+  font-size: 13px;
+}
+
+.finding-meta-table th {
+  padding-right: 10px;
+}
+
+#finding_id_clipboard {
+  transform: scale(0.7);
+}
+
+#modal_file_contents_container {
+  display: none;
+}
+
+#modal_file_contents, #modal_file_hexdump {
+  display: none;
+}
+
+#modal_file_hexdump {
+  max-height: 400px;
+}
+
+#modal_file_hexdump #line-number {
+  color: #00bc8c;
+}
+
+#modal_file_hexdump span[data-string-id], #modal_file_hexdump span[data-string-null] {
+  color: #F39C12;
+  vertical-align: middle;
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  height: 15px;
+  width: 14px;
+  text-align: center;
+}
