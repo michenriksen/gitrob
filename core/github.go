@@ -8,7 +8,7 @@ import (
 
 type GithubOwner struct {
   Login     *string
-  ID        *int
+  ID        *int64
   Type      *string
   Name      *string
   AvatarURL *string
@@ -22,7 +22,7 @@ type GithubOwner struct {
 
 type GithubRepository struct {
   Owner         *string
-  ID            *int
+  ID            *int64
   Name          *string
   FullName      *string
   CloneURL      *string
