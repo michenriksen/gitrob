@@ -6,6 +6,7 @@ import (
   "io"
   "path/filepath"
   "regexp"
+  "strings"
 )
 
 const (
@@ -17,10 +18,29 @@ const (
   PartPath      = "path"
 )
 
+var skippableExtensions = []string{".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".psd", ".xcf"}
+var skippablePathIndicators = []string{"node_modules/", "vendor/bundle", "vendor/cache"}
+
 type MatchFile struct {
   Path      string
   Filename  string
   Extension string
+}
+
+func (f *MatchFile) IsSkippable() bool {
+  ext := strings.ToLower(f.Extension)
+  path := strings.ToLower(f.Path)
+  for _, skippableExt := range skippableExtensions {
+    if ext == skippableExt {
+      return true
+    }
+  }
+  for _, skippablePathIndicator := range skippablePathIndicators {
+    if strings.Contains(path, skippablePathIndicator) {
+      return true
+    }
+  }
+  return false
 }
 
 type Finding struct {

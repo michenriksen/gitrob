@@ -144,6 +144,10 @@ func AnalyzeRepositories(sess *core.Session) {
             changeAction := core.GetChangeAction(change)
             path := core.GetChangePath(change)
             matchFile := core.NewMatchFile(path)
+            if matchFile.IsSkippable() {
+              sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", tid, *repo.FullName, matchFile.Path)
+              continue
+            }
             sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", tid, *repo.FullName, matchFile.Path)
             for _, signature := range core.Signatures {
               if signature.Match(matchFile) {
