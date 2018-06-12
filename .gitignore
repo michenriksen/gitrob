@@ -7,7 +7,8 @@
 gitrob
 gitrob.exe
 
-build
+vendor/
+build/
 
 # Test binary, build with `go test -c`
 *.test
