@@ -91,7 +91,7 @@ func AnalyzeRepositories(sess *core.Session) {
   var ch = make(chan *core.GithubRepository, len(sess.Repositories))
   var wg sync.WaitGroup
   var threadNum int
-  if len(sess.Repositories) == 1 {
+  if len(sess.Repositories) <= 1 {
     threadNum = 1
   } else if len(sess.Repositories) <= *sess.Options.Threads {
     threadNum = len(sess.Repositories) - 1
