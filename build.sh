@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 BUILD_FOLDER=build
 VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
