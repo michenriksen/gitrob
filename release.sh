@@ -28,3 +28,4 @@ git push origin v$NEW_VERSION
 
 echo
 echo "[*] All done, v$NEW_VERSION released."
+
