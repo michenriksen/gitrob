@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-CURRENT_VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
 TO_UPDATE=(
+readonly CURRENT_VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
     core/banner.go
 )
 

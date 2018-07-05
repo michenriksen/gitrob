@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-BUILD_FOLDER=build
-VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
+readonly BUILD_FOLDER=build
+readonly VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
 
 bin_dep() {
   BIN=$1
