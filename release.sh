@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-CURRENT_VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
-TO_UPDATE=(
+readonly CURRENT_VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
+declare -a TO_UPDATE=(
     core/banner.go
 )
 
@@ -28,3 +28,4 @@ git push origin v$NEW_VERSION
 
 echo
 echo "[*] All done, v$NEW_VERSION released."
+

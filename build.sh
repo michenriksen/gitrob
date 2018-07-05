@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-BUILD_FOLDER=build
-VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
+readonly BUILD_FOLDER=build
+readonly VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
 
 bin_dep() {
   BIN=$1
@@ -11,7 +11,7 @@ bin_dep() {
 create_exe_archive() {
   bin_dep 'zip'
 
-  OUTPUT=$1
+  OUTPUT="$1"
 
   echo "[*] Creating archive $OUTPUT ..."
   zip -j "$OUTPUT" gitrob.exe ../README.md ../LICENSE.txt > /dev/null
@@ -21,7 +21,7 @@ create_exe_archive() {
 create_archive() {
   bin_dep 'zip'
 
-  OUTPUT=$1
+  OUTPUT="$1"
 
   echo "[*] Creating archive $OUTPUT ..."
   zip -j "$OUTPUT" gitrob ../README.md ../LICENSE.md > /dev/null
@@ -43,13 +43,13 @@ build_windows_amd64() {
   GOOS=windows GOARCH=amd64 go build -o gitrob.exe ..
 }
 
-rm -rf $BUILD_FOLDER
-mkdir $BUILD_FOLDER
-cd $BUILD_FOLDER
+rm -rf "$BUILD_FOLDER"
+mkdir "$BUILD_FOLDER"
+cd "$BUILD_FOLDER"
 
-build_linux_amd64 && create_archive gitrob_linux_amd64_$VERSION.zip
-build_macos_amd64 && create_archive gitrob_macos_amd64_$VERSION.zip
-build_windows_amd64 && create_exe_archive gitrob_windows_amd64_$VERSION.zip
+build_linux_amd64 && create_archive "gitrob_linux_amd64_$VERSION.zip"
+build_macos_amd64 && create_archive "gitrob_macos_amd64_$VERSION.zip"
+build_windows_amd64 && create_exe_archive "gitrob_windows_amd64_$VERSION.zip"
 shasum -a 256 * > checksums.txt
 
 echo
@@ -57,3 +57,4 @@ echo
 du -sh *
 
 cd --
+
