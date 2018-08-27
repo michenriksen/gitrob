@@ -437,6 +437,12 @@ var Signatures = []Signature{
     description: "Shell configuration file",
     comment:     "Shell configuration files can contain passwords, API keys, hostnames and other goodies",
   },
+  SimpleSignature{
+    part:        PartFilename,
+    match:       "codeship.aes",
+    description: "Codeship Pro project-specific AES key",
+    comment:     "AES key to encrypt/decrypt environment variables for Codeship Pro",
+  },
   PatternSignature{
     part:        PartFilename,
     match:       regexp.MustCompile(`^.*_rsa$`),
