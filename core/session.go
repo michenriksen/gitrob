@@ -8,6 +8,7 @@ import (
   "io/ioutil"
   "os"
   "runtime"
+  "strings"
   "sync"
   "time"
 
@@ -59,6 +60,7 @@ func (s *Session) Start() {
   s.InitLogger()
   s.InitThreads()
   s.InitGithubAccessToken()
+  s.initEnterpriseConfig()
   s.InitGithubClient()
   s.InitRouter()
 }
@@ -130,13 +132,57 @@ func (s *Session) InitGithubAccessToken() {
   }
 }
 
+func (s *Session) initEnterpriseConfig() {
+	apiURL := *s.Options.EnterpriseAPI
+  
+	if apiURL == "" {
+	  return
+	}
+  
+	if !strings.HasSuffix(apiURL, "/") {
+	  apiURL += "/"
+	}
+  
+	if !strings.HasSuffix(apiURL, "/api/v3/") {
+	  apiURL += "/api/v3/"
+	}
+  
+	*s.Options.EnterpriseAPI = apiURL
+  
+	uploadURL := *s.Options.EnterpriseUpload
+  
+	if uploadURL == "" {
+	  uploadURL = *s.Options.EnterpriseAPI
+	} else {
+	  if !strings.HasSuffix(uploadURL, "/") {
+		uploadURL += "/"
+		*s.Options.EnterpriseUpload = uploadURL
+	  }
+	}
+  
+	if *s.Options.EnterpriseUser == "" && len(s.Options.Logins) > 0 {
+	  *s.Options.EnterpriseUser = s.Options.Logins[0]
+	}
+  }
+
 func (s *Session) InitGithubClient() {
   ctx := context.Background()
   ts := oauth2.StaticTokenSource(
     &oauth2.Token{AccessToken: s.GithubAccessToken},
   )
   tc := oauth2.NewClient(ctx, ts)
-  s.GithubClient = github.NewClient(tc)
+  
+  if *s.Options.EnterpriseAPI != "" {
+    enterpriseClient, err := github.NewEnterpriseClient(*s.Options.EnterpriseAPI, *s.Options.EnterpriseUpload, tc)
+    if err != nil {
+      s.Out.Fatal("Error creating GitHub Enterprise client: %s\n", err)
+    }
+    
+    s.GithubClient = enterpriseClient
+  } else {
+	s.GithubClient = github.NewClient(tc)
+  }
+
   s.GithubClient.UserAgent = fmt.Sprintf("%s v%s", Name, Version)
 }
 

@@ -7,6 +7,9 @@ import (
 type Options struct {
   CommitDepth       *int
   GithubAccessToken *string `json:"-"`
+  EnterpriseAPI     *string
+  EnterpriseUpload  *string
+  EnterpriseUser    *string
   NoExpandOrgs      *bool
   Threads           *int
   Save              *string `json:"-"`
@@ -21,7 +24,10 @@ type Options struct {
 func ParseOptions() (Options, error) {
   options := Options{
     CommitDepth:       flag.Int("commit-depth", 500, "Number of repository commits to process"),
-    GithubAccessToken: flag.String("github-access-token", "", "GitHub access token to use for API requests"),
+	GithubAccessToken: flag.String("github-access-token", "", "GitHub access token to use for API requests"),
+    EnterpriseAPI:     flag.String("enterprise-url", "", "Base URL of the GitHub Enterprise API"),
+    EnterpriseUpload:  flag.String("enterprise-upload-url", "", "Upload URL for GitHub Enterprise"),
+    EnterpriseUser:    flag.String("enterprise-user", "", "Username for your GitHub Enterprise account"),
     NoExpandOrgs:      flag.Bool("no-expand-orgs", false, "Don't add members to targets when processing organizations"),
     Threads:           flag.Int("threads", 0, "Number of concurrent threads (default number of logical CPUs)"),
     Save:              flag.String("save", "", "Save session to file"),

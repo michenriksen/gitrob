@@ -22,6 +22,12 @@ Gitrob is a tool to help find potentially sensitive files pushed to public repos
     Number of repository commits to process (default 500)
 -debug
     Print debugging information
+-enterprise-upload-url string
+    Upload URL for Github Enterprise (defaults to the URL set in -enterprise-url if any)
+-enterprise-url string
+    URL for Github Enterprise (/api/v3/ will be appended if not included)
+-enterprise-user string
+    Username for Github Enterprise (defaults to first target)
 -github-access-token string
     GitHub access token to use for API requests
 -load string
@@ -53,6 +59,14 @@ A session stored in a file can be loaded with the `-load` option:
     gitrob -load ~/gitrob-session.json
 
 Gitrob will start its web interface and serve the results for analysis.
+
+### Use with Github Enterprise
+
+To configure Gitrob for Github Enterprise, the following switches can be used:
+
+- `enterprise-url`: Must be specified; this is the URL where the path `/api/v3/` exists. This is usually the URL where the Github Webinterface can be found.
+- `enterprise-upload-url:` Optional, defaults to `enterprise-url`; full path to the upload URL if different from the main Github Enterprise URL.
+- `enterprise-user`: Optional, defaults to the first target.
 
 ## Installation
 
