@@ -3,7 +3,6 @@ package core
 import (
   "fmt"
   "io/ioutil"
-
   "gopkg.in/src-d/go-git.v4"
   "gopkg.in/src-d/go-git.v4/plumbing"
   "gopkg.in/src-d/go-git.v4/plumbing/object"
@@ -14,9 +13,14 @@ const (
   EmptyTreeCommitId = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 )
 
-func CloneRepository(url *string, branch *string, depth int) (*git.Repository, string, error) {
-  urlVal := *url
-  branchVal := *branch
+func CloneRepository(repo *GithubRepository, depth int) (*git.Repository, string, error) {
+  var urlVal string
+  if repo.CloneURL != nil {
+    urlVal = *repo.CloneURL
+  } else {
+    urlVal = *repo.URL
+  }
+  branchVal := *repo.DefaultBranch
   dir, err := ioutil.TempDir("", "gitrob")
   if err != nil {
     return nil, "", err
