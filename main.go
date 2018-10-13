@@ -6,7 +6,7 @@ import (
   "strings"
   "sync"
   "time"
-
+  "math"
   "github.com/michenriksen/gitrob/core"
 )
 
@@ -86,6 +86,52 @@ func GatherRepositories(sess *core.Session) {
   wg.Wait()
 }
 
+func GatherReposConcurrent(sess *core.Session, thread_num int, start int64, end int64, wg *sync.WaitGroup) {
+  go func() {
+    sess.Out.Debug(" Thread [%d] for repository gathering: [%d:%d]\n", thread_num, start, end)
+    repos, err := core.GetAllRepositories(sess.GithubClient, start, end)
+    if err != nil {
+      sess.Out.Error(" Failed to retrieve all repositories %s\n", err)
+    }
+
+    for _, repo := range repos {
+      sess.Out.Debug(" Retrieved repository: %s\n", *repo.FullName)
+      sess.AddRepository(repo)
+    }
+
+    sess.Out.Info(" Thread [%d] Retrieved %d %s\n", thread_num, len(repos), core.Pluralize(len(repos), "repository", "repositories"))
+    wg.Done()
+  }()
+}
+
+func GatherAllRepositories(sess *core.Session) {
+  var wg sync.WaitGroup
+  var threadNum int
+
+  count, err := core.DetermineRepositoryCount(sess.GithubClient)
+  if err != nil {
+    sess.Out.Error( "Failed to find upper limit on repositories. Setting threads to 1")
+    threadNum = 1
+    count = math.MaxInt64
+  } else {
+    threadNum = *sess.Options.Threads
+  }
+
+  sess.Out.Debug("Threads for repository gathering: %d\n", threadNum)
+
+  bounds := int(count) / threadNum
+
+  wg.Add(threadNum)
+  for i := 0; i < threadNum; i++ {
+    end := int64((i + 1) * bounds)
+    start := int64(end - int64(bounds))
+    GatherReposConcurrent(sess, i, start, end, &wg)
+  }
+
+  wg.Wait()
+  sess.Out.Info("Finished Pulling All Repos\n")
+}
+
 func AnalyzeRepositories(sess *core.Session) {
   sess.Stats.Status = core.StatusAnalyzing
   var ch = make(chan *core.GithubRepository, len(sess.Repositories))
@@ -115,7 +161,7 @@ func AnalyzeRepositories(sess *core.Session) {
         }
 
         sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.FullName)
-        clone, path, err := core.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
+        clone, path, err := core.CloneRepository(repo, *sess.Options.CommitDepth)
         if err != nil {
           if err.Error() != "remote repository is empty" {
             sess.Out.Error("Error cloning repository %s: %s\n", *repo.FullName, err)
@@ -223,12 +269,17 @@ func main() {
   if sess.Stats.Status == "finished" {
     sess.Out.Important("Loaded session file: %s\n", *sess.Options.Load)
   } else {
-    if len(sess.Options.Logins) == 0 {
+    if len(sess.Options.Logins) == 0 && !*sess.Options.GatherAll {
       sess.Out.Fatal("Please provide at least one GitHub organization or user\n")
-    }
+    } 
 
     GatherTargets(sess)
     GatherRepositories(sess)
+
+    if *sess.Options.GatherAll {
+      GatherAllRepositories(sess)
+    }
+
     AnalyzeRepositories(sess)
     sess.Finish()
 
