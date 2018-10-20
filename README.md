@@ -64,7 +64,7 @@ Gitrob will start its web interface and serve the results for analysis.
 
 To configure Gitrob for Github Enterprise, the following switches can be used:
 
-- `enterprise-url`: Must be specified; this is the URL where the path `/api/v3/` exists. This is usually the URL where the Github Webinterface can be found. Example: `-enterprise-url=https://github.yourcompany.com`
+- `enterprise-url`: Must be specified; this is the URL where the path `/api/v3/` exists. This is usually the URL where the Github web interface can be found. Example: `-enterprise-url=https://github.yourcompany.com`
 - `enterprise-upload-url:` Optional, defaults to `enterprise-url`; full path to the upload URL if different from the main Github Enterprise URL. Example: `-enterprise-upload-url=https://github.yourcompany.com/api/v3/upload`
 - `enterprise-user`: Optional, defaults to the first target. Example: `-enterprise-user=your.username`
 
