@@ -7,6 +7,7 @@ import (
   "gopkg.in/src-d/go-git.v4"
   "gopkg.in/src-d/go-git.v4/plumbing"
   "gopkg.in/src-d/go-git.v4/plumbing/object"
+  "gopkg.in/src-d/go-git.v4/plumbing/transport/http"
   "gopkg.in/src-d/go-git.v4/utils/merkletrie"
 )
 
@@ -14,20 +15,27 @@ const (
   EmptyTreeCommitId = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 )
 
-func CloneRepository(url *string, branch *string, depth int) (*git.Repository, string, error) {
+func CloneRepository(url *string, branch *string, sess *Session) (*git.Repository, string, error) {
   urlVal := *url
   branchVal := *branch
   dir, err := ioutil.TempDir("", "gitrob")
   if err != nil {
     return nil, "", err
   }
-  repository, err := git.PlainClone(dir, false, &git.CloneOptions{
+  
+  options := &git.CloneOptions{
     URL:           urlVal,
-    Depth:         depth,
+    Depth:         *sess.Options.CommitDepth,
     ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", branchVal)),
     SingleBranch:  true,
     Tags:          git.NoTags,
-  })
+  }
+
+  if sess.GithubAccessToken != "" && *sess.Options.EnterpriseUser != "" {
+    options.Auth = &http.BasicAuth{Username: *sess.Options.EnterpriseUser, Password: sess.GithubAccessToken}
+  }
+ 
+  repository, err := git.PlainClone(dir, false, options)
   if err != nil {
     return nil, dir, err
   }

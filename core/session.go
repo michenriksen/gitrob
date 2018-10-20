@@ -8,6 +8,7 @@ import (
   "io/ioutil"
   "os"
   "runtime"
+  "strings"
   "sync"
   "time"
 
@@ -23,6 +24,9 @@ const (
   StatusGathering    = "gathering"
   StatusAnalyzing    = "analyzing"
   StatusFinished     = "finished"
+
+  githubDotComURL    = "https://github.com"
+  githubAPIPath      = "/api/v3/"
 )
 
 type Stats struct {
@@ -59,6 +63,7 @@ func (s *Session) Start() {
   s.InitLogger()
   s.InitThreads()
   s.InitGithubAccessToken()
+  s.initEnterpriseConfig()
   s.InitGithubClient()
   s.InitRouter()
 }
@@ -130,13 +135,61 @@ func (s *Session) InitGithubAccessToken() {
   }
 }
 
+func (s *Session) initEnterpriseConfig() {
+	apiURL := *s.Options.EnterpriseURL
+  
+	if apiURL == "" {
+	  return
+	}
+  
+	apiURL = strings.TrimSuffix(apiURL, "/")
+  
+  *s.Options.EnterpriseURL = apiURL
+  apiPath := apiURL + githubAPIPath
+  s.Options.EnterpriseAPI = &apiPath
+  
+	uploadURL := *s.Options.EnterpriseUpload
+  
+	if uploadURL == "" {
+	  uploadURL = *s.Options.EnterpriseAPI
+	} else {
+	  if !strings.HasSuffix(uploadURL, "/") {
+		uploadURL += "/"
+		*s.Options.EnterpriseUpload = uploadURL
+	  }
+	}
+  
+	if *s.Options.EnterpriseUser == "" && len(s.Options.Logins) > 0 {
+	  *s.Options.EnterpriseUser = s.Options.Logins[0]
+	}
+}
+
+func (s *Session) GithubURL() string {
+  if s.Options.EnterpriseURL != nil && *s.Options.EnterpriseURL != "" {
+    return *s.Options.EnterpriseURL
+  }
+
+  return githubDotComURL
+}
+
 func (s *Session) InitGithubClient() {
   ctx := context.Background()
   ts := oauth2.StaticTokenSource(
     &oauth2.Token{AccessToken: s.GithubAccessToken},
   )
   tc := oauth2.NewClient(ctx, ts)
-  s.GithubClient = github.NewClient(tc)
+  
+  if s.Options.EnterpriseAPI != nil && *s.Options.EnterpriseAPI != "" {
+    enterpriseClient, err := github.NewEnterpriseClient(*s.Options.EnterpriseAPI, *s.Options.EnterpriseUpload, tc)
+    if err != nil {
+      s.Out.Fatal("Error creating GitHub Enterprise client: %s\n", err)
+    }
+    
+    s.GithubClient = enterpriseClient
+  } else {
+	  s.GithubClient = github.NewClient(tc)
+  }
+
   s.GithubClient.UserAgent = fmt.Sprintf("%s v%s", Name, Version)
 }
 
