@@ -1,8 +1,8 @@
 package core
 
 import (
+  "context"
   "fmt"
-  "io/ioutil"
   "net/http"
   "strings"
 
@@ -10,10 +10,12 @@ import (
   "github.com/gin-contrib/secure"
   "github.com/gin-contrib/static"
   "github.com/gin-gonic/gin"
+  "github.com/google/go-github/github"
 )
 
 const (
-  GithubBaseUri   = "https://raw.githubusercontent.com"
+  contextKeyGithubClient = "kGithubClient"
+  
   MaximumFileSize = 102400
   CspPolicy       = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
   ReferrerPolicy  = "no-referrer"
@@ -74,14 +76,26 @@ func NewRouter(s *Session) *gin.Engine {
   router.GET("/repositories", func(c *gin.Context) {
     c.JSON(200, s.Repositories)
   })
-  router.GET("/files/:owner/:repo/:commit/*path", fetchFile)
+
+  router.GET("/files/:owner/:repo/:commit/*path", func (c *gin.Context) {
+    c.Set(contextKeyGithubClient, s.GithubClient)
+    fetchFile(c)
+  })
 
   return router
 }
 
 func fetchFile(c *gin.Context) {
-  fileUrl := fmt.Sprintf("%s/%s/%s/%s%s", GithubBaseUri, c.Param("owner"), c.Param("repo"), c.Param("commit"), c.Param("path"))
-  resp, err := http.Head(fileUrl)
+  client, _ := c.Get(contextKeyGithubClient)
+  githubClient := client.(*github.Client)
+  
+  ctx := context.Background()
+  options := &github.RepositoryContentGetOptions{
+    Ref: c.Param("commit"),
+  }
+
+  fileResponse, _, _, err := githubClient.Repositories.GetContents(ctx, c.Param("owner"), c.Param("repo"), c.Param("path"), options)
+
   if err != nil {
     c.JSON(http.StatusInternalServerError, gin.H{
       "message": err,
@@ -89,36 +103,14 @@ func fetchFile(c *gin.Context) {
     return
   }
 
-  if resp.StatusCode == http.StatusNotFound {
-    c.JSON(http.StatusNotFound, gin.H{
-      "message": "No content",
-    })
-    return
-  }
-
-  if resp.ContentLength > MaximumFileSize {
+  if fileResponse.GetSize() > MaximumFileSize {
     c.JSON(http.StatusUnprocessableEntity, gin.H{
       "message": fmt.Sprintf("File size exceeds maximum of %d bytes", MaximumFileSize),
     })
     return
   }
+  
+  content, _ := fileResponse.GetContent()
 
-  resp, err = http.Get(fileUrl)
-  if err != nil {
-    c.JSON(http.StatusInternalServerError, gin.H{
-      "message": err,
-    })
-    return
-  }
-
-  defer resp.Body.Close()
-  body, err := ioutil.ReadAll(resp.Body)
-  if err != nil {
-    c.JSON(http.StatusInternalServerError, gin.H{
-      "message": err,
-    })
-    return
-  }
-
-  c.String(http.StatusOK, string(body[:]))
+  c.String(http.StatusOK, content)
 }

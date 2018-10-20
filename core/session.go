@@ -24,6 +24,9 @@ const (
   StatusGathering    = "gathering"
   StatusAnalyzing    = "analyzing"
   StatusFinished     = "finished"
+
+  githubDotComURL    = "https://github.com"
+  githubAPIPath      = "/api/v3/"
 )
 
 type Stats struct {
@@ -133,21 +136,17 @@ func (s *Session) InitGithubAccessToken() {
 }
 
 func (s *Session) initEnterpriseConfig() {
-	apiURL := *s.Options.EnterpriseAPI
+	apiURL := *s.Options.EnterpriseURL
   
 	if apiURL == "" {
 	  return
 	}
   
-	if !strings.HasSuffix(apiURL, "/") {
-	  apiURL += "/"
-	}
+	apiURL = strings.TrimSuffix(apiURL, "/")
   
-	if !strings.HasSuffix(apiURL, "/api/v3/") {
-	  apiURL += "/api/v3/"
-	}
-  
-	*s.Options.EnterpriseAPI = apiURL
+  *s.Options.EnterpriseURL = apiURL
+  apiPath := apiURL + githubAPIPath
+  s.Options.EnterpriseAPI = &apiPath
   
 	uploadURL := *s.Options.EnterpriseUpload
   
@@ -163,7 +162,15 @@ func (s *Session) initEnterpriseConfig() {
 	if *s.Options.EnterpriseUser == "" && len(s.Options.Logins) > 0 {
 	  *s.Options.EnterpriseUser = s.Options.Logins[0]
 	}
+}
+
+func (s *Session) GithubURL() string {
+  if s.Options.EnterpriseURL != nil && *s.Options.EnterpriseURL != "" {
+    return *s.Options.EnterpriseURL
   }
+
+  return githubDotComURL
+}
 
 func (s *Session) InitGithubClient() {
   ctx := context.Background()
@@ -172,7 +179,7 @@ func (s *Session) InitGithubClient() {
   )
   tc := oauth2.NewClient(ctx, ts)
   
-  if *s.Options.EnterpriseAPI != "" {
+  if s.Options.EnterpriseAPI != nil && *s.Options.EnterpriseAPI != "" {
     enterpriseClient, err := github.NewEnterpriseClient(*s.Options.EnterpriseAPI, *s.Options.EnterpriseUpload, tc)
     if err != nil {
       s.Out.Fatal("Error creating GitHub Enterprise client: %s\n", err)
@@ -180,7 +187,7 @@ func (s *Session) InitGithubClient() {
     
     s.GithubClient = enterpriseClient
   } else {
-	s.GithubClient = github.NewClient(tc)
+	  s.GithubClient = github.NewClient(tc)
   }
 
   s.GithubClient.UserAgent = fmt.Sprintf("%s v%s", Name, Version)

@@ -103,6 +103,8 @@ func AnalyzeRepositories(sess *core.Session) {
 
   sess.Out.Important("Analyzing %d %s...\n", len(sess.Repositories), core.Pluralize(len(sess.Repositories), "repository", "repositories"))
 
+  githubURL := sess.GithubURL()
+
   for i := 0; i < threadNum; i++ {
     go func(tid int) {
       for {
@@ -163,7 +165,7 @@ func AnalyzeRepositories(sess *core.Session) {
                   CommitMessage:   strings.TrimSpace(commit.Message),
                   CommitAuthor:    commit.Author.String(),
                 }
-                finding.Initialize()
+                finding.Initialize(githubURL)
                 sess.AddFinding(finding)
 
                 sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)

@@ -25,7 +25,7 @@ Gitrob is a tool to help find potentially sensitive files pushed to public repos
 -enterprise-upload-url string
     Upload URL for Github Enterprise (defaults to the URL set in -enterprise-url if any)
 -enterprise-url string
-    URL for Github Enterprise (/api/v3/ will be appended if not included)
+    URL for Github Enterprise
 -enterprise-user string
     Username for Github Enterprise (defaults to first target)
 -github-access-token string
@@ -64,9 +64,9 @@ Gitrob will start its web interface and serve the results for analysis.
 
 To configure Gitrob for Github Enterprise, the following switches can be used:
 
-- `enterprise-url`: Must be specified; this is the URL where the path `/api/v3/` exists. This is usually the URL where the Github Webinterface can be found.
-- `enterprise-upload-url:` Optional, defaults to `enterprise-url`; full path to the upload URL if different from the main Github Enterprise URL.
-- `enterprise-user`: Optional, defaults to the first target.
+- `enterprise-url`: Must be specified; this is the URL where the path `/api/v3/` exists. This is usually the URL where the Github Webinterface can be found. Example: `-enterprise-url=https://github.yourcompany.com`
+- `enterprise-upload-url:` Optional, defaults to `enterprise-url`; full path to the upload URL if different from the main Github Enterprise URL. Example: `-enterprise-upload-url=https://github.yourcompany.com/api/v3/upload`
+- `enterprise-user`: Optional, defaults to the first target. Example: `-enterprise-user=your.username`
 
 ## Installation
 
