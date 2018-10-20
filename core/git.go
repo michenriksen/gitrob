@@ -24,7 +24,7 @@ func CloneRepository(url *string, branch *string, sess *Session) (*git.Repositor
   }
   
   options := &git.CloneOptions{
-	URL:           urlVal,
+    URL:           urlVal,
     Depth:         *sess.Options.CommitDepth,
     ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", branchVal)),
     SingleBranch:  true,

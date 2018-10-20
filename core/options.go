@@ -25,7 +25,7 @@ type Options struct {
 func ParseOptions() (Options, error) {
   options := Options{
     CommitDepth:       flag.Int("commit-depth", 500, "Number of repository commits to process"),
-	  GithubAccessToken: flag.String("github-access-token", "", "GitHub access token to use for API requests"),
+    GithubAccessToken: flag.String("github-access-token", "", "GitHub access token to use for API requests"),
     EnterpriseURL:     flag.String("enterprise-url", "", "URL of the GitHub Enterprise instance, e.g. https://github.yourcompany.com"),
     EnterpriseUpload:  flag.String("enterprise-upload-url", "", "Upload URL for GitHub Enterprise, e.g. https://github.yourcompany.com/api/v3/upload"),
     EnterpriseUser:    flag.String("enterprise-user", "", "Username for your GitHub Enterprise account"),
