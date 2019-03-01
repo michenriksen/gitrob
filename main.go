@@ -102,7 +102,7 @@ func AnalyzeRepositories(sess *core.Session) {
 	wg.Add(threadNum)
 	sess.Out.Debug("Threads for repository analysis: %d\n", threadNum)
 
-	sess.Out.Important("Analyzing %d %s...\n", len(sess.Repositories), core.Pluralize(len(sess.Repositories), "repository", "repositories"))
+	sess.Out.Important("Analyzing %d %s branches...\n", len(sess.Repositories), core.Pluralize(len(sess.Repositories), "repository", "repositories"))
 
 	for i := 0; i < threadNum; i++ {
 		go func(tid int) {
