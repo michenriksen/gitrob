@@ -57,12 +57,18 @@ func GatherRepositories(sess *core.Session) {
   for i := 0; i < threadNum; i++ {
     go func() {
       for {
+        var repos []*core.GithubRepository
+	var err error
         target, ok := <-ch
         if !ok {
           wg.Done()
           return
         }
-        repos, err := core.GetRepositoriesFromOwner(target.Login, sess.GithubClient)
+	if *target.Type == "Organization" {
+		repos, err = core.GetRepositoriesFromOrganization(target.Login, sess.GithubClient)
+	} else {
+		repos, err = core.GetRepositoriesFromOwner(target.Login, sess.GithubClient)
+	}
         if err != nil {
           sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
         }
