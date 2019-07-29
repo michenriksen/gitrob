@@ -59,8 +59,8 @@ type Finding struct {
   RepositoryUrl   string
 }
 
-func (f *Finding) setupUrls() {
-  f.RepositoryUrl = fmt.Sprintf("https://github.com/%s/%s", f.RepositoryOwner, f.RepositoryName)
+func (f *Finding) setupUrls(githubURL string) {
+  f.RepositoryUrl = strings.Join([]string {githubURL, f.RepositoryOwner, f.RepositoryName}, "/")
   f.FileUrl = fmt.Sprintf("%s/blob/%s/%s", f.RepositoryUrl, f.CommitHash, f.FilePath)
   f.CommitUrl = fmt.Sprintf("%s/commit/%s", f.RepositoryUrl, f.CommitHash)
 }
@@ -77,8 +77,8 @@ func (f *Finding) generateID() {
   f.Id = fmt.Sprintf("%x", h.Sum(nil))
 }
 
-func (f *Finding) Initialize() {
-  f.setupUrls()
+func (f *Finding) Initialize(githubURL string) {
+  f.setupUrls(githubURL)
   f.generateID()
 }
 
