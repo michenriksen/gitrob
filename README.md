@@ -34,6 +34,8 @@ Gitrob is a tool to help find potentially sensitive files pushed to public repos
     Load session file
 -no-expand-orgs
     Don't add members to targets when processing organizations
+-no-server
+    Disables web server
 -port int
     Port to run web server on (default 9393)
 -save string

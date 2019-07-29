@@ -220,7 +220,9 @@ func main() {
   sess.Out.Info("%s\n\n", core.ASCIIBanner)
   sess.Out.Important("%s v%s started at %s\n", core.Name, core.Version, sess.Stats.StartedAt.Format(time.RFC3339))
   sess.Out.Important("Loaded %d signatures\n", len(core.Signatures))
-  sess.Out.Important("Web interface available at http://%s:%d\n", *sess.Options.BindAddress, *sess.Options.Port)
+  if !*sess.Options.NoServer {
+    sess.Out.Important("Web interface available at http://%s:%d\n", *sess.Options.BindAddress, *sess.Options.Port)
+  }
 
   if sess.Stats.Status == "finished" {
     sess.Out.Important("Loaded session file: %s\n", *sess.Options.Load)
@@ -244,6 +246,8 @@ func main() {
   }
 
   PrintSessionStats(sess)
-  sess.Out.Important("Press Ctrl+C to stop web server and exit.\n\n")
-  select {}
+  if !*sess.Options.NoServer {
+    sess.Out.Important("Press Ctrl+C to stop web server and exit.\n\n")
+    select {}
+  }
 }
