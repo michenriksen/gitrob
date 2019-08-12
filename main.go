@@ -57,12 +57,18 @@ func GatherRepositories(sess *core.Session) {
   for i := 0; i < threadNum; i++ {
     go func() {
       for {
+        var repos []*core.GithubRepository
+	var err error
         target, ok := <-ch
         if !ok {
           wg.Done()
           return
         }
-        repos, err := core.GetRepositoriesFromOwner(target.Login, sess.GithubClient)
+	if *target.Type == "Organization" {
+		repos, err = core.GetRepositoriesFromOrganization(target.Login, sess.GithubClient)
+	} else {
+		repos, err = core.GetRepositoriesFromOwner(target.Login, sess.GithubClient)
+	}
         if err != nil {
           sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
         }
@@ -103,6 +109,8 @@ func AnalyzeRepositories(sess *core.Session) {
 
   sess.Out.Important("Analyzing %d %s...\n", len(sess.Repositories), core.Pluralize(len(sess.Repositories), "repository", "repositories"))
 
+  githubURL := sess.GithubURL()
+
   for i := 0; i < threadNum; i++ {
     go func(tid int) {
       for {
@@ -115,7 +123,7 @@ func AnalyzeRepositories(sess *core.Session) {
         }
 
         sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.FullName)
-        clone, path, err := core.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
+        clone, path, err := core.CloneRepository(repo.CloneURL, repo.DefaultBranch, sess)
         if err != nil {
           if err.Error() != "remote repository is empty" {
             sess.Out.Error("Error cloning repository %s: %s\n", *repo.FullName, err)
@@ -163,7 +171,7 @@ func AnalyzeRepositories(sess *core.Session) {
                   CommitMessage:   strings.TrimSpace(commit.Message),
                   CommitAuthor:    commit.Author.String(),
                 }
-                finding.Initialize()
+                finding.Initialize(githubURL)
                 sess.AddFinding(finding)
 
                 sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
@@ -218,7 +226,9 @@ func main() {
   sess.Out.Info("%s\n\n", core.ASCIIBanner)
   sess.Out.Important("%s v%s started at %s\n", core.Name, core.Version, sess.Stats.StartedAt.Format(time.RFC3339))
   sess.Out.Important("Loaded %d signatures\n", len(core.Signatures))
-  sess.Out.Important("Web interface available at http://%s:%d\n", *sess.Options.BindAddress, *sess.Options.Port)
+  if !*sess.Options.NoServer {
+    sess.Out.Important("Web interface available at http://%s:%d\n", *sess.Options.BindAddress, *sess.Options.Port)
+  }
 
   if sess.Stats.Status == "finished" {
     sess.Out.Important("Loaded session file: %s\n", *sess.Options.Load)
@@ -242,6 +252,8 @@ func main() {
   }
 
   PrintSessionStats(sess)
-  sess.Out.Important("Press Ctrl+C to stop web server and exit.\n\n")
-  select {}
+  if !*sess.Options.NoServer {
+    sess.Out.Important("Press Ctrl+C to stop web server and exit.\n\n")
+    select {}
+  }
 }
