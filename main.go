@@ -62,7 +62,7 @@ func GatherRepositories(sess *core.Session) {
           wg.Done()
           return
         }
-        repos, err := core.GetRepositoriesFromOwner(target.Login, sess.GithubClient)
+        repos, err := core.GetRepositoriesFromOwner(target.Login, sess.GithubClient, sess.Options.IncludeBranches)
         if err != nil {
           sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
         }
@@ -72,6 +72,7 @@ func GatherRepositories(sess *core.Session) {
         for _, repo := range repos {
           sess.Out.Debug(" Retrieved repository: %s\n", *repo.FullName)
           sess.AddRepository(repo)
+          sess.AddBranches(repo)
         }
         sess.Stats.IncrementTargets()
         sess.Out.Info(" Retrieved %d %s from %s\n", len(repos), core.Pluralize(len(repos), "repository", "repositories"), *target.Login)
@@ -101,7 +102,7 @@ func AnalyzeRepositories(sess *core.Session) {
   wg.Add(threadNum)
   sess.Out.Debug("Threads for repository analysis: %d\n", threadNum)
 
-  sess.Out.Important("Analyzing %d %s...\n", len(sess.Repositories), core.Pluralize(len(sess.Repositories), "repository", "repositories"))
+  sess.Out.Important("Analyzing %d %s...\n", len(sess.Repositories), core.Pluralize(len(sess.Repositories), "branch", "branches"))
 
   for i := 0; i < threadNum; i++ {
     go func(tid int) {
@@ -115,7 +116,7 @@ func AnalyzeRepositories(sess *core.Session) {
         }
 
         sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.FullName)
-        clone, path, err := core.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
+        clone, path, err := core.CloneRepository(repo.CloneURL, repo.BranchName, *sess.Options.CommitDepth)
         if err != nil {
           if err.Error() != "remote repository is empty" {
             sess.Out.Error("Error cloning repository %s: %s\n", *repo.FullName, err)
@@ -159,6 +160,7 @@ func AnalyzeRepositories(sess *core.Session) {
                   Comment:         signature.Comment(),
                   RepositoryOwner: *repo.Owner,
                   RepositoryName:  *repo.Name,
+                  BranchName:      *repo.BranchName,
                   CommitHash:      commit.Hash.String(),
                   CommitMessage:   strings.TrimSpace(commit.Message),
                   CommitAuthor:    commit.Author.String(),
@@ -169,6 +171,7 @@ func AnalyzeRepositories(sess *core.Session) {
                 sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
                 sess.Out.Info("  Path.......: %s\n", finding.FilePath)
                 sess.Out.Info("  Repo.......: %s\n", *repo.FullName)
+                sess.Out.Info("  Branch.....: %s\n", *repo.BranchName)
                 sess.Out.Info("  Message....: %s\n", core.TruncateString(finding.CommitMessage, 100))
                 sess.Out.Info("  Author.....: %s\n", finding.CommitAuthor)
                 if finding.Comment != "" {

@@ -51,6 +51,7 @@ type Finding struct {
   Comment         string
   RepositoryOwner string
   RepositoryName  string
+  BranchName      string
   CommitHash      string
   CommitMessage   string
   CommitAuthor    string
@@ -71,6 +72,7 @@ func (f *Finding) generateID() {
   io.WriteString(h, f.Action)
   io.WriteString(h, f.RepositoryOwner)
   io.WriteString(h, f.RepositoryName)
+  io.WriteString(h, f.BranchName)
   io.WriteString(h, f.CommitHash)
   io.WriteString(h, f.CommitMessage)
   io.WriteString(h, f.CommitAuthor)

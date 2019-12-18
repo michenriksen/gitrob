@@ -28,6 +28,7 @@ type GithubRepository struct {
   CloneURL      *string
   URL           *string
   DefaultBranch *string
+  BranchName    *string
   Description   *string
   Homepage      *string
 }
@@ -53,14 +54,14 @@ func GetUserOrOrganization(login string, client *github.Client) (*GithubOwner, e
   }, nil
 }
 
-func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*GithubRepository, error) {
+func GetRepositoriesFromOwner(login *string, client *github.Client, includeBranches *bool) ([]*GithubRepository, error) {
   var allRepos []*GithubRepository
   loginVal := *login
   ctx := context.Background()
   opt := &github.RepositoryListOptions{
     Type: "sources",
   }
-
+  opts := &github.ListOptions{}
   for {
     repos, resp, err := client.Repositories.List(ctx, loginVal, opt)
     if err != nil {
@@ -68,7 +69,7 @@ func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*GithubRe
     }
     for _, repo := range repos {
       if !*repo.Fork {
-        r := GithubRepository{
+        t := GithubRepository{
           Owner:         repo.Owner.Login,
           ID:            repo.ID,
           Name:          repo.Name,
@@ -76,10 +77,34 @@ func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*GithubRe
           CloneURL:      repo.CloneURL,
           URL:           repo.HTMLURL,
           DefaultBranch: repo.DefaultBranch,
+          BranchName:    repo.DefaultBranch,
           Description:   repo.Description,
           Homepage:      repo.Homepage,
         }
-        allRepos = append(allRepos, &r)
+        branches, resp, err := client.Repositories.ListBranches(ctx, *t.Owner, *t.Name, opts)
+        if err != nil {
+          return allRepos, err
+        }
+        for _, branch := range branches {
+          r := GithubRepository{
+            Owner:         t.Owner,
+            ID:            t.ID,
+            Name:          t.Name,
+            FullName:      t.FullName,
+            CloneURL:      t.CloneURL,
+            URL:           t.URL,
+            DefaultBranch: t.DefaultBranch,
+            BranchName:    branch.Name,
+            Description:   t.Description,
+            Homepage:      t.Homepage,
+          }
+          if *includeBranches {
+            allRepos = append(allRepos, &r)
+          } else {
+            allRepos = append(allRepos, &t)
+          }
+        }
+        opts.Page = resp.NextPage
       }
     }
     if resp.NextPage == 0 {

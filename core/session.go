@@ -90,6 +90,17 @@ func (s *Session) AddRepository(repository *GithubRepository) {
   s.Repositories = append(s.Repositories, repository)
 }
 
+func (s *Session) AddBranches(repository *GithubRepository) {
+  s.Lock()
+  defer s.Unlock()
+  for _, r := range s.Repositories {
+    if *repository.BranchName == *r.BranchName {
+      return
+    }
+  }
+  s.Repositories = append(s.Repositories, repository)
+}
+
 func (s *Session) AddFinding(finding *Finding) {
   s.Lock()
   defer s.Unlock()
