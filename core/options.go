@@ -23,6 +23,7 @@ func ParseOptions() (Options, error) {
   options := Options{
     CommitDepth:       flag.Int("commit-depth", 500, "Number of repository commits to process"),
     GithubAccessToken: flag.String("github-access-token", "", "GitHub access token to use for API requests"),
+		GitLabAccessToken: flag.String("gitlab-access-token", "", "GitLab access token to use for API requests"),
     NoExpandOrgs:      flag.Bool("no-expand-orgs", false, "Don't add members to targets when processing organizations"),
     Threads:           flag.Int("threads", 0, "Number of concurrent threads (default number of logical CPUs)"),
     Save:              flag.String("save", "", "Save session to file"),
