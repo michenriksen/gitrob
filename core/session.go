@@ -130,6 +130,8 @@ func (s *Session) InitAccessToken() {
 	} else {
 		s.GitLabAccessToken = *s.Options.GitLabAccessToken
 	}
+	if s.GitLabAccessToken != "" && s.GithubAccessToken != "" {
+		s.Out.Fatal("Both a Github and GitLab token are set.  Please specify only one.")
 	}
 }
 
