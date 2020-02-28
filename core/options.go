@@ -7,6 +7,7 @@ import (
 type Options struct {
   CommitDepth       *int
   GithubAccessToken *string `json:"-"`
+	GitLabAccessToken *string `json:"-"`
   NoExpandOrgs      *bool
   Threads           *int
   Save              *string `json:"-"`

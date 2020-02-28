@@ -18,11 +18,11 @@ import (
 
 const (
   AccessTokenEnvVariable = "GITROB_ACCESS_TOKEN"
-
-	StatusInitializing = "initializing"
-	StatusGathering    = "gathering"
-	StatusAnalyzing    = "analyzing"
-	StatusFinished     = "finished"
+	GitLabAccessTokenEnvVariable = "GITROB_GITLAB_ACCESS_TOKEN"
+	StatusInitializing           = "initializing"
+	StatusGathering              = "gathering"
+	StatusAnalyzing              = "analyzing"
+	StatusFinished               = "finished"
 )
 
 type Stats struct {
@@ -47,6 +47,7 @@ type Session struct {
 	Out               *Logger `json:"-"`
 	Stats             *Stats
 	GithubAccessToken string         `json:"-"`
+	GitLabAccessToken string         `json:"-"`
 	GithubClient      *github.Client `json:"-"`
 	Router            *gin.Engine    `json:"-"`
 	Targets           []*GithubOwner
@@ -58,7 +59,7 @@ func (s *Session) Start() {
 	s.InitStats()
 	s.InitLogger()
 	s.InitThreads()
-	s.InitGithubAccessToken()
+	s.InitAccessToken()
 	s.InitGithubClient()
 	s.InitRouter()
 }
@@ -118,14 +119,14 @@ func (s *Session) InitLogger() {
 	s.Out.SetSilent(*s.Options.Silent)
 }
 
-func (s *Session) InitGithubAccessToken() {
+func (s *Session) InitAccessToken() {
 	if *s.Options.GithubAccessToken == "" {
-		accessToken := os.Getenv(GitHubAccessTokenEnvVariable)
-		if accessToken == "" {
-		}
-		s.GithubAccessToken = accessToken
+		s.GithubAccessToken = os.Getenv(GitHubAccessTokenEnvVariable)
 	} else {
 		s.GithubAccessToken = *s.Options.GithubAccessToken
+	}
+	if *s.Options.GitLabAccessToken == "" {
+		s.GitLabAccessToken = os.Getenv(GitLabAccessTokenEnvVariable)
 	}
 }
 
