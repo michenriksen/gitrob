@@ -127,6 +127,9 @@ func (s *Session) InitAccessToken() {
 	}
 	if *s.Options.GitLabAccessToken == "" {
 		s.GitLabAccessToken = os.Getenv(GitLabAccessTokenEnvVariable)
+	} else {
+		s.GitLabAccessToken = *s.Options.GitLabAccessToken
+	}
 	}
 }
 
