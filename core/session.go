@@ -146,6 +146,7 @@ func (s *Session) ValidateTokenConfig() {
 }
 
 func (s *Session) InitAPIClient() {
+	userAgent := fmt.Sprintf("%s v%s", Name, Version)
 	if s.GithubAccessToken != "" {
 		ctx := context.Background()
 		ts := oauth2.StaticTokenSource(
@@ -153,10 +154,11 @@ func (s *Session) InitAPIClient() {
 		)
 		tc := oauth2.NewClient(ctx, ts)
 		s.GithubClient = github.NewClient(tc)
-		s.GithubClient.UserAgent = fmt.Sprintf("%s v%s", Name, Version)
+		s.GithubClient.UserAgent = userAgent
 	}
 	if s.GitLabAccessToken != "" {
-		s.GitLabClient = gitlab.NewClient(nil, s.GitLabAccessToken)
+		client := gitlab.NewClient(nil, s.GitLabAccessToken)
+		client.UserAgent = userAgent
 	}
 }
 
