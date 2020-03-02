@@ -17,7 +17,7 @@ import (
 )
 
 const (
-  AccessTokenEnvVariable = "GITROB_ACCESS_TOKEN"
+	GitHubAccessTokenEnvVariable = "GITROB_GITHUB_ACCESS_TOKEN"
 	GitLabAccessTokenEnvVariable = "GITROB_GITLAB_ACCESS_TOKEN"
 	StatusInitializing           = "initializing"
 	StatusGathering              = "gathering"
