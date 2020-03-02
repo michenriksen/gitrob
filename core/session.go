@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/codeEmitter/gitrob/scm"
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/github"
 	"github.com/xanzy/go-gitlab"
@@ -52,8 +53,8 @@ type Session struct {
 	GithubClient      *github.Client `json:"-"`
 	GitLabClient      *gitlab.Client
 	Router            *gin.Engine `json:"-"`
-	Targets           []*GithubOwner
-	Repositories      []*GithubRepository
+	Targets           []*scm.GithubOwner
+	Repositories      []*scm.GithubRepository
 	Findings          []*Finding
 }
 
@@ -72,7 +73,7 @@ func (s *Session) Finish() {
 	s.Stats.Status = StatusFinished
 }
 
-func (s *Session) AddTarget(target *GithubOwner) {
+func (s *Session) AddTarget(target *scm.GithubOwner) {
 	s.Lock()
 	defer s.Unlock()
 	for _, t := range s.Targets {
@@ -83,7 +84,7 @@ func (s *Session) AddTarget(target *GithubOwner) {
 	s.Targets = append(s.Targets, target)
 }
 
-func (s *Session) AddRepository(repository *GithubRepository) {
+func (s *Session) AddRepository(repository *scm.GithubRepository) {
 	s.Lock()
 	defer s.Unlock()
 	for _, r := range s.Repositories {

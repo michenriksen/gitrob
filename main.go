@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/codeEmitter/gitrob/core"
+	"github.com/codeEmitter/gitrob/scm"
 )
 
 var (
@@ -19,7 +20,7 @@ func GatherTargets(sess *core.Session) {
 	sess.Stats.Status = core.StatusGathering
 	sess.Out.Important("Gathering targets...\n")
 	for _, login := range sess.Options.Logins {
-		target, err := core.GetUserOrOrganization(login, sess.GithubClient)
+		target, err := scm.GetUserOrOrganization(login, sess.GithubClient)
 		if err != nil {
 			sess.Out.Error(" Error retrieving information on %s: %s\n", login, err)
 			continue
@@ -28,7 +29,7 @@ func GatherTargets(sess *core.Session) {
 		sess.AddTarget(target)
 		if *sess.Options.NoExpandOrgs == false && *target.Type == "Organization" {
 			sess.Out.Debug("Gathering members of %s (ID: %d)...\n", *target.Login, *target.ID)
-			members, err := core.GetOrganizationMembers(target.Login, sess.GithubClient)
+			members, err := scm.GetOrganizationMembers(target.Login, sess.GithubClient)
 			if err != nil {
 				sess.Out.Error(" Error retrieving members of %s: %s\n", *target.Login, err)
 				continue
@@ -42,7 +43,7 @@ func GatherTargets(sess *core.Session) {
 }
 
 func GatherRepositories(sess *core.Session) {
-	var ch = make(chan *core.GithubOwner, len(sess.Targets))
+	var ch = make(chan *scm.GithubOwner, len(sess.Targets))
 	var wg sync.WaitGroup
 	var threadNum int
 	if len(sess.Targets) == 1 {
@@ -62,7 +63,7 @@ func GatherRepositories(sess *core.Session) {
 					wg.Done()
 					return
 				}
-				repos, err := core.GetRepositoriesFromOwner(target.Login, sess.GithubClient)
+				repos, err := scm.GetRepositoriesFromOwner(target.Login, sess.GithubClient)
 				if err != nil {
 					sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
 				}
@@ -88,7 +89,7 @@ func GatherRepositories(sess *core.Session) {
 
 func AnalyzeRepositories(sess *core.Session) {
 	sess.Stats.Status = core.StatusAnalyzing
-	var ch = make(chan *core.GithubRepository, len(sess.Repositories))
+	var ch = make(chan *scm.GithubRepository, len(sess.Repositories))
 	var wg sync.WaitGroup
 	var threadNum int
 	if len(sess.Repositories) <= 1 {
