@@ -131,7 +131,7 @@ func (s *Session) InitAccessToken() {
 		s.GitLabAccessToken = *s.Options.GitLabAccessToken
 	}
 	if s.GitLabAccessToken != "" && s.GithubAccessToken != "" {
-		s.Out.Fatal("Both a GitLab and Github token are present.  Only one may set.")
+		s.Out.Fatal("Both a GitLab and Github token are present.  Only one may be set.")
 	}
 	if s.GitLabAccessToken == "" && s.GithubAccessToken == "" {
 		s.Out.Fatal("No valid API token was found.")
