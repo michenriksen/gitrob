@@ -142,14 +142,16 @@ func (s *Session) ValidateTokenConfig() {
 	}
 }
 
-func (s *Session) InitGithubClient() {
-	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: s.GithubAccessToken},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-	s.GithubClient = github.NewClient(tc)
-	s.GithubClient.UserAgent = fmt.Sprintf("%s v%s", Name, Version)
+func (s *Session) InitAPIClient() {
+	if s.GithubAccessToken != "" {
+		ctx := context.Background()
+		ts := oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: s.GithubAccessToken},
+		)
+		tc := oauth2.NewClient(ctx, ts)
+		s.GithubClient = github.NewClient(tc)
+		s.GithubClient.UserAgent = fmt.Sprintf("%s v%s", Name, Version)
+	}
 }
 
 func (s *Session) InitThreads() {
