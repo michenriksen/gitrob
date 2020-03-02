@@ -53,8 +53,8 @@ type Session struct {
 	GithubClient      *github.Client `json:"-"`
 	GitLabClient      *gitlab.Client
 	Router            *gin.Engine `json:"-"`
-	Targets           []*scm.GithubOwner
-	Repositories      []*scm.GithubRepository
+	Targets           []*scm.Owner
+	Repositories      []*scm.Repository
 	Findings          []*Finding
 }
 
@@ -73,7 +73,7 @@ func (s *Session) Finish() {
 	s.Stats.Status = StatusFinished
 }
 
-func (s *Session) AddTarget(target *scm.GithubOwner) {
+func (s *Session) AddTarget(target *scm.Owner) {
 	s.Lock()
 	defer s.Unlock()
 	for _, t := range s.Targets {
@@ -84,7 +84,7 @@ func (s *Session) AddTarget(target *scm.GithubOwner) {
 	s.Targets = append(s.Targets, target)
 }
 
-func (s *Session) AddRepository(repository *scm.GithubRepository) {
+func (s *Session) AddRepository(repository *scm.Repository) {
 	s.Lock()
 	defer s.Unlock()
 	for _, r := range s.Repositories {

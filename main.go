@@ -43,7 +43,7 @@ func GatherTargets(sess *core.Session) {
 }
 
 func GatherRepositories(sess *core.Session) {
-	var ch = make(chan *scm.GithubOwner, len(sess.Targets))
+	var ch = make(chan *scm.Owner, len(sess.Targets))
 	var wg sync.WaitGroup
 	var threadNum int
 	if len(sess.Targets) == 1 {
@@ -89,7 +89,7 @@ func GatherRepositories(sess *core.Session) {
 
 func AnalyzeRepositories(sess *core.Session) {
 	sess.Stats.Status = core.StatusAnalyzing
-	var ch = make(chan *scm.GithubRepository, len(sess.Repositories))
+	var ch = make(chan *scm.Repository, len(sess.Repositories))
 	var wg sync.WaitGroup
 	var threadNum int
 	if len(sess.Repositories) <= 1 {
