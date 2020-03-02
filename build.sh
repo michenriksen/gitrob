@@ -5,7 +5,10 @@ VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
 
 bin_dep() {
   BIN=$1
-  which $BIN > /dev/null || { echo "[-] Dependency $BIN not found !"; exit 1; }
+  which $BIN >/dev/null || {
+    echo "[-] Dependency $BIN not found !"
+    exit 1
+  }
 }
 
 create_exe_archive() {
@@ -14,7 +17,7 @@ create_exe_archive() {
   OUTPUT=$1
 
   echo "[*] Creating archive $OUTPUT ..."
-  zip -j "$OUTPUT" gitrob.exe ../README.md ../LICENSE.txt > /dev/null
+  zip -j "$OUTPUT" gitrob.exe ../README.md ../LICENSE.txt >/dev/null
   rm -rf gitrob gitrob.exe
 }
 
@@ -24,7 +27,7 @@ create_archive() {
   OUTPUT=$1
 
   echo "[*] Creating archive $OUTPUT ..."
-  zip -j "$OUTPUT" gitrob ../README.md ../LICENSE.md > /dev/null
+  zip -j "$OUTPUT" gitrob ../README.md ../LICENSE.md >/dev/null
   rm -rf gitrob gitrob.exe
 }
 
@@ -50,7 +53,7 @@ cd $BUILD_FOLDER
 build_linux_amd64 && create_archive gitrob_linux_amd64_$VERSION.zip
 build_macos_amd64 && create_archive gitrob_macos_amd64_$VERSION.zip
 build_windows_amd64 && create_exe_archive gitrob_windows_amd64_$VERSION.zip
-shasum -a 256 * > checksums.txt
+shasum -a 256 * >checksums.txt
 
 echo
 echo
