@@ -60,7 +60,8 @@ func (s *Session) Start() {
 	s.InitLogger()
 	s.InitThreads()
 	s.InitAccessToken()
-	s.InitGithubClient()
+	s.ValidateTokenConfig()
+	s.InitAPIClient()
 	s.InitRouter()
 }
 
@@ -130,6 +131,9 @@ func (s *Session) InitAccessToken() {
 	} else {
 		s.GitLabAccessToken = *s.Options.GitLabAccessToken
 	}
+}
+
+func (s *Session) ValidateTokenConfig() {
 	if s.GitLabAccessToken != "" && s.GithubAccessToken != "" {
 		s.Out.Fatal("Both a GitLab and Github token are present.  Only one may be set.")
 	}
