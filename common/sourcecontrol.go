@@ -1,4 +1,4 @@
-package scm
+package common
 
 type Owner struct {
 	Login     *string

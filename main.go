@@ -7,9 +7,9 @@ import (
 	"sync"
 	"time"
 
+	"github.com/codeEmitter/gitrob/common"
 	"github.com/codeEmitter/gitrob/core"
 	"github.com/codeEmitter/gitrob/github"
-	"github.com/codeEmitter/gitrob/scm"
 )
 
 var (
@@ -44,7 +44,7 @@ func GatherTargets(sess *core.Session) {
 }
 
 func GatherRepositories(sess *core.Session) {
-	var ch = make(chan *scm.Owner, len(sess.Targets))
+	var ch = make(chan *common.Owner, len(sess.Targets))
 	var wg sync.WaitGroup
 	var threadNum int
 	if len(sess.Targets) == 1 {
@@ -90,7 +90,7 @@ func GatherRepositories(sess *core.Session) {
 
 func AnalyzeRepositories(sess *core.Session) {
 	sess.Stats.Status = core.StatusAnalyzing
-	var ch = make(chan *scm.Repository, len(sess.Repositories))
+	var ch = make(chan *common.Repository, len(sess.Repositories))
 	var wg sync.WaitGroup
 	var threadNum int
 	if len(sess.Repositories) <= 1 {

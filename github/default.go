@@ -3,17 +3,17 @@ package github
 import (
 	"context"
 
-	"github.com/codeEmitter/gitrob/scm"
+	"github.com/codeEmitter/gitrob/common"
 	"github.com/google/go-github/github"
 )
 
-func GetUserOrOrganization(login string, client *github.Client) (*scm.Owner, error) {
+func GetUserOrOrganization(login string, client *github.Client) (*common.Owner, error) {
 	ctx := context.Background()
 	user, _, err := client.Users.Get(ctx, login)
 	if err != nil {
 		return nil, err
 	}
-	return &scm.Owner{
+	return &common.Owner{
 		Login:     user.Login,
 		ID:        user.ID,
 		Type:      user.Type,
@@ -28,8 +28,8 @@ func GetUserOrOrganization(login string, client *github.Client) (*scm.Owner, err
 	}, nil
 }
 
-func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*scm.Repository, error) {
-	var allRepos []*scm.Repository
+func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*common.Repository, error) {
+	var allRepos []*common.Repository
 	loginVal := *login
 	ctx := context.Background()
 	opt := &github.RepositoryListOptions{
@@ -43,7 +43,7 @@ func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*scm.Repo
 		}
 		for _, repo := range repos {
 			if !*repo.Fork {
-				r := scm.Repository{
+				r := common.Repository{
 					Owner:         repo.Owner.Login,
 					ID:            repo.ID,
 					Name:          repo.Name,
@@ -66,8 +66,8 @@ func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*scm.Repo
 	return allRepos, nil
 }
 
-func GetOrganizationMembers(login *string, client *github.Client) ([]*scm.Owner, error) {
-	var allMembers []*scm.Owner
+func GetOrganizationMembers(login *string, client *github.Client) ([]*common.Owner, error) {
+	var allMembers []*common.Owner
 	loginVal := *login
 	ctx := context.Background()
 	opt := &github.ListMembersOptions{}
@@ -77,7 +77,7 @@ func GetOrganizationMembers(login *string, client *github.Client) ([]*scm.Owner,
 			return allMembers, err
 		}
 		for _, member := range members {
-			allMembers = append(allMembers, &scm.Owner{Login: member.Login, ID: member.ID, Type: member.Type})
+			allMembers = append(allMembers, &common.Owner{Login: member.Login, ID: member.ID, Type: member.Type})
 		}
 		if resp.NextPage == 0 {
 			break
