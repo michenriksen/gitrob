@@ -13,6 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/github"
+	"github.com/xanzy/go-gitlab"
 	"golang.org/x/oauth2"
 )
 
@@ -49,7 +50,8 @@ type Session struct {
 	GithubAccessToken string         `json:"-"`
 	GitLabAccessToken string         `json:"-"`
 	GithubClient      *github.Client `json:"-"`
-	Router            *gin.Engine    `json:"-"`
+	GitLabClient      *gitlab.Client
+	Router            *gin.Engine `json:"-"`
 	Targets           []*GithubOwner
 	Repositories      []*GithubRepository
 	Findings          []*Finding
@@ -151,6 +153,9 @@ func (s *Session) InitAPIClient() {
 		tc := oauth2.NewClient(ctx, ts)
 		s.GithubClient = github.NewClient(tc)
 		s.GithubClient.UserAgent = fmt.Sprintf("%s v%s", Name, Version)
+	}
+	if s.GitLabAccessToken != "" {
+		s.GitLabClient = gitlab.NewClient(nil, s.GitLabAccessToken)
 	}
 }
 
