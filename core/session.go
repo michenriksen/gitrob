@@ -13,6 +13,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/go-github/github"
+	"github.com/xanzy/go-gitlab"
 	"golang.org/x/oauth2"
 )
 
@@ -49,7 +50,8 @@ type Session struct {
 	GithubAccessToken string         `json:"-"`
 	GitLabAccessToken string         `json:"-"`
 	GithubClient      *github.Client `json:"-"`
-	Router            *gin.Engine    `json:"-"`
+	GitLabClient      *gitlab.Client
+	Router            *gin.Engine `json:"-"`
 	Targets           []*GithubOwner
 	Repositories      []*GithubRepository
 	Findings          []*Finding
@@ -60,7 +62,8 @@ func (s *Session) Start() {
 	s.InitLogger()
 	s.InitThreads()
 	s.InitAccessToken()
-	s.InitGithubClient()
+	s.ValidateTokenConfig()
+	s.InitAPIClient()
 	s.InitRouter()
 }
 
@@ -130,22 +133,30 @@ func (s *Session) InitAccessToken() {
 	} else {
 		s.GitLabAccessToken = *s.Options.GitLabAccessToken
 	}
+}
+
+func (s *Session) ValidateTokenConfig() {
 	if s.GitLabAccessToken != "" && s.GithubAccessToken != "" {
-		s.Out.Fatal("Both a GitLab and Github token are present.  Only one may set.")
+		s.Out.Fatal("Both a GitLab and Github token are present.  Only one may be set.")
 	}
 	if s.GitLabAccessToken == "" && s.GithubAccessToken == "" {
 		s.Out.Fatal("No valid API token was found.")
 	}
 }
 
-func (s *Session) InitGithubClient() {
-	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: s.GithubAccessToken},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-	s.GithubClient = github.NewClient(tc)
-	s.GithubClient.UserAgent = fmt.Sprintf("%s v%s", Name, Version)
+func (s *Session) InitAPIClient() {
+	if s.GithubAccessToken != "" {
+		ctx := context.Background()
+		ts := oauth2.StaticTokenSource(
+			&oauth2.Token{AccessToken: s.GithubAccessToken},
+		)
+		tc := oauth2.NewClient(ctx, ts)
+		s.GithubClient = github.NewClient(tc)
+		s.GithubClient.UserAgent = fmt.Sprintf("%s v%s", Name, Version)
+	}
+	if s.GitLabAccessToken != "" {
+		s.GitLabClient = gitlab.NewClient(nil, s.GitLabAccessToken)
+	}
 }
 
 func (s *Session) InitThreads() {

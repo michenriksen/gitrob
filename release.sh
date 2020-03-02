@@ -2,7 +2,7 @@
 
 CURRENT_VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
 TO_UPDATE=(
-    core/banner.go
+  core/banner.go
 )
 
 read -p "[?] Did you remember to update CHANGELOG.md? "
@@ -13,8 +13,7 @@ read NEW_VERSION
 echo "[*] Pushing and tagging version $NEW_VERSION in 5 seconds..."
 sleep 5
 
-for file in "${TO_UPDATE[@]}"
-do
+for file in "${TO_UPDATE[@]}"; do
   echo "[*] Patching $file ..."
   sed -i "s/$CURRENT_VERSION/$NEW_VERSION/g" $file
   git add $file
