@@ -24,10 +24,10 @@ func GatherTargets(sess *core.Session) {
 
 	for _, login := range sess.Options.Logins {
 		target, err := func() (*common.Owner, error) {
-			if sess.GithubAccessToken != "" {
-				return github.GetUserOrOrganization(login, sess.GithubClient)
+			if sess.Github.AccessToken != "" {
+				return github.GetUserOrOrganization(login, sess.Github.Client)
 			} else {
-				return gitlab.GetUserOrOrganization(login, sess.GitLabClient)
+				return gitlab.GetUserOrOrganization(login, sess.GitLab.Client)
 			}
 		}()
 
@@ -39,7 +39,7 @@ func GatherTargets(sess *core.Session) {
 		sess.AddTarget(target)
 		if *sess.Options.NoExpandOrgs == false && *target.Type == "Organization" {
 			sess.Out.Debug("Gathering members of %s (ID: %d)...\n", *target.Login, *target.ID)
-			members, err := github.GetOrganizationMembers(target.Login, sess.GithubClient)
+			members, err := github.GetOrganizationMembers(target.Login, sess.Github.Client)
 			if err != nil {
 				sess.Out.Error(" Error retrieving members of %s: %s\n", *target.Login, err)
 				continue
@@ -73,7 +73,7 @@ func GatherRepositories(sess *core.Session) {
 					wg.Done()
 					return
 				}
-				repos, err := github.GetRepositoriesFromOwner(target.Login, sess.GithubClient)
+				repos, err := github.GetRepositoriesFromOwner(target.Login, sess.Github.Client)
 				if err != nil {
 					sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
 				}
