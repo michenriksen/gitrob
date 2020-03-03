@@ -157,8 +157,8 @@ func (s *Session) InitAPIClient() {
 		s.GithubClient.UserAgent = userAgent
 	}
 	if s.GitLabAccessToken != "" {
-		client := gitlab.NewClient(nil, s.GitLabAccessToken)
-		client.UserAgent = userAgent
+		s.GitLabClient = gitlab.NewClient(nil, s.GitLabAccessToken)
+		s.GitLabClient.UserAgent = userAgent
 	}
 }
 

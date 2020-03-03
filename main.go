@@ -10,6 +10,7 @@ import (
 	"github.com/codeEmitter/gitrob/common"
 	"github.com/codeEmitter/gitrob/core"
 	"github.com/codeEmitter/gitrob/github"
+	"github.com/codeEmitter/gitrob/gitlab"
 )
 
 var (
@@ -20,8 +21,16 @@ var (
 func GatherTargets(sess *core.Session) {
 	sess.Stats.Status = core.StatusGathering
 	sess.Out.Important("Gathering targets...\n")
+
 	for _, login := range sess.Options.Logins {
-		target, err := github.GetUserOrOrganization(login, sess.GithubClient)
+		target, err := func() (*common.Owner, error) {
+			if sess.GithubAccessToken != "" {
+				return github.GetUserOrOrganization(login, sess.GithubClient)
+			} else {
+				return gitlab.GetUserOrOrganization(login, sess.GitLabClient)
+			}
+		}()
+
 		if err != nil {
 			sess.Out.Error(" Error retrieving information on %s: %s\n", login, err)
 			continue
