@@ -31,7 +31,7 @@ func GatherTargets(sess *core.Session) {
 			}
 		}()
 
-		if err != nil {
+		if err != nil || target == nil {
 			sess.Out.Error(" Error retrieving information on %s: %s\n", login, err)
 			continue
 		}

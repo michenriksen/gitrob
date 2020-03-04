@@ -1,18 +1,37 @@
 package gitlab
 
 import (
+	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/codeEmitter/gitrob/common"
 	"github.com/xanzy/go-gitlab"
 )
 
+type errorString struct {
+	s string
+}
+
+func (e *errorString) Error() string {
+	return e.s
+}
+func new(text string) error {
+	return &errorString{text}
+}
+
 func getUser(login string, client *gitlab.Client) (*gitlab.User, error) {
-	user, _, err := client.Users.ListUsers(&gitlab.ListUsersOptions{Username: gitlab.String(login)})
+	users, _, err := client.Users.ListUsers(&gitlab.ListUsersOptions{Username: gitlab.String(login)})
 	if err != nil {
 		return nil, err
 	}
-	return user[0], err
+	if len(users) == 0 {
+		return nil, new(fmt.Sprintf("No GitLab %s or %s %s was found.",
+			strings.ToLower(common.TargetTypeUser),
+			strings.ToLower(common.TargetTypeOrganization),
+			login))
+	}
+	return users[0], err
 }
 
 func getOrganization(login string, client *gitlab.Client) (*gitlab.Group, error) {
@@ -21,6 +40,9 @@ func getOrganization(login string, client *gitlab.Client) (*gitlab.Group, error)
 		return nil, err
 	}
 	org, _, err := client.Groups.GetGroup(id)
+	if err != nil {
+		return nil, err
+	}
 	return org, err
 }
 
