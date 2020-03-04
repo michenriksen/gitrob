@@ -88,9 +88,9 @@ func GetUserOrOrganization(login string, client *gitlab.Client) (*common.Owner, 
 
 func GetOrganizationMembers(id int64, client *gitlab.Client) ([]*common.Owner, error) {
 	var allMembers []*common.Owner
-	opt := gitlab.ListGroupMembersOptions{}
+	opt := &gitlab.ListGroupMembersOptions{}
 	for {
-		members, resp, err := client.Groups.ListAllGroupMembers(int(id), &gitlab.ListGroupMembersOptions{})
+		members, resp, err := client.Groups.ListAllGroupMembers(int(id), opt)
 		if err != nil {
 			return nil, err
 		}
@@ -108,4 +108,50 @@ func GetOrganizationMembers(id int64, client *gitlab.Client) ([]*common.Owner, e
 		opt.Page = resp.NextPage
 	}
 	return allMembers, nil
+}
+
+func GetRepositoriesFromOwner(target common.Owner, client *gitlab.Client) ([]*common.Repository, error) {
+	var allProjects []*common.Repository
+	listUserProjectsOps := &gitlab.ListProjectsOptions{}
+	listGroupProjectsOps := &gitlab.ListGroupProjectsOptions{}
+	id := int(*target.ID)
+	for {
+		projects, resp, err := func() ([]*gitlab.Project, *gitlab.Response, error) {
+			if *target.Type == common.TargetTypeUser {
+				return client.Projects.ListUserProjects(id, listUserProjectsOps)
+			} else {
+				return client.Groups.ListGroupProjects(id, listGroupProjectsOps)
+			}
+		}()
+		if err != nil {
+			return nil, err
+		}
+		for _, project := range projects {
+			//don't capture forks
+			if (gitlab.ForkParent{}) == *project.ForkedFromProject {
+				id := int64(project.ID)
+				p := common.Repository{
+					Owner:         gitlab.String(project.Owner.Name),
+					ID:            &id,
+					Name:          gitlab.String(project.Name),
+					FullName:      gitlab.String(project.NameWithNamespace),
+					CloneURL:      gitlab.String(project.HTTPURLToRepo),
+					URL:           gitlab.String(project.WebURL),
+					DefaultBranch: gitlab.String(project.DefaultBranch),
+					Description:   gitlab.String(project.Description),
+					Homepage:      gitlab.String(project.WebURL),
+				}
+				allProjects = append(allProjects, &p)
+			}
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		if *target.Type == common.TargetTypeUser {
+			listUserProjectsOps.Page = resp.NextPage
+		} else {
+			listGroupProjectsOps.Page = resp.NextPage
+		}
+	}
+	return allProjects, nil
 }
