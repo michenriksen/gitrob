@@ -64,4 +64,6 @@ func GetUserOrOrganization(login string, client *gitlab.Client) (*common.Owner, 
 	}
 }
 
+func GetOrganizationMembers(login *string, client *gitlab.Client) ([]*common.Owner, error) {
+	return nil, nil
 }

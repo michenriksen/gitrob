@@ -39,7 +39,13 @@ func GatherTargets(sess *core.Session) {
 		sess.AddTarget(target)
 		if *sess.Options.NoExpandOrgs == false && *target.Type == common.TargetTypeOrganization {
 			sess.Out.Debug("Gathering members of %s (ID: %d)...\n", *target.Login, *target.ID)
-			members, err := github.GetOrganizationMembers(target.Login, sess.Github.Client)
+			members, err := func() ([]*common.Owner, error) {
+				if sess.Github.AccessToken != "" {
+					return github.GetOrganizationMembers(target.Login, sess.Github.Client)
+				} else {
+					return gitlab.GetOrganizationMembers(target.Login, sess.GitLab.Client)
+				}
+			}()
 			if err != nil {
 				sess.Out.Error(" Error retrieving members of %s: %s\n", *target.Login, err)
 				continue
