@@ -86,6 +86,26 @@ func GetUserOrOrganization(login string, client *gitlab.Client) (*common.Owner, 
 	}
 }
 
-func GetOrganizationMembers(login *string, client *gitlab.Client) ([]*common.Owner, error) {
-	return nil, nil
+func GetOrganizationMembers(id int64, client *gitlab.Client) ([]*common.Owner, error) {
+	var allMembers []*common.Owner
+	opt := gitlab.ListGroupMembersOptions{}
+	for {
+		members, resp, err := client.Groups.ListAllGroupMembers(int(id), &gitlab.ListGroupMembersOptions{})
+		if err != nil {
+			return nil, err
+		}
+		for _, member := range members {
+			id := int64(member.ID)
+			allMembers = append(allMembers,
+				&common.Owner{
+					Login: gitlab.String(member.Username),
+					ID:    &id,
+					Type:  gitlab.String(common.TargetTypeUser)})
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+	return allMembers, nil
 }

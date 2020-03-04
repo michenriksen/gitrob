@@ -43,7 +43,7 @@ func GatherTargets(sess *core.Session) {
 				if sess.Github.AccessToken != "" {
 					return github.GetOrganizationMembers(target.Login, sess.Github.Client)
 				} else {
-					return gitlab.GetOrganizationMembers(target.Login, sess.GitLab.Client)
+					return gitlab.GetOrganizationMembers(*target.ID, sess.GitLab.Client)
 				}
 			}()
 			if err != nil {
