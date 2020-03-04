@@ -1,44 +1,19 @@
-package core
+package github
 
 import (
 	"context"
 
+	"github.com/codeEmitter/gitrob/common"
 	"github.com/google/go-github/github"
 )
 
-type GithubOwner struct {
-	Login     *string
-	ID        *int64
-	Type      *string
-	Name      *string
-	AvatarURL *string
-	URL       *string
-	Company   *string
-	Blog      *string
-	Location  *string
-	Email     *string
-	Bio       *string
-}
-
-type GithubRepository struct {
-	Owner         *string
-	ID            *int64
-	Name          *string
-	FullName      *string
-	CloneURL      *string
-	URL           *string
-	DefaultBranch *string
-	Description   *string
-	Homepage      *string
-}
-
-func GetUserOrOrganization(login string, client *github.Client) (*GithubOwner, error) {
+func GetUserOrOrganization(login string, client *github.Client) (*common.Owner, error) {
 	ctx := context.Background()
 	user, _, err := client.Users.Get(ctx, login)
 	if err != nil {
 		return nil, err
 	}
-	return &GithubOwner{
+	return &common.Owner{
 		Login:     user.Login,
 		ID:        user.ID,
 		Type:      user.Type,
@@ -53,8 +28,8 @@ func GetUserOrOrganization(login string, client *github.Client) (*GithubOwner, e
 	}, nil
 }
 
-func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*GithubRepository, error) {
-	var allRepos []*GithubRepository
+func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*common.Repository, error) {
+	var allRepos []*common.Repository
 	loginVal := *login
 	ctx := context.Background()
 	opt := &github.RepositoryListOptions{
@@ -68,7 +43,7 @@ func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*GithubRe
 		}
 		for _, repo := range repos {
 			if !*repo.Fork {
-				r := GithubRepository{
+				r := common.Repository{
 					Owner:         repo.Owner.Login,
 					ID:            repo.ID,
 					Name:          repo.Name,
@@ -91,8 +66,8 @@ func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*GithubRe
 	return allRepos, nil
 }
 
-func GetOrganizationMembers(login *string, client *github.Client) ([]*GithubOwner, error) {
-	var allMembers []*GithubOwner
+func GetOrganizationMembers(login *string, client *github.Client) ([]*common.Owner, error) {
+	var allMembers []*common.Owner
 	loginVal := *login
 	ctx := context.Background()
 	opt := &github.ListMembersOptions{}
@@ -102,7 +77,7 @@ func GetOrganizationMembers(login *string, client *github.Client) ([]*GithubOwne
 			return allMembers, err
 		}
 		for _, member := range members {
-			allMembers = append(allMembers, &GithubOwner{Login: member.Login, ID: member.ID, Type: member.Type})
+			allMembers = append(allMembers, &common.Owner{Login: member.Login, ID: member.ID, Type: member.Type})
 		}
 		if resp.NextPage == 0 {
 			break

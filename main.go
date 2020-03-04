@@ -7,7 +7,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/codeEmitter/gitrob/common"
 	"github.com/codeEmitter/gitrob/core"
+	"github.com/codeEmitter/gitrob/github"
+	"github.com/codeEmitter/gitrob/gitlab"
 )
 
 var (
@@ -18,17 +21,31 @@ var (
 func GatherTargets(sess *core.Session) {
 	sess.Stats.Status = core.StatusGathering
 	sess.Out.Important("Gathering targets...\n")
+
 	for _, login := range sess.Options.Logins {
-		target, err := core.GetUserOrOrganization(login, sess.GithubClient)
-		if err != nil {
+		target, err := func() (*common.Owner, error) {
+			if sess.Github.AccessToken != "" {
+				return github.GetUserOrOrganization(login, sess.Github.Client)
+			} else {
+				return gitlab.GetUserOrOrganization(login, sess.GitLab.Client)
+			}
+		}()
+
+		if err != nil || target == nil {
 			sess.Out.Error(" Error retrieving information on %s: %s\n", login, err)
 			continue
 		}
 		sess.Out.Debug("%s (ID: %d) type: %s\n", *target.Login, *target.ID, *target.Type)
 		sess.AddTarget(target)
-		if *sess.Options.NoExpandOrgs == false && *target.Type == "Organization" {
+		if *sess.Options.NoExpandOrgs == false && *target.Type == common.TargetTypeOrganization {
 			sess.Out.Debug("Gathering members of %s (ID: %d)...\n", *target.Login, *target.ID)
-			members, err := core.GetOrganizationMembers(target.Login, sess.GithubClient)
+			members, err := func() ([]*common.Owner, error) {
+				if sess.Github.AccessToken != "" {
+					return github.GetOrganizationMembers(target.Login, sess.Github.Client)
+				} else {
+					return gitlab.GetOrganizationMembers(*target.ID, sess.GitLab.Client)
+				}
+			}()
 			if err != nil {
 				sess.Out.Error(" Error retrieving members of %s: %s\n", *target.Login, err)
 				continue
@@ -42,7 +59,7 @@ func GatherTargets(sess *core.Session) {
 }
 
 func GatherRepositories(sess *core.Session) {
-	var ch = make(chan *core.GithubOwner, len(sess.Targets))
+	var ch = make(chan *common.Owner, len(sess.Targets))
 	var wg sync.WaitGroup
 	var threadNum int
 	if len(sess.Targets) == 1 {
@@ -62,7 +79,7 @@ func GatherRepositories(sess *core.Session) {
 					wg.Done()
 					return
 				}
-				repos, err := core.GetRepositoriesFromOwner(target.Login, sess.GithubClient)
+				repos, err := github.GetRepositoriesFromOwner(target.Login, sess.Github.Client)
 				if err != nil {
 					sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
 				}
@@ -88,7 +105,7 @@ func GatherRepositories(sess *core.Session) {
 
 func AnalyzeRepositories(sess *core.Session) {
 	sess.Stats.Status = core.StatusAnalyzing
-	var ch = make(chan *core.GithubRepository, len(sess.Repositories))
+	var ch = make(chan *common.Repository, len(sess.Repositories))
 	var wg sync.WaitGroup
 	var threadNum int
 	if len(sess.Repositories) <= 1 {
