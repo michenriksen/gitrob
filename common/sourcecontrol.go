@@ -1,5 +1,10 @@
 package common
 
+const (
+	TargetTypeUser         = "User"
+	TargetTypeOrganization = "Organization"
+)
+
 type Owner struct {
 	Login     *string
 	ID        *int64

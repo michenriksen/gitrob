@@ -37,7 +37,7 @@ func GatherTargets(sess *core.Session) {
 		}
 		sess.Out.Debug("%s (ID: %d) type: %s\n", *target.Login, *target.ID, *target.Type)
 		sess.AddTarget(target)
-		if *sess.Options.NoExpandOrgs == false && *target.Type == "Organization" {
+		if *sess.Options.NoExpandOrgs == false && *target.Type == common.TargetTypeOrganization {
 			sess.Out.Debug("Gathering members of %s (ID: %d)...\n", *target.Login, *target.ID)
 			members, err := github.GetOrganizationMembers(target.Login, sess.Github.Client)
 			if err != nil {
