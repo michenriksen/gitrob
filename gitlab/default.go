@@ -110,25 +110,17 @@ func GetOrganizationMembers(id int64, client *gitlab.Client) ([]*common.Owner, e
 	return allMembers, nil
 }
 
-func GetRepositoriesFromOwner(target common.Owner, client *gitlab.Client) ([]*common.Repository, error) {
-	var allProjects []*common.Repository
+func getUserProjects(id int, client *gitlab.Client) ([]*common.Repository, error) {
+	var allUserProjects []*common.Repository
 	listUserProjectsOps := &gitlab.ListProjectsOptions{}
-	listGroupProjectsOps := &gitlab.ListGroupProjectsOptions{}
-	id := int(*target.ID)
 	for {
-		projects, resp, err := func() ([]*gitlab.Project, *gitlab.Response, error) {
-			if *target.Type == common.TargetTypeUser {
-				return client.Projects.ListUserProjects(id, listUserProjectsOps)
-			} else {
-				return client.Groups.ListGroupProjects(id, listGroupProjectsOps)
-			}
-		}()
+		projects, resp, err := client.Projects.ListUserProjects(id, listUserProjectsOps)
 		if err != nil {
 			return nil, err
 		}
 		for _, project := range projects {
 			//don't capture forks
-			if (gitlab.ForkParent{}) == *project.ForkedFromProject {
+			if project.ForkedFromProject == nil {
 				id := int64(project.ID)
 				p := common.Repository{
 					Owner:         gitlab.String(project.Owner.Name),
@@ -141,16 +133,73 @@ func GetRepositoriesFromOwner(target common.Owner, client *gitlab.Client) ([]*co
 					Description:   gitlab.String(project.Description),
 					Homepage:      gitlab.String(project.WebURL),
 				}
-				allProjects = append(allProjects, &p)
+				allUserProjects = append(allUserProjects, &p)
 			}
 		}
 		if resp.NextPage == 0 {
 			break
 		}
-		if *target.Type == common.TargetTypeUser {
-			listUserProjectsOps.Page = resp.NextPage
-		} else {
-			listGroupProjectsOps.Page = resp.NextPage
+		listUserProjectsOps.Page = resp.NextPage
+	}
+	return allUserProjects, nil
+}
+
+func getGroupProjects(id int, client *gitlab.Client) ([]*common.Repository, error) {
+	var allGroupProjects []*common.Repository
+	listGroupProjectsOps := &gitlab.ListGroupProjectsOptions{}
+	for {
+		projects, resp, err := client.Groups.ListGroupProjects(id, listGroupProjectsOps)
+		if err != nil {
+			return nil, err
+		}
+		for _, project := range projects {
+			//don't capture forks
+			if project.ForkedFromProject == nil {
+				id := int64(project.ID)
+				owner := ""
+				if project.Owner != nil {
+					owner = project.Owner.Name
+				}
+				p := common.Repository{
+					Owner:         gitlab.String(owner),
+					ID:            &id,
+					Name:          gitlab.String(project.Name),
+					FullName:      gitlab.String(project.NameWithNamespace),
+					CloneURL:      gitlab.String(project.HTTPURLToRepo),
+					URL:           gitlab.String(project.WebURL),
+					DefaultBranch: gitlab.String(project.DefaultBranch),
+					Description:   gitlab.String(project.Description),
+					Homepage:      gitlab.String(project.WebURL),
+				}
+				allGroupProjects = append(allGroupProjects, &p)
+			}
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		listGroupProjectsOps.Page = resp.NextPage
+	}
+	return allGroupProjects, nil
+}
+
+func GetRepositoriesFromOwner(target common.Owner, client *gitlab.Client) ([]*common.Repository, error) {
+	var allProjects []*common.Repository
+	id := int(*target.ID)
+	if *target.Type == common.TargetTypeUser {
+		userProjects, err := getUserProjects(id, client)
+		if err != nil {
+			return nil, err
+		}
+		for _, project := range userProjects {
+			allProjects = append(allProjects, project)
+		}
+	} else {
+		groupProjects, err := getGroupProjects(id, client)
+		if err != nil {
+			return nil, err
+		}
+		for _, project := range groupProjects {
+			allProjects = append(allProjects, project)
 		}
 	}
 	return allProjects, nil
