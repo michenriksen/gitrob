@@ -79,7 +79,13 @@ func GatherRepositories(sess *core.Session) {
 					wg.Done()
 					return
 				}
-				repos, err := github.GetRepositoriesFromOwner(target.Login, sess.Github.Client)
+				repos, err := func() ([]*common.Repository, error) {
+					if sess.Github.AccessToken != "" {
+						return github.GetRepositoriesFromOwner(target.Login, sess.Github.Client)
+					} else {
+						return gitlab.GetRepositoriesFromOwner(*target, sess.GitLab.Client)
+					}
+				}()
 				if err != nil {
 					sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
 				}
