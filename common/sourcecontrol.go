@@ -5,6 +5,14 @@ const (
 	TargetTypeOrganization = "Organization"
 )
 
+type CloneConfiguration struct {
+	Url      *string
+	Username *string
+	Token    *string
+	Branch   *string
+	Depth    *int
+}
+
 type Owner struct {
 	Login     *string
 	ID        *int64

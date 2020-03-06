@@ -143,10 +143,17 @@ func AnalyzeRepositories(sess *core.Session) {
 					if sess.Github.AccessToken != "" {
 						return github.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
 					} else {
-						return gitlab.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
+						userName := "oauth2"
+						cloneConfig := common.CloneConfiguration{
+							Url:      repo.CloneURL,
+							Branch:   repo.DefaultBranch,
+							Depth:    sess.Options.CommitDepth,
+							Token:    &sess.GitLab.AccessToken,
+							Username: &userName,
+						}
+						return gitlab.CloneRepository(&cloneConfig)
 					}
 				}()
-				//clone, path, err := github.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
 				if err != nil {
 					if err.Error() != "remote repository is empty" {
 						sess.Out.Error("Error cloning repository %s: %s\n", *repo.FullName, err)
