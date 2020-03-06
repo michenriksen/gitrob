@@ -11,6 +11,7 @@ import (
 	"github.com/codeEmitter/gitrob/core"
 	"github.com/codeEmitter/gitrob/github"
 	"github.com/codeEmitter/gitrob/gitlab"
+	"gopkg.in/src-d/go-git.v4"
 )
 
 var (
@@ -137,8 +138,15 @@ func AnalyzeRepositories(sess *core.Session) {
 					return
 				}
 
-				sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.FullName)
-				clone, path, err := github.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
+				sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.CloneURL)
+				clone, path, err := func() (*git.Repository, string, error) {
+					if sess.Github.AccessToken != "" {
+						return github.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
+					} else {
+						return gitlab.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
+					}
+				}()
+				//clone, path, err := github.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
 				if err != nil {
 					if err.Error() != "remote repository is empty" {
 						sess.Out.Error("Error cloning repository %s: %s\n", *repo.FullName, err)
