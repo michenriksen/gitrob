@@ -156,7 +156,7 @@ func AnalyzeRepositories(sess *core.Session) {
 				}()
 				if err != nil {
 					if err.Error() != "remote repository is empty" {
-						sess.Out.Error("Error cloning repository %s: %s\n", *repo.FullName, err)
+						sess.Out.Error("Error cloning repository %s: %s\n", *repo.CloneURL, err)
 					}
 					sess.Stats.IncrementRepositories()
 					sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
@@ -164,7 +164,7 @@ func AnalyzeRepositories(sess *core.Session) {
 				}
 				sess.Out.Debug("[THREAD #%d][%s] Cloned repository to: %s\n", tid, *repo.FullName, path)
 
-				history, err := github.GetRepositoryHistory(clone)
+				history, err := common.GetRepositoryHistory(clone)
 				if err != nil {
 					sess.Out.Error("[THREAD #%d][%s] Error getting commit history: %s\n", tid, *repo.FullName, err)
 					os.RemoveAll(path)
@@ -176,11 +176,11 @@ func AnalyzeRepositories(sess *core.Session) {
 
 				for _, commit := range history {
 					sess.Out.Debug("[THREAD #%d][%s] Analyzing commit: %s\n", tid, *repo.FullName, commit.Hash)
-					changes, _ := github.GetChanges(commit, clone)
+					changes, _ := common.GetChanges(commit, clone)
 					sess.Out.Debug("[THREAD #%d][%s] Changes in %s: %d\n", tid, *repo.FullName, commit.Hash, len(changes))
 					for _, change := range changes {
-						changeAction := github.GetChangeAction(change)
-						path := github.GetChangePath(change)
+						changeAction := common.GetChangeAction(change)
+						path := common.GetChangePath(change)
 						matchFile := core.NewMatchFile(path)
 						if matchFile.IsSkippable() {
 							sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", tid, *repo.FullName, matchFile.Path)
