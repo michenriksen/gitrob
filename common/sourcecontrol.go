@@ -50,6 +50,21 @@ const (
 	EmptyTreeCommitId = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 )
 
+func getParentCommit(commit *object.Commit, repo *git.Repository) (*object.Commit, error) {
+	if commit.NumParents() == 0 {
+		parentCommit, err := repo.CommitObject(plumbing.NewHash(EmptyTreeCommitId))
+		if err != nil {
+			return nil, err
+		}
+		return parentCommit, nil
+	}
+	parentCommit, err := commit.Parents().Next()
+	if err != nil {
+		return nil, err
+	}
+	return parentCommit, nil
+}
+
 func GetRepositoryHistory(repository *git.Repository) ([]*object.Commit, error) {
 	var commits []*object.Commit
 	ref, err := repository.Head()
@@ -68,7 +83,7 @@ func GetRepositoryHistory(repository *git.Repository) ([]*object.Commit, error) 
 }
 
 func GetChanges(commit *object.Commit, repo *git.Repository) (object.Changes, error) {
-	parentCommit, err := GetParentCommit(commit, repo)
+	parentCommit, err := getParentCommit(commit, repo)
 	if err != nil {
 		return nil, err
 	}
@@ -88,21 +103,6 @@ func GetChanges(commit *object.Commit, repo *git.Repository) (object.Changes, er
 		return nil, err
 	}
 	return changes, nil
-}
-
-func GetParentCommit(commit *object.Commit, repo *git.Repository) (*object.Commit, error) {
-	if commit.NumParents() == 0 {
-		parentCommit, err := repo.CommitObject(plumbing.NewHash(EmptyTreeCommitId))
-		if err != nil {
-			return nil, err
-		}
-		return parentCommit, nil
-	}
-	parentCommit, err := commit.Parents().Next()
-	if err != nil {
-		return nil, err
-	}
-	return parentCommit, nil
 }
 
 func GetChangeAction(change *object.Change) string {
