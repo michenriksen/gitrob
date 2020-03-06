@@ -4,27 +4,21 @@ import (
 	"fmt"
 	"io/ioutil"
 
+	"github.com/codeEmitter/gitrob/common"
+
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
-	"gopkg.in/src-d/go-git.v4/plumbing/object"
-	"gopkg.in/src-d/go-git.v4/utils/merkletrie"
 )
 
-const (
-	EmptyTreeCommitId = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
-)
-
-func CloneRepository(url *string, branch *string, depth int) (*git.Repository, string, error) {
-	urlVal := *url
-	branchVal := *branch
+func CloneRepository(cloneConfig *common.CloneConfiguration) (*git.Repository, string, error) {
 	dir, err := ioutil.TempDir("", "gitrob")
 	if err != nil {
 		return nil, "", err
 	}
 	repository, err := git.PlainClone(dir, false, &git.CloneOptions{
-		URL:           urlVal,
-		Depth:         depth,
-		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", branchVal)),
+		URL:           *cloneConfig.Url,
+		Depth:         *cloneConfig.Depth,
+		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", *cloneConfig.Branch)),
 		SingleBranch:  true,
 		Tags:          git.NoTags,
 	})

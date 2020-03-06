@@ -140,17 +140,17 @@ func AnalyzeRepositories(sess *core.Session) {
 
 				sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.CloneURL)
 				clone, path, err := func() (*git.Repository, string, error) {
+					cloneConfig := common.CloneConfiguration{
+						Url:    repo.CloneURL,
+						Branch: repo.DefaultBranch,
+						Depth:  sess.Options.CommitDepth,
+						Token:  &sess.GitLab.AccessToken,
+					}
 					if sess.Github.AccessToken != "" {
-						return github.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
+						return github.CloneRepository(&cloneConfig)
 					} else {
 						userName := "oauth2"
-						cloneConfig := common.CloneConfiguration{
-							Url:      repo.CloneURL,
-							Branch:   repo.DefaultBranch,
-							Depth:    sess.Options.CommitDepth,
-							Token:    &sess.GitLab.AccessToken,
-							Username: &userName,
-						}
+						cloneConfig.Username = &userName
 						return gitlab.CloneRepository(&cloneConfig)
 					}
 				}()
