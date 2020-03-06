@@ -11,6 +11,7 @@ import (
 	"github.com/codeEmitter/gitrob/core"
 	"github.com/codeEmitter/gitrob/github"
 	"github.com/codeEmitter/gitrob/gitlab"
+	"gopkg.in/src-d/go-git.v4"
 )
 
 var (
@@ -93,7 +94,7 @@ func GatherRepositories(sess *core.Session) {
 					continue
 				}
 				for _, repo := range repos {
-					sess.Out.Debug(" Retrieved repository: %s\n", *repo.FullName)
+					sess.Out.Debug(" Retrieved repository: %s\n", *repo.CloneURL)
 					sess.AddRepository(repo)
 				}
 				sess.Stats.IncrementTargets()
@@ -137,41 +138,55 @@ func AnalyzeRepositories(sess *core.Session) {
 					return
 				}
 
-				sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.FullName)
-				clone, path, err := core.CloneRepository(repo.CloneURL, repo.DefaultBranch, *sess.Options.CommitDepth)
+				sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.CloneURL)
+				clone, path, err := func() (*git.Repository, string, error) {
+					cloneConfig := common.CloneConfiguration{
+						Url:    repo.CloneURL,
+						Branch: repo.DefaultBranch,
+						Depth:  sess.Options.CommitDepth,
+						Token:  &sess.GitLab.AccessToken,
+					}
+					if sess.Github.AccessToken != "" {
+						return github.CloneRepository(&cloneConfig)
+					} else {
+						userName := "oauth2"
+						cloneConfig.Username = &userName
+						return gitlab.CloneRepository(&cloneConfig)
+					}
+				}()
 				if err != nil {
 					if err.Error() != "remote repository is empty" {
-						sess.Out.Error("Error cloning repository %s: %s\n", *repo.FullName, err)
+						sess.Out.Error("Error cloning repository %s: %s\n", *repo.CloneURL, err)
 					}
 					sess.Stats.IncrementRepositories()
 					sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
 					continue
 				}
-				sess.Out.Debug("[THREAD #%d][%s] Cloned repository to: %s\n", tid, *repo.FullName, path)
+				sess.Out.Debug("[THREAD #%d][%s] Cloned repository to: %s\n", tid, *repo.CloneURL, path)
 
-				history, err := core.GetRepositoryHistory(clone)
+				history, err := common.GetRepositoryHistory(clone)
 				if err != nil {
-					sess.Out.Error("[THREAD #%d][%s] Error getting commit history: %s\n", tid, *repo.FullName, err)
+					sess.Out.Error("[THREAD #%d][%s] Error getting commit history: %s\n", tid, *repo.CloneURL, err)
 					os.RemoveAll(path)
 					sess.Stats.IncrementRepositories()
 					sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
 					continue
 				}
-				sess.Out.Debug("[THREAD #%d][%s] Number of commits: %d\n", tid, *repo.FullName, len(history))
+				sess.Out.Debug("[THREAD #%d][%s] Number of commits: %d\n", tid, *repo.CloneURL, len(history))
 
 				for _, commit := range history {
-					sess.Out.Debug("[THREAD #%d][%s] Analyzing commit: %s\n", tid, *repo.FullName, commit.Hash)
-					changes, _ := core.GetChanges(commit, clone)
-					sess.Out.Debug("[THREAD #%d][%s] Changes in %s: %d\n", tid, *repo.FullName, commit.Hash, len(changes))
+					sess.Out.Debug("[THREAD #%d][%s] Analyzing commit: %s\n", tid, *repo.CloneURL, commit.Hash)
+					changes, _ := common.GetChanges(commit, clone)
+					sess.Out.Debug("[THREAD #%d][%s] Changes in %s: %d\n", tid, *repo.CloneURL, commit.Hash, len(changes))
 					for _, change := range changes {
-						changeAction := core.GetChangeAction(change)
-						path := core.GetChangePath(change)
+						changeAction := common.GetChangeAction(change)
+						path := common.GetChangePath(change)
 						matchFile := core.NewMatchFile(path)
 						if matchFile.IsSkippable() {
-							sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", tid, *repo.FullName, matchFile.Path)
+							sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", tid, *repo.CloneURL, matchFile.Path)
 							continue
 						}
-						sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", tid, *repo.FullName, matchFile.Path)
+						sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", tid, *repo.CloneURL, matchFile.Path)
 						for _, signature := range core.Signatures {
 							if signature.Match(matchFile) {
 
@@ -191,7 +206,7 @@ func AnalyzeRepositories(sess *core.Session) {
 
 								sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
 								sess.Out.Info("  Path.......: %s\n", finding.FilePath)
-								sess.Out.Info("  Repo.......: %s\n", *repo.FullName)
+								sess.Out.Info("  Repo.......: %s\n", *repo.CloneURL)
 								sess.Out.Info("  Message....: %s\n", core.TruncateString(finding.CommitMessage, 100))
 								sess.Out.Info("  Author.....: %s\n", finding.CommitAuthor)
 								if finding.Comment != "" {
@@ -207,11 +222,11 @@ func AnalyzeRepositories(sess *core.Session) {
 						sess.Stats.IncrementFiles()
 					}
 					sess.Stats.IncrementCommits()
-					sess.Out.Debug("[THREAD #%d][%s] Done analyzing changes in %s\n", tid, *repo.FullName, commit.Hash)
+					sess.Out.Debug("[THREAD #%d][%s] Done analyzing changes in %s\n", tid, *repo.CloneURL, commit.Hash)
 				}
-				sess.Out.Debug("[THREAD #%d][%s] Done analyzing commits\n", tid, *repo.FullName)
+				sess.Out.Debug("[THREAD #%d][%s] Done analyzing commits\n", tid, *repo.CloneURL)
 				os.RemoveAll(path)
-				sess.Out.Debug("[THREAD #%d][%s] Deleted %s\n", tid, *repo.FullName, path)
+				sess.Out.Debug("[THREAD #%d][%s] Deleted %s\n", tid, *repo.CloneURL, path)
 				sess.Stats.IncrementRepositories()
 				sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
 			}
