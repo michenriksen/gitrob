@@ -201,7 +201,7 @@ func AnalyzeRepositories(sess *core.Session) {
 									CommitMessage:   strings.TrimSpace(commit.Message),
 									CommitAuthor:    commit.Author.String(),
 								}
-								finding.Initialize()
+								finding.Initialize(sess.Github.AccessToken != "")
 								sess.AddFinding(finding)
 
 								sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)

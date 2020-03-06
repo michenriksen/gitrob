@@ -59,7 +59,7 @@ func getUserProjects(id int, client *gitlab.Client) ([]*common.Repository, error
 			if project.ForkedFromProject == nil {
 				id := int64(project.ID)
 				p := common.Repository{
-					Owner:         gitlab.String(project.Owner.Name),
+					Owner:         gitlab.String(project.Owner.Username),
 					ID:            &id,
 					Name:          gitlab.String(project.Name),
 					FullName:      gitlab.String(project.NameWithNamespace),
