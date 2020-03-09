@@ -15,9 +15,12 @@ import (
 const (
 	GithubBaseUri   = "https://raw.githubusercontent.com"
 	MaximumFileSize = 102400
+	GitLabBaseUri   = "https://gitlab.com"
 	CspPolicy       = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
 	ReferrerPolicy  = "no-referrer"
 )
+
+var IsGithub = true
 
 type binaryFileSystem struct {
 	fs http.FileSystem
@@ -45,6 +48,9 @@ func BinaryFileSystem(root string) *binaryFileSystem {
 }
 
 func NewRouter(s *Session) *gin.Engine {
+
+	IsGithub = s.Github.AccessToken != ""
+
 	if *s.Options.Debug == true {
 		gin.SetMode(gin.DebugMode)
 	} else {
@@ -80,7 +86,15 @@ func NewRouter(s *Session) *gin.Engine {
 }
 
 func fetchFile(c *gin.Context) {
-	fileUrl := fmt.Sprintf("%s/%s/%s/%s%s", GithubBaseUri, c.Param("owner"), c.Param("repo"), c.Param("commit"), c.Param("path"))
+	//Github:  https://raw.githubusercontent.com/mhh/config/6257553245337bdae802a8e19935e8cdab562bad/bash/.bashrc
+	//GitLab:  https://gitlab.com/pharrison/python-gitlab/-/raw/ab7d794251bcdbafce69b1bde0628cd3b710d784/docs/gl_objects/settings.py
+	fileUrl := func() string {
+		if IsGithub {
+			return fmt.Sprintf("%s/%s/%s/%s%s", GithubBaseUri, c.Param("owner"), c.Param("repo"), c.Param("commit"), c.Param("path"))
+		} else {
+			return fmt.Sprintf("%s/%s/%s/%s/%s%s", GitLabBaseUri, c.Param("owner"), c.Param("repo"), "/-/raw/", c.Param("commit"), c.Param("path"))
+		}
+	}()
 	resp, err := http.Head(fileUrl)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{

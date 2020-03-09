@@ -59,10 +59,16 @@ type Finding struct {
 	RepositoryUrl   string
 }
 
-func (f *Finding) setupUrls() {
-	f.RepositoryUrl = fmt.Sprintf("https://github.com/%s/%s", f.RepositoryOwner, f.RepositoryName)
-	f.FileUrl = fmt.Sprintf("%s/blob/%s/%s", f.RepositoryUrl, f.CommitHash, f.FilePath)
-	f.CommitUrl = fmt.Sprintf("%s/commit/%s", f.RepositoryUrl, f.CommitHash)
+func (f *Finding) setupUrls(isGithubSession bool) {
+	if isGithubSession {
+		f.RepositoryUrl = fmt.Sprintf("https://github.com/%s/%s", f.RepositoryOwner, f.RepositoryName)
+		f.FileUrl = fmt.Sprintf("%s/blob/%s/%s", f.RepositoryUrl, f.CommitHash, f.FilePath)
+		f.CommitUrl = fmt.Sprintf("%s/commit/%s", f.RepositoryUrl, f.CommitHash)
+	} else {
+		f.RepositoryUrl = fmt.Sprintf("https://gitlab.com/%s/%s", f.RepositoryOwner, f.RepositoryName)
+		f.FileUrl = fmt.Sprintf("%s/blob/%s/%s", f.RepositoryUrl, f.CommitHash, f.FilePath)
+		f.CommitUrl = fmt.Sprintf("%s/commit/%s", f.RepositoryUrl, f.CommitHash)
+	}
 }
 
 func (f *Finding) generateID() {
@@ -77,8 +83,8 @@ func (f *Finding) generateID() {
 	f.Id = fmt.Sprintf("%x", h.Sum(nil))
 }
 
-func (f *Finding) Initialize() {
-	f.setupUrls()
+func (f *Finding) Initialize(isGithubSession bool) {
+	f.setupUrls(isGithubSession)
 	f.generateID()
 }
 
