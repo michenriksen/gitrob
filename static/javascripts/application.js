@@ -364,6 +364,7 @@ var FindingModal = Backbone.View.extend({
       var host = this.getHostName();
       var fadeInFunc = function() {
         $("#modal_file_contents_container").html(content.replace("%s", host)).fadeIn("fast");
+        $('.modal-content #view-file, #finding_view_raw, #finding_view_hexdump').addClass('disabled');
       }
       $("#modal_file_spinner_container").fadeOut("fast", fadeInFunc());
       return;

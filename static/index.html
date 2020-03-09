@@ -180,8 +180,8 @@
       </div>
       <div class="modal-footer">
           <span class="text-muted font-italic font-weight-light"><span class="oi oi-lightbulb"></span> Tip: Browse findings by using the <span class="oi oi-arrow-left"></span> and <span class="oi oi-arrow-right"></span> arrow keys.</span>
-          <a href="<%- FileUrl %>" rel="noopener noreferrer" target="_blank" class="btn btn-primary" role="button">View file on <span><%= this.getHostName() %></span></a>
-          <a href="<%- CommitUrl %>" rel="noopener noreferrer" target="_blank" class="btn btn-secondary" role="button">View commit on <span><%= this.getHostName() %></a>
+          <a id="view-file" href="<%- FileUrl %>" rel="noopener noreferrer" target="_blank" class="btn btn-primary" role="button">View file on <span><%= this.getHostName() %></span></a>
+          <a id="view-commit" href="<%- CommitUrl %>" rel="noopener noreferrer" target="_blank" class="btn btn-secondary" role="button">View commit on <span><%= this.getHostName() %></a>
       </div>
     </script>
 
