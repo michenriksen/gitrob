@@ -335,6 +335,10 @@ var FindingModal = Backbone.View.extend({
     $("#modal_file_contents").hide();
     $("#modal_file_hexdump").show();
   },
+  getHostName: function() {
+    if (this.model.get("CommitUrl").indexOf("github") !== -1) return "Github";
+    return "GitLab";
+  },
   truncatedCommitMessage: function() {
     var message = this.model.trimmedCommitMessage();
     if (message.length <= 150) {
@@ -356,9 +360,12 @@ var FindingModal = Backbone.View.extend({
   },
   fetchFileContents: function() {
     if (this.model.get("Action") == "Delete") {
-      $("#modal_file_spinner_container").fadeOut("fast", function() {
-        $("#modal_file_contents_container").html("<div class='alert alert-info' role='alert'>View commit on GitHub to see contents of deleted files.</div>").fadeIn("fast");
-      });
+      var content = "<div class='alert alert-info' role='alert'>View commit on %s to see contents of deleted files.</div>";
+      var host = this.getHostName();
+      var fadeInFunc = function() {
+        $("#modal_file_contents_container").html(content.replace("%s", host)).fadeIn("fast");
+      }
+      $("#modal_file_spinner_container").fadeOut("fast", fadeInFunc());
       return;
     }
     var context = this;
