@@ -713,4 +713,34 @@ var Signatures = []Signature{
 		description: "Contains word: password",
 		comment:     "",
 	},
+	SimpleSignature{
+		part:        PartFilename,
+		match:       "credentials.json",
+		description: "Google Cloud Platform service account credentials keyfile",
+		comment:     "GCP service account credentials can be activated using the gcloud command from Google's Cloud SDK (https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account)",
+	},
+	PatternSignature{
+		part:        PartFilename,
+		match:       regexp.MustCompile(`^.*-[a-f0-9]{12}\.json$`),
+		description: "Google Cloud Platform service account credentials keyfile",
+		comment:     "GCP service account credentials can be activated using the gcloud command from Google's Cloud SDK (https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account)",
+	},
+    	SimpleSignature{
+		part:        PartFilename,
+		match:       "adc.json",
+		description: "Legacy Google Cloud Platform service account credentials keyfile",
+		comment:     "GCP service account credentials can be activated using the gcloud command from Google's Cloud SDK (https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account)",
+	},
+    	SimpleSignature{
+		part:        PartFilename,
+		match:       "credentials.db",
+		description: "Google Cloud Platform gcloud credential database",
+		comment:     "sqlite database containing credentials used by the gcloud command from Google's Cloud SDK",
+	},
+    	SimpleSignature{
+		part:        PartFilename,
+		match:       ".boto",
+		description: "Legacy Google Cloud Platform gcloud credential database",
+		comment:     "File containing credentials used by the gcloud command from Google's Cloud SDK",
+	},
 }
