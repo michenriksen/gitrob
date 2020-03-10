@@ -9,27 +9,16 @@ import (
 	"github.com/xanzy/go-gitlab"
 )
 
-type errorString struct {
-	s string
-}
-
-func (e *errorString) Error() string {
-	return e.s
-}
-func new(text string) error {
-	return &errorString{text}
-}
-
 func getUser(login string, client *gitlab.Client) (*gitlab.User, error) {
 	users, _, err := client.Users.ListUsers(&gitlab.ListUsersOptions{Username: gitlab.String(login)})
 	if err != nil {
 		return nil, err
 	}
 	if len(users) == 0 {
-		return nil, new(fmt.Sprintf("No GitLab %s or %s %s was found.",
+		return nil, fmt.Errorf("No GitLab %s or %s %s was found.",
 			strings.ToLower(common.TargetTypeUser),
 			strings.ToLower(common.TargetTypeOrganization),
-			login))
+			login)
 	}
 	return users[0], err
 }
