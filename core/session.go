@@ -150,7 +150,7 @@ func (s *Session) ValidateTokenConfig() {
 		s.Out.Fatal("Both a GitLab and Github token are present.  Only one may be set.")
 	}
 	if s.GitLab.AccessToken == "" && s.Github.AccessToken == "" {
-		s.Out.Fatal("No valid API token was found.")
+		s.Out.Fatal("No valid API token was found.\n")
 	}
 }
 
