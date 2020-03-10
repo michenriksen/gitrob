@@ -14,7 +14,7 @@ import (
 
 const (
 	GithubBaseUri   = "https://raw.githubusercontent.com"
-	MaximumFileSize = 102400
+	MaximumFileSize = 153600
 	GitLabBaseUri   = "https://gitlab.com"
 	CspPolicy       = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'"
 	ReferrerPolicy  = "no-referrer"
