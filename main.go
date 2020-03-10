@@ -262,7 +262,14 @@ func main() {
 		sess.Out.Important("Loaded session file: %s\n", *sess.Options.Load)
 	} else {
 		if len(sess.Options.Logins) == 0 {
-			sess.Out.Fatal("Please provide at least one GitHub organization or user\n")
+			host := func() string {
+				if sess.Github.AccessToken != "" {
+					return "Github organization"
+				} else {
+					return "GitLab group"
+				}
+			}()
+			sess.Out.Fatal(fmt.Sprintf("Please provide at least one %s or user\n", host))
 		}
 
 		GatherTargets(sess)
