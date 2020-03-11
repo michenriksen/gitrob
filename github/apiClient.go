@@ -2,10 +2,26 @@ package github
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/codeEmitter/gitrob/common"
 	"github.com/google/go-github/github"
+	"golang.org/x/oauth2"
 )
+
+type client *http.Client
+
+var clientInstance client
+
+func init() {
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: nil//s.Github.AccessToken},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	clientInstance = *github.NewClient(tc)
+	clientInstance.UserAgent = common.UserAgent
+}
 
 func GetUserOrOrganization(login string, client *github.Client) (*common.Owner, error) {
 	ctx := context.Background()
