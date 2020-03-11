@@ -266,7 +266,7 @@ func NewSession() (*Session, error) {
 		}
 	}
 
-	session.Version = Version
+	session.Version = common.Version
 	session.Start()
 
 	return &session, nil
