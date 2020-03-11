@@ -9,11 +9,21 @@ import (
 	"github.com/xanzy/go-gitlab"
 )
 
-func GetUserOrOrganization(login string, client *gitlab.Client) (*common.Owner, error) {
+type Client struct {
+	apiClient *gitlab.Client
+}
+
+func (c Client) NewClient(token string) (apiClient Client) {
+	c.apiClient = gitlab.NewClient(nil, token)
+	c.apiClient.UserAgent = common.UserAgent
+	return c
+}
+
+func (c Client) GetUserOrOrganization(login string) (*common.Owner, error) {
 	emptyString := gitlab.String("")
-	org, orgErr := getOrganization(login, client)
+	org, orgErr := c.getOrganization(login)
 	if orgErr != nil {
-		user, userErr := getUser(login, client)
+		user, userErr := c.getUser(login)
 		if userErr != nil {
 			return nil, userErr
 		}
@@ -49,11 +59,15 @@ func GetUserOrOrganization(login string, client *gitlab.Client) (*common.Owner, 
 	}
 }
 
-func GetOrganizationMembers(id int64, client *gitlab.Client) ([]*common.Owner, error) {
+func (c Client) GetOrganizationMembers(login string) ([]*common.Owner, error) {
 	var allMembers []*common.Owner
 	opt := &gitlab.ListGroupMembersOptions{}
+	id, err := strconv.Atoi(login)
+	if err != nil {
+		return nil, err
+	}
 	for {
-		members, resp, err := client.Groups.ListAllGroupMembers(int(id), opt)
+		members, resp, err := c.apiClient.Groups.ListAllGroupMembers(id, opt)
 		if err != nil {
 			return nil, err
 		}
@@ -73,11 +87,11 @@ func GetOrganizationMembers(id int64, client *gitlab.Client) ([]*common.Owner, e
 	return allMembers, nil
 }
 
-func GetRepositoriesFromOwner(target common.Owner, client *gitlab.Client) ([]*common.Repository, error) {
+func (c Client) GetRepositoriesFromOwner(target common.Owner) ([]*common.Repository, error) {
 	var allProjects []*common.Repository
 	id := int(*target.ID)
 	if *target.Type == common.TargetTypeUser {
-		userProjects, err := getUserProjects(id, client)
+		userProjects, err := c.getUserProjects(id)
 		if err != nil {
 			return nil, err
 		}
@@ -85,7 +99,7 @@ func GetRepositoriesFromOwner(target common.Owner, client *gitlab.Client) ([]*co
 			allProjects = append(allProjects, project)
 		}
 	} else {
-		groupProjects, err := getGroupProjects(id, client)
+		groupProjects, err := c.getGroupProjects(id)
 		if err != nil {
 			return nil, err
 		}
@@ -96,8 +110,8 @@ func GetRepositoriesFromOwner(target common.Owner, client *gitlab.Client) ([]*co
 	return allProjects, nil
 }
 
-func getUser(login string, client *gitlab.Client) (*gitlab.User, error) {
-	users, _, err := client.Users.ListUsers(&gitlab.ListUsersOptions{Username: gitlab.String(login)})
+func (c Client) getUser(login string) (*gitlab.User, error) {
+	users, _, err := c.apiClient.Users.ListUsers(&gitlab.ListUsersOptions{Username: gitlab.String(login)})
 	if err != nil {
 		return nil, err
 	}
@@ -110,23 +124,23 @@ func getUser(login string, client *gitlab.Client) (*gitlab.User, error) {
 	return users[0], err
 }
 
-func getOrganization(login string, client *gitlab.Client) (*gitlab.Group, error) {
+func (c Client) getOrganization(login string) (*gitlab.Group, error) {
 	id, err := strconv.Atoi(login)
 	if err != nil {
 		return nil, err
 	}
-	org, _, err := client.Groups.GetGroup(id)
+	org, _, err := c.apiClient.Groups.GetGroup(id)
 	if err != nil {
 		return nil, err
 	}
 	return org, err
 }
 
-func getUserProjects(id int, client *gitlab.Client) ([]*common.Repository, error) {
+func (c Client) getUserProjects(id int) ([]*common.Repository, error) {
 	var allUserProjects []*common.Repository
 	listUserProjectsOps := &gitlab.ListProjectsOptions{}
 	for {
-		projects, resp, err := client.Projects.ListUserProjects(id, listUserProjectsOps)
+		projects, resp, err := c.apiClient.Projects.ListUserProjects(id, listUserProjectsOps)
 		if err != nil {
 			return nil, err
 		}
@@ -156,11 +170,11 @@ func getUserProjects(id int, client *gitlab.Client) ([]*common.Repository, error
 	return allUserProjects, nil
 }
 
-func getGroupProjects(id int, client *gitlab.Client) ([]*common.Repository, error) {
+func (c Client) getGroupProjects(id int) ([]*common.Repository, error) {
 	var allGroupProjects []*common.Repository
 	listGroupProjectsOps := &gitlab.ListGroupProjectsOptions{}
 	for {
-		projects, resp, err := client.Groups.ListGroupProjects(id, listGroupProjectsOps)
+		projects, resp, err := c.apiClient.Groups.ListGroupProjects(id, listGroupProjectsOps)
 		if err != nil {
 			return nil, err
 		}

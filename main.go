@@ -24,14 +24,7 @@ func GatherTargets(sess *core.Session) {
 	sess.Out.Important("Gathering targets...\n")
 
 	for _, login := range sess.Options.Logins {
-		target, err := func() (*common.Owner, error) {
-			if sess.Github.AccessToken != "" {
-				return github.GetUserOrOrganization(login, sess.Github.Client)
-			} else {
-				return gitlab.GetUserOrOrganization(login, sess.GitLab.Client)
-			}
-		}()
-
+		target, err := sess.Client.GetUserOrOrganization(login)
 		if err != nil || target == nil {
 			sess.Out.Error(" Error retrieving information on %s: %s\n", login, err)
 			continue
@@ -40,13 +33,7 @@ func GatherTargets(sess *core.Session) {
 		sess.AddTarget(target)
 		if *sess.Options.NoExpandOrgs == false && *target.Type == common.TargetTypeOrganization {
 			sess.Out.Debug("Gathering members of %s (ID: %d)...\n", *target.Login, *target.ID)
-			members, err := func() ([]*common.Owner, error) {
-				if sess.Github.AccessToken != "" {
-					return github.GetOrganizationMembers(target.Login, sess.Github.Client)
-				} else {
-					return gitlab.GetOrganizationMembers(*target.ID, sess.GitLab.Client)
-				}
-			}()
+			members, err := sess.Client.GetOrganizationMembers(*target.Login)
 			if err != nil {
 				sess.Out.Error(" Error retrieving members of %s: %s\n", *target.Login, err)
 				continue
@@ -80,13 +67,7 @@ func GatherRepositories(sess *core.Session) {
 					wg.Done()
 					return
 				}
-				repos, err := func() ([]*common.Repository, error) {
-					if sess.Github.AccessToken != "" {
-						return github.GetRepositoriesFromOwner(target.Login, sess.Github.Client)
-					} else {
-						return gitlab.GetRepositoriesFromOwner(*target, sess.GitLab.Client)
-					}
-				}()
+				repos, err := sess.Client.GetRepositoriesFromOwner(*target)
 				if err != nil {
 					sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
 				}

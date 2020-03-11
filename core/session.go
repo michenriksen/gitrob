@@ -1,7 +1,6 @@
 package core
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,10 +11,9 @@ import (
 	"time"
 
 	"github.com/codeEmitter/gitrob/common"
+	gh "github.com/codeEmitter/gitrob/github"
+	gl "github.com/codeEmitter/gitrob/gitlab"
 	"github.com/gin-gonic/gin"
-	"github.com/google/go-github/github"
-	"github.com/xanzy/go-gitlab"
-	"golang.org/x/oauth2"
 )
 
 const (
@@ -42,14 +40,11 @@ type Stats struct {
 }
 
 type Github struct {
-	AccessToken string         `json:"-"`
-	Client      *github.Client `json:"-"`
+	AccessToken string `json:"-"`
 }
 
 type GitLab struct {
 	AccessToken string `json:"-"`
-	Client      *gitlab.Client
-	UserID      int64
 }
 
 type Session struct {
@@ -61,6 +56,7 @@ type Session struct {
 	Stats        *Stats
 	Github       Github
 	GitLab       GitLab
+	Client       common.IClient
 	Router       *gin.Engine `json:"-"`
 	Targets      []*common.Owner
 	Repositories []*common.Repository
@@ -155,19 +151,10 @@ func (s *Session) ValidateTokenConfig() {
 }
 
 func (s *Session) InitAPIClient() {
-	userAgent := fmt.Sprintf("%s v%s", Name, Version)
 	if s.Github.AccessToken != "" {
-		ctx := context.Background()
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: s.Github.AccessToken},
-		)
-		tc := oauth2.NewClient(ctx, ts)
-		s.Github.Client = github.NewClient(tc)
-		s.Github.Client.UserAgent = userAgent
-	}
-	if s.GitLab.AccessToken != "" {
-		s.GitLab.Client = gitlab.NewClient(nil, s.GitLab.AccessToken)
-		s.GitLab.Client.UserAgent = userAgent
+		s.Client = gh.Client.NewClient(gh.Client{}, s.Github.AccessToken)
+	} else {
+		s.Client = gl.Client.NewClient(gl.Client{}, s.GitLab.AccessToken)
 	}
 }
 

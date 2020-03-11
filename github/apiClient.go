@@ -2,30 +2,30 @@ package github
 
 import (
 	"context"
-	"net/http"
 
 	"github.com/codeEmitter/gitrob/common"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
 )
 
-type client *http.Client
-
-var clientInstance client
-
-func init() {
-	ctx := context.Background()
-	ts := oauth2.StaticTokenSource(
-		&oauth2.Token{AccessToken: nil//s.Github.AccessToken},
-	)
-	tc := oauth2.NewClient(ctx, ts)
-	clientInstance = *github.NewClient(tc)
-	clientInstance.UserAgent = common.UserAgent
+type Client struct {
+	apiClient *github.Client
 }
 
-func GetUserOrOrganization(login string, client *github.Client) (*common.Owner, error) {
+func (c Client) NewClient(token string) (apiClient Client) {
 	ctx := context.Background()
-	user, _, err := client.Users.Get(ctx, login)
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+	c.apiClient = github.NewClient(tc)
+	c.apiClient.UserAgent = common.UserAgent
+	return c
+}
+
+func (c Client) GetUserOrOrganization(login string) (*common.Owner, error) {
+	ctx := context.Background()
+	user, _, err := c.apiClient.Users.Get(ctx, login)
 	if err != nil {
 		return nil, err
 	}
@@ -44,16 +44,15 @@ func GetUserOrOrganization(login string, client *github.Client) (*common.Owner, 
 	}, nil
 }
 
-func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*common.Repository, error) {
+func (c Client) GetRepositoriesFromOwner(target common.Owner) ([]*common.Repository, error) {
 	var allRepos []*common.Repository
-	loginVal := *login
 	ctx := context.Background()
 	opt := &github.RepositoryListOptions{
 		Type: "sources",
 	}
 
 	for {
-		repos, resp, err := client.Repositories.List(ctx, loginVal, opt)
+		repos, resp, err := c.apiClient.Repositories.List(ctx, *target.Login, opt)
 		if err != nil {
 			return allRepos, err
 		}
@@ -82,13 +81,12 @@ func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*common.R
 	return allRepos, nil
 }
 
-func GetOrganizationMembers(login *string, client *github.Client) ([]*common.Owner, error) {
+func (c Client) GetOrganizationMembers(login string) ([]*common.Owner, error) {
 	var allMembers []*common.Owner
-	loginVal := *login
 	ctx := context.Background()
 	opt := &github.ListMembersOptions{}
 	for {
-		members, resp, err := client.Organizations.ListMembers(ctx, loginVal, opt)
+		members, resp, err := c.apiClient.Organizations.ListMembers(ctx, login, opt)
 		if err != nil {
 			return allMembers, err
 		}
