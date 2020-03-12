@@ -59,15 +59,12 @@ func (c Client) GetUserOrOrganization(login string) (*common.Owner, error) {
 	}
 }
 
-func (c Client) GetOrganizationMembers(login string) ([]*common.Owner, error) {
+func (c Client) GetOrganizationMembers(target common.Owner) ([]*common.Owner, error) {
 	var allMembers []*common.Owner
 	opt := &gitlab.ListGroupMembersOptions{}
-	id, err := strconv.Atoi(login)
-	if err != nil {
-		return nil, err
-	}
+	sID := strconv.FormatInt(*target.ID, 10) //safely downcast an int64 to an int
 	for {
-		members, resp, err := c.apiClient.Groups.ListAllGroupMembers(id, opt)
+		members, resp, err := c.apiClient.Groups.ListAllGroupMembers(sID, opt)
 		if err != nil {
 			return nil, err
 		}

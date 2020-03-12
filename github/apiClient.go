@@ -81,12 +81,12 @@ func (c Client) GetRepositoriesFromOwner(target common.Owner) ([]*common.Reposit
 	return allRepos, nil
 }
 
-func (c Client) GetOrganizationMembers(login string) ([]*common.Owner, error) {
+func (c Client) GetOrganizationMembers(target common.Owner) ([]*common.Owner, error) {
 	var allMembers []*common.Owner
 	ctx := context.Background()
 	opt := &github.ListMembersOptions{}
 	for {
-		members, resp, err := c.apiClient.Organizations.ListMembers(ctx, login, opt)
+		members, resp, err := c.apiClient.Organizations.ListMembers(ctx, *target.Login, opt)
 		if err != nil {
 			return allMembers, err
 		}
