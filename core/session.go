@@ -142,11 +142,13 @@ func (s *Session) InitAccessToken() {
 }
 
 func (s *Session) ValidateTokenConfig() {
-	if s.GitLab.AccessToken != "" && s.Github.AccessToken != "" {
-		s.Out.Fatal("Both a GitLab and Github token are present.  Only one may be set.")
-	}
-	if s.GitLab.AccessToken == "" && s.Github.AccessToken == "" {
-		s.Out.Fatal("No valid API token was found.\n")
+	if *s.Options.Load == "" {
+		if s.GitLab.AccessToken != "" && s.Github.AccessToken != "" {
+			s.Out.Fatal("Both a GitLab and Github token are present.  Only one may be set.")
+		}
+		if s.GitLab.AccessToken == "" && s.Github.AccessToken == "" {
+			s.Out.Fatal("No valid API token was found.\n")
+		}
 	}
 }
 
