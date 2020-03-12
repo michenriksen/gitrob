@@ -96,7 +96,7 @@ func (c Client) GetRepositoriesFromOwner(target common.Owner) ([]*common.Reposit
 			allProjects = append(allProjects, project)
 		}
 	} else {
-		groupProjects, err := c.getGroupProjects(id)
+		groupProjects, err := c.getGroupProjects(target)
 		if err != nil {
 			return nil, err
 		}
@@ -167,9 +167,10 @@ func (c Client) getUserProjects(id int) ([]*common.Repository, error) {
 	return allUserProjects, nil
 }
 
-func (c Client) getGroupProjects(id int) ([]*common.Repository, error) {
+func (c Client) getGroupProjects(target common.Owner) ([]*common.Repository, error) {
 	var allGroupProjects []*common.Repository
 	listGroupProjectsOps := &gitlab.ListGroupProjectsOptions{}
+	id := strconv.FormatInt(*target.ID, 10)
 	for {
 		projects, resp, err := c.apiClient.Groups.ListGroupProjects(id, listGroupProjectsOps)
 		if err != nil {
@@ -179,12 +180,8 @@ func (c Client) getGroupProjects(id int) ([]*common.Repository, error) {
 			//don't capture forks
 			if project.ForkedFromProject == nil {
 				id := int64(project.ID)
-				owner := ""
-				if project.Owner != nil {
-					owner = project.Owner.Name
-				}
 				p := common.Repository{
-					Owner:         gitlab.String(owner),
+					Owner:         gitlab.String(project.Namespace.FullPath),
 					ID:            &id,
 					Name:          gitlab.String(project.Name),
 					FullName:      gitlab.String(project.NameWithNamespace),
