@@ -51,13 +51,13 @@ type Session struct {
 	sync.Mutex
 
 	Version      string
-	Options      Options `json:"-"`
-	Out          *Logger `json:"-"`
+	Options      Options `json:"-"` //do not unmarshal to json on save
+	Out          *Logger `json:"-"` //do not unmarshal to json on save
 	Stats        *Stats
-	Github       Github
-	GitLab       GitLab
-	Client       common.IClient
-	Router       *gin.Engine `json:"-"`
+	Github       Github         `json:"-"` //do not unmarshal to json on save
+	GitLab       GitLab         `json:"-"` //do not unmarshal to json on save
+	Client       common.IClient `json:"-"` //do not unmarshal to json on save
+	Router       *gin.Engine    `json:"-"` //do not unmarshal to json on save
 	Targets      []*common.Owner
 	Repositories []*common.Repository
 	Findings     []*Finding
