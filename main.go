@@ -23,10 +23,10 @@ func GatherTargets(sess *core.Session) {
 	sess.Stats.Status = core.StatusGathering
 	sess.Out.Important("Gathering targets...\n")
 
-	for _, login := range sess.Options.Logins {
-		target, err := sess.Client.GetUserOrOrganization(login)
+	for _, loginOption := range sess.Options.Logins {
+		target, err := sess.Client.GetUserOrOrganization(loginOption)
 		if err != nil || target == nil {
-			sess.Out.Error(" Error retrieving information on %s: %s\n", login, err)
+			sess.Out.Error(" Error retrieving information on %s: %s\n", loginOption, err)
 			continue
 		}
 		sess.Out.Debug("%s (ID: %d) type: %s\n", *target.Login, *target.ID, *target.Type)
