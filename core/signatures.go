@@ -65,7 +65,9 @@ func (f *Finding) setupUrls(isGithubSession bool) {
 		f.FileUrl = fmt.Sprintf("%s/blob/%s/%s", f.RepositoryUrl, f.CommitHash, f.FilePath)
 		f.CommitUrl = fmt.Sprintf("%s/commit/%s", f.RepositoryUrl, f.CommitHash)
 	} else {
-		f.RepositoryUrl = fmt.Sprintf("https://gitlab.com/%s/%s", f.RepositoryOwner, f.RepositoryName)
+		repoOwner := strings.ReplaceAll(f.RepositoryOwner, " ", "-")
+		repoName := strings.ReplaceAll(f.RepositoryName, " ", "-")
+		f.RepositoryUrl = fmt.Sprintf("https://gitlab.com/%s/%s", repoOwner, repoName)
 		f.FileUrl = fmt.Sprintf("%s/blob/%s/%s", f.RepositoryUrl, f.CommitHash, f.FilePath)
 		f.CommitUrl = fmt.Sprintf("%s/commit/%s", f.RepositoryUrl, f.CommitHash)
 	}
