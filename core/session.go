@@ -63,7 +63,7 @@ type Session struct {
 	Findings     []*Finding
 }
 
-func (s *Session) Start() {
+func (s *Session) Initialize() {
 	s.InitStats()
 	s.InitLogger()
 	s.InitThreads()
@@ -256,7 +256,7 @@ func NewSession() (*Session, error) {
 	}
 
 	session.Version = common.Version
-	session.Start()
+	session.Initialize()
 
 	return &session, nil
 }
