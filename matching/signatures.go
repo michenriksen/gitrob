@@ -8,12 +8,6 @@ const (
 	PartPath      = "path"
 )
 
-type Signature interface {
-	Match(file MatchFile) bool
-	GetDescription() string
-	GetComment() string
-}
-
 var Signatures = []Signature{
 	SimpleSignature{
 		Part:        PartExtension,
