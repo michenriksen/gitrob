@@ -12,11 +12,11 @@ type PatternSignature struct {
 func (s PatternSignature) Match(file MatchFile) bool {
 	var haystack *string
 	switch s.Part {
-	case PartPath:
+	case fileSignatureTypes.Path:
 		haystack = &file.Path
-	case PartFilename:
+	case fileSignatureTypes.Filename:
 		haystack = &file.Filename
-	case PartExtension:
+	case fileSignatureTypes.Extension:
 		haystack = &file.Extension
 	default:
 		return false
