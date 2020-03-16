@@ -10,9 +10,6 @@ import (
 )
 
 const (
-	TypeSimple  = "simple"
-	TypePattern = "pattern"
-
 	PartExtension = "extension"
 	PartFilename  = "filename"
 	PartPath      = "path"
