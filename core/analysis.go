@@ -11,7 +11,6 @@ import (
 	"sync"
 )
 
-
 func PrintSessionStats(sess *Session) {
 	sess.Out.Info("\nFindings....: %d\n", sess.Stats.Findings)
 	sess.Out.Info("Files.......: %d\n", sess.Stats.Files)

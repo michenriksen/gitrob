@@ -4,7 +4,7 @@ import "regexp"
 
 type PatternSignature struct {
 	Part        string
-	MatchOn       *regexp.Regexp
+	MatchOn     *regexp.Regexp
 	Description string
 	Comment     string
 }

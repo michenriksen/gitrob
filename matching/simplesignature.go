@@ -1,9 +1,8 @@
 package matching
 
-
 type SimpleSignature struct {
 	Part        string
-	MatchOn       string
+	MatchOn     string
 	Description string
 	Comment     string
 }
