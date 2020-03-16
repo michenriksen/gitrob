@@ -1,7 +1,6 @@
 package core
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,10 +11,9 @@ import (
 	"time"
 
 	"github.com/codeEmitter/gitrob/common"
+	gh "github.com/codeEmitter/gitrob/github"
+	gl "github.com/codeEmitter/gitrob/gitlab"
 	"github.com/gin-gonic/gin"
-	"github.com/google/go-github/github"
-	"github.com/xanzy/go-gitlab"
-	"golang.org/x/oauth2"
 )
 
 const (
@@ -42,32 +40,30 @@ type Stats struct {
 }
 
 type Github struct {
-	AccessToken string         `json:"-"`
-	Client      *github.Client `json:"-"`
+	AccessToken string `json:"-"`
 }
 
 type GitLab struct {
 	AccessToken string `json:"-"`
-	Client      *gitlab.Client
-	UserID      int64
 }
 
 type Session struct {
 	sync.Mutex
 
 	Version      string
-	Options      Options `json:"-"`
-	Out          *Logger `json:"-"`
+	Options      Options `json:"-"` //do not unmarshal to json on save
+	Out          *Logger `json:"-"` //do not unmarshal to json on save
 	Stats        *Stats
-	Github       Github
-	GitLab       GitLab
-	Router       *gin.Engine `json:"-"`
+	Github       Github         `json:"-"` //do not unmarshal to json on save
+	GitLab       GitLab         `json:"-"` //do not unmarshal to json on save
+	Client       common.IClient `json:"-"` //do not unmarshal to json on save
+	Router       *gin.Engine    `json:"-"` //do not unmarshal to json on save
 	Targets      []*common.Owner
 	Repositories []*common.Repository
 	Findings     []*Finding
 }
 
-func (s *Session) Start() {
+func (s *Session) Initialize() {
 	s.InitStats()
 	s.InitLogger()
 	s.InitThreads()
@@ -146,28 +142,21 @@ func (s *Session) InitAccessToken() {
 }
 
 func (s *Session) ValidateTokenConfig() {
-	if s.GitLab.AccessToken != "" && s.Github.AccessToken != "" {
-		s.Out.Fatal("Both a GitLab and Github token are present.  Only one may be set.")
-	}
-	if s.GitLab.AccessToken == "" && s.Github.AccessToken == "" {
-		s.Out.Fatal("No valid API token was found.\n")
+	if *s.Options.Load == "" {
+		if s.GitLab.AccessToken != "" && s.Github.AccessToken != "" {
+			s.Out.Fatal("Both a GitLab and Github token are present.  Only one may be set.")
+		}
+		if s.GitLab.AccessToken == "" && s.Github.AccessToken == "" {
+			s.Out.Fatal("No valid API token was found.\n")
+		}
 	}
 }
 
 func (s *Session) InitAPIClient() {
-	userAgent := fmt.Sprintf("%s v%s", Name, Version)
 	if s.Github.AccessToken != "" {
-		ctx := context.Background()
-		ts := oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: s.Github.AccessToken},
-		)
-		tc := oauth2.NewClient(ctx, ts)
-		s.Github.Client = github.NewClient(tc)
-		s.Github.Client.UserAgent = userAgent
-	}
-	if s.GitLab.AccessToken != "" {
-		s.GitLab.Client = gitlab.NewClient(nil, s.GitLab.AccessToken)
-		s.GitLab.Client.UserAgent = userAgent
+		s.Client = gh.Client.NewClient(gh.Client{}, s.Github.AccessToken)
+	} else {
+		s.Client = gl.Client.NewClient(gl.Client{}, s.GitLab.AccessToken)
 	}
 }
 
@@ -266,8 +255,8 @@ func NewSession() (*Session, error) {
 		}
 	}
 
-	session.Version = Version
-	session.Start()
+	session.Version = common.Version
+	session.Initialize()
 
 	return &session, nil
 }

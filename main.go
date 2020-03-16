@@ -23,30 +23,17 @@ func GatherTargets(sess *core.Session) {
 	sess.Stats.Status = core.StatusGathering
 	sess.Out.Important("Gathering targets...\n")
 
-	for _, login := range sess.Options.Logins {
-		target, err := func() (*common.Owner, error) {
-			if sess.Github.AccessToken != "" {
-				return github.GetUserOrOrganization(login, sess.Github.Client)
-			} else {
-				return gitlab.GetUserOrOrganization(login, sess.GitLab.Client)
-			}
-		}()
-
+	for _, loginOption := range sess.Options.Logins {
+		target, err := sess.Client.GetUserOrOrganization(loginOption)
 		if err != nil || target == nil {
-			sess.Out.Error(" Error retrieving information on %s: %s\n", login, err)
+			sess.Out.Error(" Error retrieving information on %s: %s\n", loginOption, err)
 			continue
 		}
 		sess.Out.Debug("%s (ID: %d) type: %s\n", *target.Login, *target.ID, *target.Type)
 		sess.AddTarget(target)
 		if *sess.Options.NoExpandOrgs == false && *target.Type == common.TargetTypeOrganization {
 			sess.Out.Debug("Gathering members of %s (ID: %d)...\n", *target.Login, *target.ID)
-			members, err := func() ([]*common.Owner, error) {
-				if sess.Github.AccessToken != "" {
-					return github.GetOrganizationMembers(target.Login, sess.Github.Client)
-				} else {
-					return gitlab.GetOrganizationMembers(*target.ID, sess.GitLab.Client)
-				}
-			}()
+			members, err := sess.Client.GetOrganizationMembers(*target)
 			if err != nil {
 				sess.Out.Error(" Error retrieving members of %s: %s\n", *target.Login, err)
 				continue
@@ -80,13 +67,7 @@ func GatherRepositories(sess *core.Session) {
 					wg.Done()
 					return
 				}
-				repos, err := func() ([]*common.Repository, error) {
-					if sess.Github.AccessToken != "" {
-						return github.GetRepositoriesFromOwner(target.Login, sess.Github.Client)
-					} else {
-						return gitlab.GetRepositoriesFromOwner(*target, sess.GitLab.Client)
-					}
-				}()
+				repos, err := sess.Client.GetRepositoriesFromOwner(*target)
 				if err != nil {
 					sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
 				}
@@ -253,8 +234,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	sess.Out.Info("%s\n\n", core.ASCIIBanner)
-	sess.Out.Important("%s v%s started at %s\n", core.Name, core.Version, sess.Stats.StartedAt.Format(time.RFC3339))
+	sess.Out.Info("%s\n\n", common.ASCIIBanner)
+	sess.Out.Important("%s v%s started at %s\n", common.Name, common.Version, sess.Stats.StartedAt.Format(time.RFC3339))
 	sess.Out.Important("Loaded %d signatures\n", len(core.Signatures))
 	sess.Out.Important("Web interface available at http://%s:%d\n", *sess.Options.BindAddress, *sess.Options.Port)
 
