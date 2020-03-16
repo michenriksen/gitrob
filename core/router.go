@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/codeEmitter/gitrob/common"
 	assetfs "github.com/elazarl/go-bindata-assetfs"
 	"github.com/gin-contrib/secure"
 	"github.com/gin-contrib/static"
@@ -92,7 +93,8 @@ func fetchFile(c *gin.Context) {
 		if IsGithub {
 			return fmt.Sprintf("%s/%s/%s/%s%s", GithubBaseUri, c.Param("owner"), c.Param("repo"), c.Param("commit"), c.Param("path"))
 		} else {
-			return fmt.Sprintf("%s/%s/%s/%s/%s%s", GitLabBaseUri, c.Param("owner"), c.Param("repo"), "/-/raw/", c.Param("commit"), c.Param("path"))
+			results := common.CleanUrlSpaces(c.Param("owner"), c.Param("repo"), c.Param("commit"), c.Param("path"))
+			return fmt.Sprintf("%s/%s/%s/%s/%s%s", GitLabBaseUri, results[0], results[1], "/-/raw/", results[2], results[3])
 		}
 	}()
 	resp, err := http.Head(fileUrl)
