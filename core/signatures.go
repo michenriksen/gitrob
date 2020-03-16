@@ -3,6 +3,7 @@ package core
 import (
 	"crypto/sha1"
 	"fmt"
+	"github.com/codeEmitter/gitrob/common"
 	"io"
 	"path/filepath"
 	"regexp"
@@ -62,9 +63,8 @@ func (f *Finding) setupUrls(isGithubSession bool) {
 		f.FileUrl = fmt.Sprintf("%s/blob/%s/%s", f.RepositoryUrl, f.CommitHash, f.FilePath)
 		f.CommitUrl = fmt.Sprintf("%s/commit/%s", f.RepositoryUrl, f.CommitHash)
 	} else {
-		repoOwner := strings.ReplaceAll(f.RepositoryOwner, " ", "-")
-		repoName := strings.ReplaceAll(f.RepositoryName, " ", "-")
-		f.RepositoryUrl = fmt.Sprintf("https://gitlab.com/%s/%s", repoOwner, repoName)
+		results := common.CleanUrlSpaces(f.RepositoryOwner, f.RepositoryName)
+		f.RepositoryUrl = fmt.Sprintf("https://gitlab.com/%s/%s", results[0], results[1])
 		f.FileUrl = fmt.Sprintf("%s/blob/%s/%s", f.RepositoryUrl, f.CommitHash, f.FilePath)
 		f.CommitUrl = fmt.Sprintf("%s/commit/%s", f.RepositoryUrl, f.CommitHash)
 	}
