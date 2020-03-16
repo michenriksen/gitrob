@@ -4,6 +4,7 @@ import (
 	"github.com/codeEmitter/gitrob/common"
 	"github.com/codeEmitter/gitrob/github"
 	"github.com/codeEmitter/gitrob/gitlab"
+	"github.com/codeEmitter/gitrob/matching"
 	"gopkg.in/src-d/go-git.v4"
 	"os"
 	"strings"
@@ -162,7 +163,7 @@ func AnalyzeRepositories(sess *Session) {
 					for _, change := range changes {
 						changeAction := common.GetChangeAction(change)
 						path := common.GetChangePath(change)
-						matchFile := NewMatchFile(path)
+						matchFile := matching.NewMatchFile(path)
 						if matchFile.IsSkippable() {
 							sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", tid, *repo.CloneURL, matchFile.Path)
 							continue
