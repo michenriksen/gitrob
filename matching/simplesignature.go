@@ -1,13 +1,13 @@
 package matching
 
-type SimpleSignature struct {
+type SimpleFileSignature struct {
 	Part        string
 	MatchOn     string
 	Description string
 	Comment     string
 }
 
-func (s SimpleSignature) Match(file MatchFile) bool {
+func (s SimpleFileSignature) Match(file MatchFile) bool {
 	var haystack *string
 	switch s.Part {
 	case fileSignatureTypes.Path:
@@ -23,10 +23,10 @@ func (s SimpleSignature) Match(file MatchFile) bool {
 	return s.MatchOn == *haystack
 }
 
-func (s SimpleSignature) GetDescription() string {
+func (s SimpleFileSignature) GetDescription() string {
 	return s.Description
 }
 
-func (s SimpleSignature) GetComment() string {
+func (s SimpleFileSignature) GetComment() string {
 	return s.Comment
 }

@@ -2,14 +2,14 @@ package matching
 
 import "regexp"
 
-type PatternSignature struct {
+type PatternFileSignature struct {
 	Part        string
 	MatchOn     *regexp.Regexp
 	Description string
 	Comment     string
 }
 
-func (s PatternSignature) Match(file MatchFile) bool {
+func (s PatternFileSignature) Match(file MatchFile) bool {
 	var haystack *string
 	switch s.Part {
 	case fileSignatureTypes.Path:
@@ -25,10 +25,10 @@ func (s PatternSignature) Match(file MatchFile) bool {
 	return s.MatchOn.MatchString(*haystack)
 }
 
-func (s PatternSignature) GetDescription() string {
+func (s PatternFileSignature) GetDescription() string {
 	return s.Description
 }
 
-func (s PatternSignature) GetComment() string {
+func (s PatternFileSignature) GetComment() string {
 	return s.Comment
 }
