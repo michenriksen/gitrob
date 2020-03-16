@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/codeEmitter/gitrob/matching"
 	"io/ioutil"
 	"os"
 	"runtime"
@@ -60,7 +61,7 @@ type Session struct {
 	Router       *gin.Engine    `json:"-"` //do not unmarshal to json on save
 	Targets      []*common.Owner
 	Repositories []*common.Repository
-	Findings     []*Finding
+	Findings     []*matching.Finding
 }
 
 func (s *Session) Initialize() {
@@ -100,7 +101,7 @@ func (s *Session) AddRepository(repository *common.Repository) {
 	s.Repositories = append(s.Repositories, repository)
 }
 
-func (s *Session) AddFinding(finding *Finding) {
+func (s *Session) AddFinding(finding *matching.Finding) {
 	s.Lock()
 	defer s.Unlock()
 	s.Findings = append(s.Findings, finding)

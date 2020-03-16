@@ -169,14 +169,14 @@ func AnalyzeRepositories(sess *Session) {
 							continue
 						}
 						sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", tid, *repo.CloneURL, matchFile.Path)
-						for _, signature := range Signatures {
+						for _, signature := range matching.Signatures {
 							if signature.Match(matchFile) {
 
-								finding := &Finding{
+								finding := &matching.Finding{
 									FilePath:        path,
 									Action:          changeAction,
-									Description:     signature.Description(),
-									Comment:         signature.Comment(),
+									Description:     signature.GetDescription(),
+									Comment:         signature.GetComment(),
 									RepositoryOwner: *repo.Owner,
 									RepositoryName:  *repo.Name,
 									CommitHash:      commit.Hash.String(),
