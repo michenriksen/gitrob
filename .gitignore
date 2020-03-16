@@ -10,7 +10,9 @@ gitrob.exe
 vendor/
 build/
 .vscode
+.idea
 __debug_bin
+go_build_gitrob_
 
 # Test binary, build with `go test -c`
 *.test
