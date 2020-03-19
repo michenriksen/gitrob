@@ -9,14 +9,8 @@ import (
 )
 
 type Signatures struct {
-	FileSignatures []FileSignature
+	FileSignatures    []FileSignature
 	ContentSignatures []ContentSignature
-}
-
-type ContentSignature struct {
-	MatchOn string
-	Description string
-	Comment string
 }
 
 func (s *Signatures) Load(mode int) error {
@@ -32,4 +26,3 @@ func (s *Signatures) Load(mode int) error {
 	}
 	return nil
 }
-
