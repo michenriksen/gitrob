@@ -1,6 +1,6 @@
 package matching
 
-type FileSignature interface {
+type IFileSignature interface {
 	Match(file MatchFile) bool
 	GetDescription() string
 	GetComment() string

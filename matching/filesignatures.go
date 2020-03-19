@@ -14,7 +14,7 @@ var fileSignatureTypes = FileSignatureType{
 	Path:      "path",
 }
 
-var FileSignatures = []FileSignature{
+var FileSignatures = []IFileSignature{
 	SimpleFileSignature{
 		Part:        fileSignatureTypes.Extension,
 		MatchOn:     ".pem",
