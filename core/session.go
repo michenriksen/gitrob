@@ -62,6 +62,7 @@ type Session struct {
 	Targets      []*common.Owner
 	Repositories []*common.Repository
 	Findings     []*matching.Finding
+	Signatures matching.Signatures
 }
 
 func (s *Session) Initialize() {
@@ -69,9 +70,15 @@ func (s *Session) Initialize() {
 	s.InitLogger()
 	s.InitThreads()
 	s.InitAccessToken()
+	s.InitSignatures()
 	s.ValidateTokenConfig()
 	s.InitAPIClient()
 	s.InitRouter()
+}
+
+func (s *Session) InitSignatures() {
+	s.Signatures = matching.Signatures{}
+	s.Signatures.Load(*s.Options.Mode)
 }
 
 func (s *Session) Finish() {

@@ -1,9 +1,0 @@
-[
-  {
-    "type": "file",
-    "part": "extension",
-    "match": ".pem",
-    "description": "Potential cryptographic private key",
-    "comment": ""
-  }
-]
