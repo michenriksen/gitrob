@@ -1,20 +1,12 @@
-package core
+package common
 
 import (
 	"fmt"
-	"os"
 	"regexp"
 	"strings"
 )
 
 var NewlineRegex = regexp.MustCompile(`\r?\n`)
-
-func FileExists(path string) bool {
-	if _, err := os.Stat(path); os.IsNotExist(err) {
-		return false
-	}
-	return true
-}
 
 func Pluralize(count int, singular string, plural string) string {
 	if count == 1 {

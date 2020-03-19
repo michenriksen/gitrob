@@ -239,12 +239,12 @@ func NewSession() (*Session, error) {
 		return nil, err
 	}
 
-	if *session.Options.Save != "" && FileExists(*session.Options.Save) {
+	if *session.Options.Save != "" && common.FileExists(*session.Options.Save) {
 		return nil, errors.New(fmt.Sprintf("File: %s already exists.", *session.Options.Save))
 	}
 
 	if *session.Options.Load != "" {
-		if !FileExists(*session.Options.Load) {
+		if !common.FileExists(*session.Options.Load) {
 			return nil, errors.New(fmt.Sprintf("Session file %s does not exist or is not readable.", *session.Options.Load))
 		}
 		data, err := ioutil.ReadFile(*session.Options.Load)

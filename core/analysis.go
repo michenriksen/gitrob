@@ -79,7 +79,7 @@ func GatherRepositories(sess *Session) {
 					sess.AddRepository(repo)
 				}
 				sess.Stats.IncrementTargets()
-				sess.Out.Info(" Retrieved %d %s from %s\n", len(repos), Pluralize(len(repos), "repository", "repositories"), *target.Login)
+				sess.Out.Info(" Retrieved %d %s from %s\n", len(repos), common.Pluralize(len(repos), "repository", "repositories"), *target.Login)
 			}
 		}()
 	}
@@ -106,7 +106,7 @@ func AnalyzeRepositories(sess *Session) {
 	wg.Add(threadNum)
 	sess.Out.Debug("Threads for repository analysis: %d\n", threadNum)
 
-	sess.Out.Important("Analyzing %d %s...\n", len(sess.Repositories), Pluralize(len(sess.Repositories), "repository", "repositories"))
+	sess.Out.Important("Analyzing %d %s...\n", len(sess.Repositories), common.Pluralize(len(sess.Repositories), "repository", "repositories"))
 
 	for i := 0; i < threadNum; i++ {
 		go func(tid int) {
@@ -188,7 +188,7 @@ func AnalyzeRepositories(sess *Session) {
 								sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
 								sess.Out.Info("  Path.......: %s\n", finding.FilePath)
 								sess.Out.Info("  Repo.......: %s\n", *repo.CloneURL)
-								sess.Out.Info("  Message....: %s\n", TruncateString(finding.CommitMessage, 100))
+								sess.Out.Info("  Message....: %s\n", common.TruncateString(finding.CommitMessage, 100))
 								sess.Out.Info("  Author.....: %s\n", finding.CommitAuthor)
 								if finding.Comment != "" {
 									sess.Out.Info("  Comment....: %s\n", finding.Comment)
