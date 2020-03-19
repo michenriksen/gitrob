@@ -7,6 +7,7 @@ import (
 	"github.com/codeEmitter/gitrob/matching"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"runtime"
 	"sync"
 	"time"
@@ -79,6 +80,10 @@ func (s *Session) Initialize() {
 func (s *Session) InitSignatures() {
 	s.Signatures = matching.Signatures{}
 	s.Signatures.Load(*s.Options.Mode)
+	for _, fileSignature := range s.Signatures.FileSignatures {
+		s.Out.Info(fileSignature.MatchOn)
+		fileSignature.CompiledRegex = regexp.MustCompile(fileSignature.MatchOn)
+	}
 }
 
 func (s *Session) Finish() {

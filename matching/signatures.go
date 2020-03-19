@@ -19,14 +19,6 @@ type ContentSignature struct {
 	Comment string
 }
 
-type FileSignature struct {
-	Kind string
-	Part string
-	MatchOn string
-	Description string
-	Comment string
-}
-
 func (s *Signatures) Load(mode int) error {
 	fileSignaturePath := "./filesignatures.json"
 	if !common.FileExists(fileSignaturePath) {
@@ -41,26 +33,3 @@ func (s *Signatures) Load(mode int) error {
 	return nil
 }
 
-func (s FileSignature) Match(file MatchFile) bool {
-	var haystack *string
-	switch s.Part {
-	case fileSignatureTypes.Path:
-		haystack = &file.Path
-	case fileSignatureTypes.Filename:
-		haystack = &file.Filename
-	case fileSignatureTypes.Extension:
-		haystack = &file.Extension
-	default:
-		return false
-	}
-
-	return s.MatchOn == *haystack
-}
-
-func (s FileSignature) GetDescription() string {
-	return s.Description
-}
-
-func (s FileSignature) GetComment() string {
-	return s.Comment
-}
