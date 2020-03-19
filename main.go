@@ -21,9 +21,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	signatures := matching.Signatures{}
+	err := signatures.Load(*sess.Options.Mode); if err != nil {
+		sess.Out.Fatal(err.Error())
+	}
+
 	sess.Out.Info("%s\n\n", common.ASCIIBanner)
 	sess.Out.Important("%s v%s started at %s\n", common.Name, common.Version, sess.Stats.StartedAt.Format(time.RFC3339))
-	sess.Out.Important("Loaded %d signatures\n", len(matching.FileSignatures))
+	sess.Out.Important("Loaded %d signatures\n", len(signatures.FileSignatures))
 	sess.Out.Important("Web interface available at http://%s:%d\n", *sess.Options.BindAddress, *sess.Options.Port)
 
 	if sess.Stats.Status == "finished" {
