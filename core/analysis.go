@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"github.com/codeEmitter/gitrob/common"
 	"github.com/codeEmitter/gitrob/github"
 	"github.com/codeEmitter/gitrob/gitlab"
@@ -170,8 +171,11 @@ func AnalyzeRepositories(sess *Session) {
 						sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", tid, *repo.CloneURL, matchFile.Path)
 
 						for _, signature := range sess.Signatures.FileSignatures {
-							if signature.Match(matchFile) {
-
+							matched, err := signature.Match(matchFile)
+							if err != nil {
+								sess.Out.Fatal(fmt.Sprintf("Error while performing match: %s", err))
+							}
+							if matched {
 								finding := &matching.Finding{
 									FilePath:        path,
 									Action:          changeAction,

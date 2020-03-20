@@ -1,6 +1,10 @@
 package matching
 
-import "regexp"
+import (
+	"errors"
+	"fmt"
+	"regexp"
+)
 
 
 type FileSignatureType struct {
@@ -20,22 +24,21 @@ type FileSignature struct {
 	MatchOn string
 	Description string
 	Comment string
-	CompiledRegex *regexp.Regexp
 }
 
-func (s FileSignature) Match(file MatchFile) bool {
-	var haystack string
+func (s FileSignature) Match(file MatchFile) (bool, error) {
+	var haystack *string
 	switch s.Part {
 	case fileSignatureTypes.Path:
-		haystack = file.Path
+		haystack = &file.Path
 	case fileSignatureTypes.Filename:
-		haystack = file.Filename
+		haystack = &file.Filename
 	case fileSignatureTypes.Extension:
-		haystack = file.Extension
+		haystack = &file.Extension
 	default:
-		return false
+		return false, errors.New(fmt.Sprintf("Unrecognized 'Part' parameter: %s\n", s.Part))
 	}
-	return s.CompiledRegex.MatchString(haystack)
+	return regexp.MatchString(s.MatchOn, *haystack)
 }
 
 func (s FileSignature) GetDescription() string {
