@@ -170,45 +170,47 @@ func AnalyzeRepositories(sess *Session) {
 						}
 						sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", tid, *repo.CloneURL, matchFile.Path)
 
-						for _, signature := range sess.Signatures.FileSignatures {
-							matched, err := signature.Match(matchFile)
-							if err != nil {
-								sess.Out.Fatal(fmt.Sprintf("Error while performing match: %s", err))
-							}
-							if matched {
-								finding := &matching.Finding{
-									FilePath:        path,
-									Action:          changeAction,
-									Description:     signature.GetDescription(),
-									Comment:         signature.GetComment(),
-									RepositoryOwner: *repo.Owner,
-									RepositoryName:  *repo.Name,
-									CommitHash:      commit.Hash.String(),
-									CommitMessage:   strings.TrimSpace(commit.Message),
-									CommitAuthor:    commit.Author.String(),
+						if *sess.Options.Mode != 3 {
+							for _, signature := range sess.Signatures.FileSignatures {
+								matched, err := signature.Match(matchFile)
+								if err != nil {
+									sess.Out.Fatal(fmt.Sprintf("Error while performing match: %s", err))
 								}
-								finding.Initialize(sess.Github.AccessToken != "")
-								sess.AddFinding(finding)
+								if matched {
+									finding := &matching.Finding{
+										FilePath:        path,
+										Action:          changeAction,
+										Description:     signature.GetDescription(),
+										Comment:         signature.GetComment(),
+										RepositoryOwner: *repo.Owner,
+										RepositoryName:  *repo.Name,
+										CommitHash:      commit.Hash.String(),
+										CommitMessage:   strings.TrimSpace(commit.Message),
+										CommitAuthor:    commit.Author.String(),
+									}
+									finding.Initialize(sess.Github.AccessToken != "")
+									sess.AddFinding(finding)
 
-								sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
-								sess.Out.Info("  Path.......: %s\n", finding.FilePath)
-								sess.Out.Info("  Repo.......: %s\n", *repo.CloneURL)
-								sess.Out.Info("  Message....: %s\n", common.TruncateString(finding.CommitMessage, 100))
-								sess.Out.Info("  Author.....: %s\n", finding.CommitAuthor)
-								if finding.Comment != "" {
-									sess.Out.Info("  Comment....: %s\n", finding.Comment)
+									sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
+									sess.Out.Info("  Path.......: %s\n", finding.FilePath)
+									sess.Out.Info("  Repo.......: %s\n", *repo.CloneURL)
+									sess.Out.Info("  Message....: %s\n", common.TruncateString(finding.CommitMessage, 100))
+									sess.Out.Info("  Author.....: %s\n", finding.CommitAuthor)
+									if finding.Comment != "" {
+										sess.Out.Info("  Comment....: %s\n", finding.Comment)
+									}
+									sess.Out.Info("  File URL...: %s\n", finding.FileUrl)
+									sess.Out.Info("  Commit URL.: %s\n", finding.CommitUrl)
+									sess.Out.Info(" ------------------------------------------------\n\n")
+									sess.Stats.IncrementFindings()
+									break
 								}
-								sess.Out.Info("  File URL...: %s\n", finding.FileUrl)
-								sess.Out.Info("  Commit URL.: %s\n", finding.CommitUrl)
-								sess.Out.Info(" ------------------------------------------------\n\n")
-								sess.Stats.IncrementFindings()
-								break
 							}
+							sess.Stats.IncrementFiles()
 						}
-						sess.Stats.IncrementFiles()
+						sess.Stats.IncrementCommits()
+						sess.Out.Debug("[THREAD #%d][%s] Done analyzing changes in %s\n", tid, *repo.CloneURL, commit.Hash)
 					}
-					sess.Stats.IncrementCommits()
-					sess.Out.Debug("[THREAD #%d][%s] Done analyzing changes in %s\n", tid, *repo.CloneURL, commit.Hash)
 				}
 				sess.Out.Debug("[THREAD #%d][%s] Done analyzing commits\n", tid, *repo.CloneURL)
 				os.RemoveAll(path)
