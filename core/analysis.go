@@ -163,48 +163,49 @@ func AnalyzeRepositories(sess *Session) {
 					for _, change := range changes {
 						changeAction := common.GetChangeAction(change)
 						path := common.GetChangePath(change)
-						matchFile := matching.NewMatchFile(path)
-						if matchFile.IsSkippable() {
-							sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", tid, *repo.CloneURL, matchFile.Path)
+						matchTarget := matching.NewMatchTarget(path)
+						if matchTarget.IsSkippable() {
+							sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", tid, *repo.CloneURL, matchTarget.Path)
 							continue
 						}
-						sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", tid, *repo.CloneURL, matchFile.Path)
+						sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", tid, *repo.CloneURL, matchTarget.Path)
 
 						if *sess.Options.Mode != 3 {
-							for _, signature := range sess.Signatures.FileSignatures {
-								matched, err := signature.Match(matchFile)
+							for _, fileSignature := range sess.Signatures.FileSignatures {
+								matched, err := fileSignature.Match(matchTarget)
 								if err != nil {
 									sess.Out.Fatal(fmt.Sprintf("Error while performing match: %s", err))
 								}
-								if matched {
-									finding := &matching.Finding{
-										FilePath:        path,
-										Action:          changeAction,
-										Description:     signature.GetDescription(),
-										Comment:         signature.GetComment(),
-										RepositoryOwner: *repo.Owner,
-										RepositoryName:  *repo.Name,
-										CommitHash:      commit.Hash.String(),
-										CommitMessage:   strings.TrimSpace(commit.Message),
-										CommitAuthor:    commit.Author.String(),
-									}
-									finding.Initialize(sess.Github.AccessToken != "")
-									sess.AddFinding(finding)
-
-									sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
-									sess.Out.Info("  Path.......: %s\n", finding.FilePath)
-									sess.Out.Info("  Repo.......: %s\n", *repo.CloneURL)
-									sess.Out.Info("  Message....: %s\n", common.TruncateString(finding.CommitMessage, 100))
-									sess.Out.Info("  Author.....: %s\n", finding.CommitAuthor)
-									if finding.Comment != "" {
-										sess.Out.Info("  Comment....: %s\n", finding.Comment)
-									}
-									sess.Out.Info("  File URL...: %s\n", finding.FileUrl)
-									sess.Out.Info("  Commit URL.: %s\n", finding.CommitUrl)
-									sess.Out.Info(" ------------------------------------------------\n\n")
-									sess.Stats.IncrementFindings()
-									break
+								if !matched {
+									continue
 								}
+								finding := &matching.Finding{
+									FilePath:        path,
+									Action:          changeAction,
+									Description:     fileSignature.GetDescription(),
+									Comment:         fileSignature.GetComment(),
+									RepositoryOwner: *repo.Owner,
+									RepositoryName:  *repo.Name,
+									CommitHash:      commit.Hash.String(),
+									CommitMessage:   strings.TrimSpace(commit.Message),
+									CommitAuthor:    commit.Author.String(),
+								}
+								finding.Initialize(sess.Github.AccessToken != "")
+								sess.AddFinding(finding)
+
+								sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
+								sess.Out.Info("  Path.......: %s\n", finding.FilePath)
+								sess.Out.Info("  Repo.......: %s\n", *repo.CloneURL)
+								sess.Out.Info("  Message....: %s\n", common.TruncateString(finding.CommitMessage, 100))
+								sess.Out.Info("  Author.....: %s\n", finding.CommitAuthor)
+								if finding.Comment != "" {
+									sess.Out.Info("  Comment....: %s\n", finding.Comment)
+								}
+								sess.Out.Info("  File URL...: %s\n", finding.FileUrl)
+								sess.Out.Info("  Commit URL.: %s\n", finding.CommitUrl)
+								sess.Out.Info(" ------------------------------------------------\n\n")
+								sess.Stats.IncrementFindings()
+								break
 							}
 							sess.Stats.IncrementFiles()
 						}

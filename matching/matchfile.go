@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-type MatchFile struct {
+type MatchTarget struct {
 	Path      string
 	Filename  string
 	Extension string
@@ -14,7 +14,7 @@ type MatchFile struct {
 var skippableExtensions = []string{".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".psd", ".xcf"}
 var skippablePathIndicators = []string{"node_modules/", "vendor/bundle", "vendor/cache"}
 
-func (f *MatchFile) IsSkippable() bool {
+func (f *MatchTarget) IsSkippable() bool {
 	ext := strings.ToLower(f.Extension)
 	path := strings.ToLower(f.Path)
 	for _, skippableExt := range skippableExtensions {
@@ -30,10 +30,10 @@ func (f *MatchFile) IsSkippable() bool {
 	return false
 }
 
-func NewMatchFile(path string) MatchFile {
+func NewMatchTarget(path string) MatchTarget {
 	_, filename := filepath.Split(path)
 	extension := filepath.Ext(path)
-	return MatchFile{
+	return MatchTarget{
 		Path:      path,
 		Filename:  filename,
 		Extension: extension,

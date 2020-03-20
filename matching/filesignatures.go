@@ -26,7 +26,7 @@ type FileSignature struct {
 	Comment string
 }
 
-func (s FileSignature) Match(file MatchFile) (bool, error) {
+func (s FileSignature) Match(file MatchTarget) (bool, error) {
 	var haystack *string
 	switch s.Part {
 	case fileSignatureTypes.Path:
