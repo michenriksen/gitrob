@@ -188,7 +188,7 @@
     },
     {
       "Part": "path",
-      "MatchOn": "",
+      "MatchOn": "\\.?gem/credentials$",
       "Description": "Rubygems credentials file",
       "Comment": "Can contain API key for a rubygems.org account"
     },
