@@ -1,0 +1,29 @@
+{
+  "ContentSignatures": [
+    {
+      "MatchOn": "aws_secret_access_key.*?[a-zA-Z0-9/\\\\+]{40}",
+      "Description": "AWS Secret Key",
+      "Comment": ""
+    },
+    {
+      "MatchOn": "(?<![A-Z0-9])[A-Z0-9]{20}(?![A-Z0-9])",
+      "Description": "AWS Access Key ID",
+      "Comment": ""
+    },
+    {
+      "MatchOn": "(?<![A-Za-z0-9/+=])[A-Za-z0-9/+=]{40}(?![A-Za-z0-9/+=])",
+      "Description": "AWS Secret Access Key",
+      "Comment": ""
+    },
+    {
+      "MatchOn": "AKIA[0-9A-Z]{16}",
+      "Description": "Amazon AWS Access Key ID",
+      "Comment": ""
+    },
+    {
+      "MatchOn": "amzn\\\\.mws\\\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+      "Description": "Amazon MWS Auth Token",
+      "Comment": ""
+    }
+  ]
+}
