@@ -163,11 +163,7 @@ func AnalyzeRepositories(sess *Session) {
 					for _, change := range changes {
 						changeAction := common.GetChangeAction(change)
 						path := common.GetChangePath(change)
-						content, err := common.GetChangeContent(change)
-						if err != nil {
-							sess.Out.Fatal(fmt.Sprintf("Error retrieving content from commit: %s", change.To.Name))
-						}
-						matchTarget := matching.NewMatchTarget(path, content)
+						matchTarget := matching.NewMatchTarget(path, "")
 						//how do i get content of the commit `git log
 						if matchTarget.IsSkippable() {
 							sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", tid, *repo.CloneURL, matchTarget.Path)
@@ -183,6 +179,11 @@ func AnalyzeRepositories(sess *Session) {
 								}
 								if !matched {
 									continue
+								}
+								//if mode == 2
+								matchTarget.Content, err = common.GetChangeContent(change)
+								if err != nil {
+									sess.Out.Fatal(fmt.Sprintf("Error retrieving content in commit %s, change %s.", commit.String(), change.String()))
 								}
 								finding := &matching.Finding{
 									FilePath:        path,
