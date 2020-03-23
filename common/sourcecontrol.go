@@ -134,3 +134,20 @@ func GetChangePath(change *object.Change) string {
 		return change.To.Name
 	}
 }
+
+func GetChangeContent(change *object.Change) (string, error) {
+	patch, err := change.Patch()
+	if err != nil {
+		return "", err
+	}
+	result := ""
+	for _, filePatch := range patch.FilePatches() {
+		if filePatch.IsBinary() {
+			continue
+		}
+		for _, chunk := range filePatch.Chunks() {
+			result += chunk.Content()
+		}
+	}
+	return result, nil
+}

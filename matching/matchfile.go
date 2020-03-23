@@ -9,6 +9,7 @@ type MatchTarget struct {
 	Path      string
 	Filename  string
 	Extension string
+	Content string
 }
 
 var skippableExtensions = []string{".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".psd", ".xcf"}
@@ -30,12 +31,13 @@ func (f *MatchTarget) IsSkippable() bool {
 	return false
 }
 
-func NewMatchTarget(path string) MatchTarget {
+func NewMatchTarget(path string, content string) MatchTarget {
 	_, filename := filepath.Split(path)
 	extension := filepath.Ext(path)
 	return MatchTarget{
 		Path:      path,
 		Filename:  filename,
 		Extension: extension,
+		Content: content,
 	}
 }
