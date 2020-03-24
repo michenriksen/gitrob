@@ -114,6 +114,33 @@ func createFinding(repo common.Repository,
 	return finding
 }
 
+func matchContent(sess *Session,
+	matchTarget matching.MatchTarget,
+	repo common.Repository,
+	change *object.Change,
+	commit object.Commit,
+	fileSignature matching.FileSignature,
+	threadId int) {
+
+	content, err := common.GetChangeContent(change)
+	if err != nil {
+		sess.Out.Fatal("Error retrieving content in commit %s, change %s.", commit.String(), change.String())
+	}
+	matchTarget.Content = content
+	sess.Out.Debug("[THREAD #%d][%s] Matching content in %s...\n", threadId, *repo.CloneURL, commit.Hash)
+	for _, contentSignature := range sess.Signatures.ContentSignatures {
+		matched, err := contentSignature.Match(matchTarget)
+		if err != nil {
+			sess.Out.Fatal("Error while performing content match: %s", err)
+		}
+		if !matched {
+			continue
+		}
+		finding := createFinding(repo, commit, change, fileSignature, sess.IsGithubSession)
+		sess.AddFinding(finding)
+	}
+}
+
 func AnalyzeRepositories(sess *Session) {
 	sess.Stats.Status = StatusAnalyzing
 	var ch = make(chan *common.Repository, len(sess.Repositories))
@@ -191,44 +218,27 @@ func AnalyzeRepositories(sess *Session) {
 						}
 						sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", tid, *repo.CloneURL, matchTarget.Path)
 
-						if *sess.Options.Mode != 3 {
-							for _, fileSignature := range sess.Signatures.FileSignatures {
-								matched, err := fileSignature.Match(matchTarget)
-								if err != nil {
-									sess.Out.Fatal(fmt.Sprintf("Error while performing file match: %s", err))
-								}
-								if !matched {
-									continue
-								}
-								if *sess.Options.Mode == 1 {
-									finding := createFinding(*repo, *commit, change, fileSignature, sess.IsGithubSession)
-									sess.AddFinding(finding)
-								}
-								if *sess.Options.Mode == 2 {
-									sess.Out.Debug("[THREAD #%d][%s] Matching content: %s...\n", tid, *repo.CloneURL, matchTarget.Content)
-									matchTarget.Content, err = common.GetChangeContent(change)
-									if err != nil {
-										sess.Out.Fatal(fmt.Sprintf("Error retrieving content in commit %s, change %s.", commit.String(), change.String()))
-									}
-									for _, contentSignature := range sess.Signatures.ContentSignatures {
-										matched, err := contentSignature.Match(matchTarget)
-										if err != nil {
-											sess.Out.Fatal(fmt.Sprintf("Error while performing content match: %s", err))
-										}
-										if !matched {
-											continue
-										}
-										finding := createFinding(*repo, *commit, change, fileSignature, sess.IsGithubSession)
-										sess.AddFinding(finding)
-									}
-								}
-								break
+						for _, fileSignature := range sess.Signatures.FileSignatures {
+							matched, err := fileSignature.Match(matchTarget)
+							if err != nil {
+								sess.Out.Fatal(fmt.Sprintf("Error while performing file match: %s", err))
 							}
-							sess.Stats.IncrementFiles()
+							if !matched {
+								continue
+							}
+							if *sess.Options.Mode == 1 {
+								finding := createFinding(*repo, *commit, change, fileSignature, sess.IsGithubSession)
+								sess.AddFinding(finding)
+							}
+							if *sess.Options.Mode == 2 {
+								matchContent(sess, matchTarget, *repo, change, *commit, fileSignature, tid)
+							}
+							break
 						}
-						sess.Stats.IncrementCommits()
-						sess.Out.Debug("[THREAD #%d][%s] Done analyzing changes in %s\n", tid, *repo.CloneURL, commit.Hash)
+						sess.Stats.IncrementFiles()
 					}
+					sess.Stats.IncrementCommits()
+					sess.Out.Debug("[THREAD #%d][%s] Done analyzing changes in %s\n", tid, *repo.CloneURL, commit.Hash)
 				}
 				sess.Out.Debug("[THREAD #%d][%s] Done analyzing commits\n", tid, *repo.CloneURL)
 				os.RemoveAll(path)
