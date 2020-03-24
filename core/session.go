@@ -78,7 +78,10 @@ func (s *Session) Initialize() {
 
 func (s *Session) InitSignatures() {
 	s.Signatures = matching.Signatures{}
-	s.Signatures.Load(*s.Options.Mode)
+	err := s.Signatures.Load(*s.Options.Mode)
+	if err != nil {
+		s.Out.Fatal("Error loading signatures: %s\n", err)
+	}
 }
 
 func (s *Session) Finish() {
