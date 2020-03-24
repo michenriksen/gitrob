@@ -26,25 +26,25 @@ type FileSignature struct {
 	Comment string
 }
 
-func (s FileSignature) Match(file MatchTarget) (bool, error) {
+func (f FileSignature) Match(target MatchTarget) (bool, error) {
 	var haystack *string
-	switch s.Part {
+	switch f.Part {
 	case fileSignatureTypes.Path:
-		haystack = &file.Path
+		haystack = &target.Path
 	case fileSignatureTypes.Filename:
-		haystack = &file.Filename
+		haystack = &target.Filename
 	case fileSignatureTypes.Extension:
-		haystack = &file.Extension
+		haystack = &target.Extension
 	default:
-		return false, errors.New(fmt.Sprintf("Unrecognized 'Part' parameter: %s\n", s.Part))
+		return false, errors.New(fmt.Sprintf("Unrecognized 'Part' parameter: %f\n", f.Part))
 	}
-	return regexp.MatchString(s.MatchOn, *haystack)
+	return regexp.MatchString(f.MatchOn, *haystack)
 }
 
-func (s FileSignature) GetDescription() string {
-	return s.Description
+func (f FileSignature) GetDescription() string {
+	return f.Description
 }
 
-func (s FileSignature) GetComment() string {
-	return s.Comment
+func (f FileSignature) GetComment() string {
+	return f.Comment
 }
