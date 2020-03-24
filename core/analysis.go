@@ -172,6 +172,39 @@ func matchFile(sess *Session, repo *common.Repository, commit *object.Commit, ch
 	}
 }
 
+func cloneRepository(sess *Session, repo *common.Repository, threadId int) (*git.Repository, string, error) {
+	sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", threadId, *repo.CloneURL)
+
+	cloneConfig := common.CloneConfiguration{
+		Url:    repo.CloneURL,
+		Branch: repo.DefaultBranch,
+		Depth:  sess.Options.CommitDepth,
+		Token:  &sess.GitLab.AccessToken,
+	}
+
+	var clone *git.Repository
+	var path string
+	var err error
+
+	if sess.IsGithubSession {
+		clone, path, err = github.CloneRepository(&cloneConfig)
+	} else {
+		userName := "oauth2"
+		cloneConfig.Username = &userName
+		clone, path, err = gitlab.CloneRepository(&cloneConfig)
+	}
+	if err != nil {
+		if err.Error() != "remote repository is empty" {
+			sess.Out.Error("Error cloning repository %s: %s\n", *repo.CloneURL, err)
+		}
+		sess.Stats.IncrementRepositories()
+		sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
+		return nil, "", nil
+	}
+	sess.Out.Debug("[THREAD #%d][%s] Cloned repository to: %s\n", threadId, *repo.CloneURL, path)
+	return clone, path, err
+}
+
 func AnalyzeRepositories(sess *Session) {
 	sess.Stats.Status = StatusAnalyzing
 	var ch = make(chan *common.Repository, len(sess.Repositories))
@@ -200,31 +233,7 @@ func AnalyzeRepositories(sess *Session) {
 					return
 				}
 
-				sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.CloneURL)
-				clone, path, err := func() (*git.Repository, string, error) {
-					cloneConfig := common.CloneConfiguration{
-						Url:    repo.CloneURL,
-						Branch: repo.DefaultBranch,
-						Depth:  sess.Options.CommitDepth,
-						Token:  &sess.GitLab.AccessToken,
-					}
-					if sess.IsGithubSession {
-						return github.CloneRepository(&cloneConfig)
-					} else {
-						userName := "oauth2"
-						cloneConfig.Username = &userName
-						return gitlab.CloneRepository(&cloneConfig)
-					}
-				}()
-				if err != nil {
-					if err.Error() != "remote repository is empty" {
-						sess.Out.Error("Error cloning repository %s: %s\n", *repo.CloneURL, err)
-					}
-					sess.Stats.IncrementRepositories()
-					sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
-					continue
-				}
-				sess.Out.Debug("[THREAD #%d][%s] Cloned repository to: %s\n", tid, *repo.CloneURL, path)
+				clone, path, err := cloneRepository(sess, repo, tid)
 
 				history, err := common.GetRepositoryHistory(clone)
 				if err != nil {
