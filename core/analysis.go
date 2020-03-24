@@ -144,12 +144,12 @@ func matchContent(sess *Session,
 func findSecrets(sess *Session, repo *common.Repository, commit *object.Commit, changes object.Changes, threadId int) {
 	for _, change := range changes {
 		path := common.GetChangePath(change)
-		matchTarget := matching.NewMatchTarget(path, "")
+		matchTarget := matching.NewMatchTarget(path)
 		if matchTarget.IsSkippable() {
 			sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", threadId, *repo.CloneURL, matchTarget.Path)
 			continue
 		}
-		sess.Out.Debug("[THREAD #%d][%s] Matching: %s...\n", threadId, *repo.CloneURL, matchTarget.Path)
+		sess.Out.Debug("[THREAD #%d][%s] Matching file: %s...\n", threadId, *repo.CloneURL, matchTarget.Path)
 
 		for _, fileSignature := range sess.Signatures.FileSignatures {
 			matched, err := fileSignature.Match(matchTarget)
@@ -199,10 +199,23 @@ func cloneRepository(sess *Session, repo *common.Repository, threadId int) (*git
 		}
 		sess.Stats.IncrementRepositories()
 		sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
-		return nil, "", nil
+		return nil, "", err
 	}
 	sess.Out.Debug("[THREAD #%d][%s] Cloned repository to: %s\n", threadId, *repo.CloneURL, path)
 	return clone, path, err
+}
+
+func getRepositoryHistory(sess *Session, clone *git.Repository, repo *common.Repository, path string, threadId int) ([]*object.Commit, error) {
+	history, err := common.GetRepositoryHistory(clone)
+	if err != nil {
+		sess.Out.Error("[THREAD #%d][%s] Error getting commit history: %s\n", threadId, *repo.CloneURL, err)
+		os.RemoveAll(path)
+		sess.Stats.IncrementRepositories()
+		sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
+		return nil, err
+	}
+	sess.Out.Debug("[THREAD #%d][%s] Number of commits: %d\n", threadId, *repo.CloneURL, len(history))
+	return history, err
 }
 
 func AnalyzeRepositories(sess *Session) {
@@ -234,16 +247,14 @@ func AnalyzeRepositories(sess *Session) {
 				}
 
 				clone, path, err := cloneRepository(sess, repo, tid)
-
-				history, err := common.GetRepositoryHistory(clone)
 				if err != nil {
-					sess.Out.Error("[THREAD #%d][%s] Error getting commit history: %s\n", tid, *repo.CloneURL, err)
-					os.RemoveAll(path)
-					sess.Stats.IncrementRepositories()
-					sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
 					continue
 				}
-				sess.Out.Debug("[THREAD #%d][%s] Number of commits: %d\n", tid, *repo.CloneURL, len(history))
+
+				history, err := getRepositoryHistory(sess, clone, repo, path, tid)
+				if err != nil {
+					continue
+				}
 
 				for _, commit := range history {
 					sess.Out.Debug("[THREAD #%d][%s] Analyzing commit: %s\n", tid, *repo.CloneURL, commit.Hash)
@@ -255,6 +266,7 @@ func AnalyzeRepositories(sess *Session) {
 					sess.Stats.IncrementCommits()
 					sess.Out.Debug("[THREAD #%d][%s] Done analyzing changes in %s\n", tid, *repo.CloneURL, commit.Hash)
 				}
+
 				sess.Out.Debug("[THREAD #%d][%s] Done analyzing commits\n", tid, *repo.CloneURL)
 				os.RemoveAll(path)
 				sess.Out.Debug("[THREAD #%d][%s] Deleted %s\n", tid, *repo.CloneURL, path)
