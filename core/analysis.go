@@ -248,7 +248,7 @@ func AnalyzeRepositories(sess *Session) {
 				for _, commit := range history {
 					sess.Out.Debug("[THREAD #%d][%s] Analyzing commit: %s\n", tid, *repo.CloneURL, commit.Hash)
 					changes, _ := common.GetChanges(commit, clone)
-					sess.Out.Debug("[THREAD #%d][%s] %d changes in %s\n", tid, *repo.CloneURL, commit.Hash, len(changes))
+					sess.Out.Debug("[THREAD #%d][%s] %s changes in %d\n", tid, *repo.CloneURL, commit.Hash, len(changes))
 
 					matchFile(sess, repo, commit, changes, tid)
 
