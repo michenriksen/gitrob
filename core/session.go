@@ -63,8 +63,8 @@ type Session struct {
 	Targets         []*common.Owner
 	Repositories    []*common.Repository
 	Findings        []*matching.Finding
-	IsGithubSession bool
-	Signatures      matching.Signatures
+	IsGithubSession bool                `json:"-"` //do not unmarshal to json on save
+	Signatures      matching.Signatures `json:"-"` //do not unmarshal to json on save
 }
 
 func (s *Session) Initialize() {
