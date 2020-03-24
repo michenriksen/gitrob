@@ -21,7 +21,7 @@ const (
 	ReferrerPolicy  = "no-referrer"
 )
 
-var IsGithub = true
+var IsGithub bool
 
 type binaryFileSystem struct {
 	fs http.FileSystem
@@ -50,7 +50,7 @@ func BinaryFileSystem(root string) *binaryFileSystem {
 
 func NewRouter(s *Session) *gin.Engine {
 
-	IsGithub = s.Github.AccessToken != ""
+	IsGithub = s.IsGithubSession
 
 	if *s.Options.Debug == true {
 		gin.SetMode(gin.DebugMode)
@@ -87,8 +87,6 @@ func NewRouter(s *Session) *gin.Engine {
 }
 
 func fetchFile(c *gin.Context) {
-	//Github:  https://raw.githubusercontent.com/mhh/config/6257553245337bdae802a8e19935e8cdab562bad/bash/.bashrc
-	//GitLab:  https://gitlab.com/pharrison/python-gitlab/-/raw/ab7d794251bcdbafce69b1bde0628cd3b710d784/docs/gl_objects/settings.py
 	fileUrl := func() string {
 		if IsGithub {
 			return fmt.Sprintf("%s/%s/%s/%s%s", GithubBaseUri, c.Param("owner"), c.Param("repo"), c.Param("commit"), c.Param("path"))

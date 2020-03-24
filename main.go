@@ -30,7 +30,7 @@ func main() {
 	} else {
 		if len(sess.Options.Logins) == 0 {
 			host := func() string {
-				if sess.Github.AccessToken != "" {
+				if sess.IsGithubSession {
 					return "Github organization"
 				} else {
 					return "GitLab group"
