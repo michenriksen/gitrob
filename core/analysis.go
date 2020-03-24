@@ -7,6 +7,7 @@ import (
 	"github.com/codeEmitter/gitrob/gitlab"
 	"github.com/codeEmitter/gitrob/matching"
 	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing/object"
 	"os"
 	"strings"
 	"sync"
@@ -92,6 +93,27 @@ func GatherRepositories(sess *Session) {
 	wg.Wait()
 }
 
+func createFinding(repo common.Repository,
+	commit object.Commit,
+	change *object.Change,
+	fileSignature matching.FileSignature,
+	isGitHubSession bool) *matching.Finding {
+	finding := &matching.Finding{
+		FilePath:        common.GetChangePath(change),
+		Action:          common.GetChangeAction(change),
+		Description:     fileSignature.GetDescription(),
+		Comment:         fileSignature.GetComment(),
+		RepositoryOwner: *repo.Owner,
+		RepositoryName:  *repo.Name,
+		CommitHash:      commit.Hash.String(),
+		CommitMessage:   strings.TrimSpace(commit.Message),
+		CommitAuthor:    commit.Author.String(),
+		CloneUrl:        *repo.CloneURL,
+	}
+	finding.Initialize(isGitHubSession)
+	return finding
+}
+
 func AnalyzeRepositories(sess *Session) {
 	sess.Stats.Status = StatusAnalyzing
 	var ch = make(chan *common.Repository, len(sess.Repositories))
@@ -128,7 +150,7 @@ func AnalyzeRepositories(sess *Session) {
 						Depth:  sess.Options.CommitDepth,
 						Token:  &sess.GitLab.AccessToken,
 					}
-					if sess.Github.AccessToken != "" {
+					if sess.IsGithubSession {
 						return github.CloneRepository(&cloneConfig)
 					} else {
 						userName := "oauth2"
@@ -161,10 +183,8 @@ func AnalyzeRepositories(sess *Session) {
 					changes, _ := common.GetChanges(commit, clone)
 					sess.Out.Debug("[THREAD #%d][%s] Changes in %s: %d\n", tid, *repo.CloneURL, commit.Hash, len(changes))
 					for _, change := range changes {
-						changeAction := common.GetChangeAction(change)
 						path := common.GetChangePath(change)
 						matchTarget := matching.NewMatchTarget(path, "")
-						//how do i get content of the commit `git log
 						if matchTarget.IsSkippable() {
 							sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", tid, *repo.CloneURL, matchTarget.Path)
 							continue
@@ -175,42 +195,33 @@ func AnalyzeRepositories(sess *Session) {
 							for _, fileSignature := range sess.Signatures.FileSignatures {
 								matched, err := fileSignature.Match(matchTarget)
 								if err != nil {
-									sess.Out.Fatal(fmt.Sprintf("Error while performing match: %s", err))
+									sess.Out.Fatal(fmt.Sprintf("Error while performing file match: %s", err))
 								}
 								if !matched {
 									continue
 								}
-								//if mode == 2
-								matchTarget.Content, err = common.GetChangeContent(change)
-								if err != nil {
-									sess.Out.Fatal(fmt.Sprintf("Error retrieving content in commit %s, change %s.", commit.String(), change.String()))
+								if *sess.Options.Mode == 1 {
+									finding := createFinding(*repo, *commit, change, fileSignature, sess.IsGithubSession)
+									sess.AddFinding(finding)
 								}
-								finding := &matching.Finding{
-									FilePath:        path,
-									Action:          changeAction,
-									Description:     fileSignature.GetDescription(),
-									Comment:         fileSignature.GetComment(),
-									RepositoryOwner: *repo.Owner,
-									RepositoryName:  *repo.Name,
-									CommitHash:      commit.Hash.String(),
-									CommitMessage:   strings.TrimSpace(commit.Message),
-									CommitAuthor:    commit.Author.String(),
+								if *sess.Options.Mode == 2 {
+									sess.Out.Debug("[THREAD #%d][%s] Matching content: %s...\n", tid, *repo.CloneURL, matchTarget.Content)
+									matchTarget.Content, err = common.GetChangeContent(change)
+									if err != nil {
+										sess.Out.Fatal(fmt.Sprintf("Error retrieving content in commit %s, change %s.", commit.String(), change.String()))
+									}
+									for _, contentSignature := range sess.Signatures.ContentSignatures {
+										matched, err := contentSignature.Match(matchTarget)
+										if err != nil {
+											sess.Out.Fatal(fmt.Sprintf("Error while performing content match: %s", err))
+										}
+										if !matched {
+											continue
+										}
+										finding := createFinding(*repo, *commit, change, fileSignature, sess.IsGithubSession)
+										sess.AddFinding(finding)
+									}
 								}
-								finding.Initialize(sess.Github.AccessToken != "")
-								sess.AddFinding(finding)
-
-								sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
-								sess.Out.Info("  Path.......: %s\n", finding.FilePath)
-								sess.Out.Info("  Repo.......: %s\n", *repo.CloneURL)
-								sess.Out.Info("  Message....: %s\n", common.TruncateString(finding.CommitMessage, 100))
-								sess.Out.Info("  Author.....: %s\n", finding.CommitAuthor)
-								if finding.Comment != "" {
-									sess.Out.Info("  Comment....: %s\n", finding.Comment)
-								}
-								sess.Out.Info("  File URL...: %s\n", finding.FileUrl)
-								sess.Out.Info("  Commit URL.: %s\n", finding.CommitUrl)
-								sess.Out.Info(" ------------------------------------------------\n\n")
-								sess.Stats.IncrementFindings()
 								break
 							}
 							sess.Stats.IncrementFiles()

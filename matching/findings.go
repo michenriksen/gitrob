@@ -21,6 +21,7 @@ type Finding struct {
 	FileUrl         string
 	CommitUrl       string
 	RepositoryUrl   string
+	CloneUrl        string
 }
 
 func (f *Finding) setupUrls(isGithubSession bool) {
