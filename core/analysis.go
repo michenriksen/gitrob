@@ -141,7 +141,7 @@ func matchContent(sess *Session,
 	}
 }
 
-func matchFile(sess *Session, repo *common.Repository, commit *object.Commit, changes object.Changes, threadId int) {
+func findSecrets(sess *Session, repo *common.Repository, commit *object.Commit, changes object.Changes, threadId int) {
 	for _, change := range changes {
 		path := common.GetChangePath(change)
 		matchTarget := matching.NewMatchTarget(path, "")
@@ -250,7 +250,7 @@ func AnalyzeRepositories(sess *Session) {
 					changes, _ := common.GetChanges(commit, clone)
 					sess.Out.Debug("[THREAD #%d][%s] %s changes in %d\n", tid, *repo.CloneURL, commit.Hash, len(changes))
 
-					matchFile(sess, repo, commit, changes, tid)
+					findSecrets(sess, repo, commit, changes, tid)
 
 					sess.Stats.IncrementCommits()
 					sess.Out.Debug("[THREAD #%d][%s] Done analyzing changes in %s\n", tid, *repo.CloneURL, commit.Hash)
