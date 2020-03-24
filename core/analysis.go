@@ -124,14 +124,14 @@ func matchContent(sess *Session,
 
 	content, err := common.GetChangeContent(change)
 	if err != nil {
-		sess.Out.Fatal("Error retrieving content in commit %s, change %s.", commit.String(), change.String())
+		sess.Out.Error("Error retrieving content in commit %s, change %s.", commit.String(), change.String())
 	}
 	matchTarget.Content = content
 	sess.Out.Debug("[THREAD #%d][%s] Matching content in %s...\n", threadId, *repo.CloneURL, commit.Hash)
 	for _, contentSignature := range sess.Signatures.ContentSignatures {
 		matched, err := contentSignature.Match(matchTarget)
 		if err != nil {
-			sess.Out.Fatal("Error while performing content match: %s", err)
+			sess.Out.Error("Error while performing content match: %s\n", err)
 		}
 		if !matched {
 			continue
@@ -154,7 +154,7 @@ func findSecrets(sess *Session, repo *common.Repository, commit *object.Commit, 
 		for _, fileSignature := range sess.Signatures.FileSignatures {
 			matched, err := fileSignature.Match(matchTarget)
 			if err != nil {
-				sess.Out.Fatal(fmt.Sprintf("Error while performing file match: %s", err))
+				sess.Out.Error(fmt.Sprintf("Error while performing file match: %s\n", err))
 			}
 			if !matched {
 				continue

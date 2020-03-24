@@ -36,7 +36,7 @@ func main() {
 					return "GitLab group"
 				}
 			}()
-			sess.Out.Fatal(fmt.Sprintf("Please provide at least one %s or user\n", host))
+			sess.Out.Fatal("Please provide at least one %s or user\n", host)
 		}
 
 		core.GatherTargets(sess)
