@@ -8,20 +8,22 @@ import (
 )
 
 type Finding struct {
-	Id              string
-	FilePath        string
-	Action          string
-	Description     string
-	Comment         string
-	RepositoryOwner string
-	RepositoryName  string
-	CommitHash      string
-	CommitMessage   string
-	CommitAuthor    string
-	FileUrl         string
-	CommitUrl       string
-	RepositoryUrl   string
-	CloneUrl        string
+	Id                          string
+	FilePath                    string
+	Action                      string
+	FileSignatureDescription    string
+	FileSignatureComment        string
+	ContentSignatureDescription string
+	ContentSignatureComment     string
+	RepositoryOwner             string
+	RepositoryName              string
+	CommitHash                  string
+	CommitMessage               string
+	CommitAuthor                string
+	FileUrl                     string
+	CommitUrl                   string
+	RepositoryUrl               string
+	CloneUrl                    string
 }
 
 func (f *Finding) setupUrls(isGithubSession bool) {

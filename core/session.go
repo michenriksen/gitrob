@@ -116,14 +116,18 @@ func (s *Session) AddRepository(repository *common.Repository) {
 func (s *Session) AddFinding(finding *matching.Finding) {
 	s.Lock()
 	defer s.Unlock()
+	const MaxStrLen = 100
 	s.Findings = append(s.Findings, finding)
-	s.Out.Warn(" %s: %s\n", strings.ToUpper(finding.Action), finding.Description)
-	s.Out.Info("  Path.......: %s\n", finding.FilePath)
-	s.Out.Info("  Repo.......: %s\n", finding.CloneUrl)
-	s.Out.Info("  Message....: %s\n", common.TruncateString(finding.CommitMessage, 100))
-	s.Out.Info("  Author.....: %s\n", finding.CommitAuthor)
-	if finding.Comment != "" {
-		s.Out.Info("  Comment....: %s\n", finding.Comment)
+	s.Out.Warn(" %s: %s, %s\n", strings.ToUpper(finding.Action), "File Match: " + finding.FileSignatureDescription, "Content Match: " + finding.ContentSignatureDescription)
+	s.Out.Info("  Path......................: %s\n", finding.FilePath)
+	s.Out.Info("  Repo......................: %s\n", finding.CloneUrl)
+	s.Out.Info("  Message...................: %s\n", common.TruncateString(finding.CommitMessage, MaxStrLen))
+	s.Out.Info("  Author....................: %s\n", finding.CommitAuthor)
+	if finding.FileSignatureComment != "" {
+		s.Out.Info("  FileSignatureComment......: %s\n", common.TruncateString(finding.FileSignatureComment, MaxStrLen))
+	}
+	if finding.ContentSignatureComment != "" {
+		s.Out.Info("  ContentSignatureComment...:%s\n", common.TruncateString(finding.ContentSignatureComment, MaxStrLen))
 	}
 	s.Out.Info("  File URL...: %s\n", finding.FileUrl)
 	s.Out.Info("  Commit URL.: %s\n", finding.CommitUrl)

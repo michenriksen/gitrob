@@ -97,21 +97,26 @@ func createFinding(repo common.Repository,
 	commit object.Commit,
 	change *object.Change,
 	fileSignature matching.FileSignature,
+	contentSignature matching.ContentSignature,
 	isGitHubSession bool) *matching.Finding {
+
 	finding := &matching.Finding{
-		FilePath:        common.GetChangePath(change),
-		Action:          common.GetChangeAction(change),
-		Description:     fileSignature.GetDescription(),
-		Comment:         fileSignature.GetComment(),
-		RepositoryOwner: *repo.Owner,
-		RepositoryName:  *repo.Name,
-		CommitHash:      commit.Hash.String(),
-		CommitMessage:   strings.TrimSpace(commit.Message),
-		CommitAuthor:    commit.Author.String(),
-		CloneUrl:        *repo.CloneURL,
+		FilePath:                    common.GetChangePath(change),
+		Action:                      common.GetChangeAction(change),
+		FileSignatureDescription:    fileSignature.GetDescription(),
+		FileSignatureComment:        fileSignature.GetComment(),
+		ContentSignatureDescription: contentSignature.GetDescription(),
+		ContentSignatureComment:     contentSignature.GetComment(),
+		RepositoryOwner:             *repo.Owner,
+		RepositoryName:              *repo.Name,
+		CommitHash:                  commit.Hash.String(),
+		CommitMessage:               strings.TrimSpace(commit.Message),
+		CommitAuthor:                commit.Author.String(),
+		CloneUrl:                    *repo.CloneURL,
 	}
 	finding.Initialize(isGitHubSession)
 	return finding
+
 }
 
 func matchContent(sess *Session,
@@ -136,7 +141,7 @@ func matchContent(sess *Session,
 		if !matched {
 			continue
 		}
-		finding := createFinding(repo, commit, change, fileSignature, sess.IsGithubSession)
+		finding := createFinding(repo, commit, change, fileSignature, contentSignature, sess.IsGithubSession)
 		sess.AddFinding(finding)
 	}
 }
@@ -160,7 +165,7 @@ func findSecrets(sess *Session, repo *common.Repository, commit *object.Commit, 
 				continue
 			}
 			if *sess.Options.Mode == 1 {
-				finding := createFinding(*repo, *commit, change, fileSignature, sess.IsGithubSession)
+				finding := createFinding(*repo, *commit, change, fileSignature, matching.ContentSignature{}, sess.IsGithubSession)
 				sess.AddFinding(finding)
 			}
 			if *sess.Options.Mode == 2 {
