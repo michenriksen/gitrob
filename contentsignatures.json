@@ -8,17 +8,12 @@
     {
       "MatchOn": "([^A-Z0-9]|)AKIA[A-Z0-9]{12}([^A-Z0-9]|)",
       "Description": "AWS Access Key ID",
-      "Comment": ""
+      "Comment": "An AWS access key ID needs a secret access key as well."
     },
     {
       "MatchOn": "[a-zA-Z0-9/+]{40}",
       "Description": "AWS Secret Access Key",
-      "Comment": ""
-    },
-    {
-      "MatchOn": "AKIA[0-9A-Z]{16}",
-      "Description": "Amazon AWS Access Key ID",
-      "Comment": ""
+      "Comment": "An AWS secret access key needs a access key ID as well."
     },
     {
       "MatchOn": "amzn\\\\.mws\\\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
