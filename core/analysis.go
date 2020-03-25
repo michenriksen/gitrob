@@ -154,26 +154,32 @@ func findSecrets(sess *Session, repo *common.Repository, commit *object.Commit, 
 			sess.Out.Debug("[THREAD #%d][%s] Skipping %s\n", threadId, *repo.CloneURL, matchTarget.Path)
 			continue
 		}
-		sess.Out.Debug("[THREAD #%d][%s] Matching file: %s...\n", threadId, *repo.CloneURL, matchTarget.Path)
+		sess.Out.Debug("[THREAD #%d][%s] Inspecting file: %s...\n", threadId, *repo.CloneURL, matchTarget.Path)
 
-		for _, fileSignature := range sess.Signatures.FileSignatures {
-			matched, err := fileSignature.Match(matchTarget)
-			if err != nil {
-				sess.Out.Error(fmt.Sprintf("Error while performing file match: %s\n", err))
+		if *sess.Options.Mode != 3 {
+			for _, fileSignature := range sess.Signatures.FileSignatures {
+				matched, err := fileSignature.Match(matchTarget)
+				if err != nil {
+					sess.Out.Error(fmt.Sprintf("Error while performing file match: %s\n", err))
+				}
+				if !matched {
+					continue
+				}
+				if *sess.Options.Mode == 1 {
+					finding := createFinding(*repo, *commit, change, fileSignature,
+						matching.ContentSignature{Description: "NA"}, sess.IsGithubSession)
+					sess.AddFinding(finding)
+				}
+				if *sess.Options.Mode == 2 {
+					matchContent(sess, matchTarget, *repo, change, *commit, fileSignature, threadId)
+				}
+				break
 			}
-			if !matched {
-				continue
-			}
-			if *sess.Options.Mode == 1 {
-				finding := createFinding(*repo, *commit, change, fileSignature, matching.ContentSignature{}, sess.IsGithubSession)
-				sess.AddFinding(finding)
-			}
-			if *sess.Options.Mode == 2 {
-				matchContent(sess, matchTarget, *repo, change, *commit, fileSignature, threadId)
-			}
-			break
+			sess.Stats.IncrementFiles()
+		} else {
+			matchContent(sess, matchTarget, *repo, change, *commit, matching.FileSignature{Description: "NA"}, threadId)
+			sess.Stats.IncrementFiles()
 		}
-		sess.Stats.IncrementFiles()
 	}
 }
 
