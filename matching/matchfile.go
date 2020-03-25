@@ -9,7 +9,7 @@ type MatchTarget struct {
 	Path      string
 	Filename  string
 	Extension string
-	Content string
+	Content   string
 }
 
 var skippableExtensions = []string{".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".psd", ".xcf"}
@@ -38,6 +38,6 @@ func NewMatchTarget(path string) MatchTarget {
 		Path:      path,
 		Filename:  filename,
 		Extension: extension,
-		Content: "",
+		Content:   "",
 	}
 }

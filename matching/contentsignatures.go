@@ -3,9 +3,9 @@ package matching
 import "regexp"
 
 type ContentSignature struct {
-	MatchOn string
+	MatchOn     string
 	Description string
-	Comment string
+	Comment     string
 }
 
 func (c ContentSignature) Match(target MatchTarget) (bool, error) {

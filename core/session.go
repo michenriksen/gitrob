@@ -118,7 +118,7 @@ func (s *Session) AddFinding(finding *matching.Finding) {
 	defer s.Unlock()
 	const MaxStrLen = 100
 	s.Findings = append(s.Findings, finding)
-	s.Out.Warn(" %s: %s, %s\n", strings.ToUpper(finding.Action), "File Match: " + finding.FileSignatureDescription, "Content Match: " + finding.ContentSignatureDescription)
+	s.Out.Warn(" %s: %s, %s\n", strings.ToUpper(finding.Action), "File Match: "+finding.FileSignatureDescription, "Content Match: "+finding.ContentSignatureDescription)
 	s.Out.Info("  Path......................: %s\n", finding.FilePath)
 	s.Out.Info("  Repo......................: %s\n", finding.CloneUrl)
 	s.Out.Info("  Message...................: %s\n", common.TruncateString(finding.CommitMessage, MaxStrLen))
