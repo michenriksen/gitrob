@@ -6,7 +6,6 @@ import (
 	"regexp"
 )
 
-
 type FileSignatureType struct {
 	Extension string
 	Filename  string
@@ -20,10 +19,10 @@ var fileSignatureTypes = FileSignatureType{
 }
 
 type FileSignature struct {
-	Part string
-	MatchOn string
+	Part        string
+	MatchOn     string
 	Description string
-	Comment string
+	Comment     string
 }
 
 func (f FileSignature) Match(target MatchTarget) (bool, error) {
