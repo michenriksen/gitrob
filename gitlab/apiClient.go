@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/codeEmitter/gitrob/common"
 	"github.com/xanzy/go-gitlab"
@@ -11,11 +12,13 @@ import (
 
 type Client struct {
 	apiClient *gitlab.Client
+	logger *common.Logger
 }
 
-func (c Client) NewClient(token string) (apiClient Client) {
+func (c Client) NewClient(token string, logger *common.Logger) (apiClient Client) {
 	c.apiClient = gitlab.NewClient(nil, token)
 	c.apiClient.UserAgent = common.UserAgent
+	c.logger = logger
 	return c
 }
 
@@ -107,8 +110,61 @@ func (c Client) GetRepositoriesFromOwner(target common.Owner) ([]*common.Reposit
 	return allProjects, nil
 }
 
+func (c Client) logRateLimitInfo(remaining int, wait time.Duration, isResetTime bool) {
+	resetTimeMsg := ""
+	if isResetTime {
+		resetTimeMsg = "(rate limit reset time)"
+	}
+	c.logger.Warn(" Remaining requests before GitLab rate limit: %d.  Waiting %f seconds. %s\n", remaining, wait.Seconds(), resetTimeMsg)
+}
+
+func (c Client) getRateLimitResetDuration(rateLimitReset string) time.Duration {
+	resetTime, _ := time.Parse(time.RFC1123, rateLimitReset)
+	return time.Until(resetTime)
+}
+
+func (c Client) handleRateLimit(response *gitlab.Response) {
+
+	remaining, _ := strconv.Atoi(response.Header.Get("RateLimit-Remaining"))
+
+	switch {
+	case remaining >=1 && remaining <= 10:
+		reset := c.getRateLimitResetDuration(response.Header.Get("RateLimit-ResetTime"))
+		c.logRateLimitInfo(remaining, reset, true)
+		time.Sleep(reset)
+	case remaining >=11 && remaining <= 25:
+		wait, _ := time.ParseDuration("5s")
+		c.logRateLimitInfo(remaining, wait, false)
+		time.Sleep(wait)
+	case remaining >= 26 && remaining <= 50:
+		wait, _ := time.ParseDuration("2500ms")
+		c.logRateLimitInfo(remaining, wait, false)
+		time.Sleep(wait)
+	case remaining >= 51 && remaining <= 100:
+		wait, _ := time.ParseDuration("1250ms")
+		c.logRateLimitInfo(remaining, wait, false)
+		time.Sleep(wait)
+	case remaining >= 101 && remaining <= 200:
+		wait, _ := time.ParseDuration("750ms")
+		c.logRateLimitInfo(remaining, wait, false)
+		time.Sleep(wait)
+	case remaining >= 201 && remaining <= 300:
+		wait, _ := time.ParseDuration("500ms")
+		c.logRateLimitInfo(remaining, wait, false)
+		time.Sleep(wait)
+	case remaining >= 301 && remaining <= 400:
+		wait, _ := time.ParseDuration("250ms")
+		c.logRateLimitInfo(remaining, wait, false)
+		time.Sleep(wait)
+	default:
+		c.logger.Debug("Rate limited requests remaining:  %d\n", remaining)
+	}
+
+}
+
 func (c Client) getUser(login string) (*gitlab.User, error) {
-	users, _, err := c.apiClient.Users.ListUsers(&gitlab.ListUsersOptions{Username: gitlab.String(login)})
+	users, response, err := c.apiClient.Users.ListUsers(&gitlab.ListUsersOptions{Username: gitlab.String(login)})
+	c.handleRateLimit(response)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +182,8 @@ func (c Client) getOrganization(login string) (*gitlab.Group, error) {
 	if err != nil {
 		return nil, err
 	}
-	org, _, err := c.apiClient.Groups.GetGroup(id)
+	org, response, err := c.apiClient.Groups.GetGroup(id)
+	c.handleRateLimit(response)
 	if err != nil {
 		return nil, err
 	}
@@ -137,7 +194,8 @@ func (c Client) getUserProjects(id int) ([]*common.Repository, error) {
 	var allUserProjects []*common.Repository
 	listUserProjectsOps := &gitlab.ListProjectsOptions{}
 	for {
-		projects, resp, err := c.apiClient.Projects.ListUserProjects(id, listUserProjectsOps)
+		projects, response, err := c.apiClient.Projects.ListUserProjects(id, listUserProjectsOps)
+		c.handleRateLimit(response)
 		if err != nil {
 			return nil, err
 		}
@@ -159,10 +217,10 @@ func (c Client) getUserProjects(id int) ([]*common.Repository, error) {
 				allUserProjects = append(allUserProjects, &p)
 			}
 		}
-		if resp.NextPage == 0 {
+		if response.NextPage == 0 {
 			break
 		}
-		listUserProjectsOps.Page = resp.NextPage
+		listUserProjectsOps.Page = response.NextPage
 	}
 	return allUserProjects, nil
 }
@@ -172,7 +230,8 @@ func (c Client) getGroupProjects(target common.Owner) ([]*common.Repository, err
 	listGroupProjectsOps := &gitlab.ListGroupProjectsOptions{}
 	id := strconv.FormatInt(*target.ID, 10)
 	for {
-		projects, resp, err := c.apiClient.Groups.ListGroupProjects(id, listGroupProjectsOps)
+		projects, response, err := c.apiClient.Groups.ListGroupProjects(id, listGroupProjectsOps)
+		c.handleRateLimit(response)
 		if err != nil {
 			return nil, err
 		}
@@ -194,10 +253,10 @@ func (c Client) getGroupProjects(target common.Owner) ([]*common.Repository, err
 				allGroupProjects = append(allGroupProjects, &p)
 			}
 		}
-		if resp.NextPage == 0 {
+		if response.NextPage == 0 {
 			break
 		}
-		listGroupProjectsOps.Page = resp.NextPage
+		listGroupProjectsOps.Page = response.NextPage
 	}
 	return allGroupProjects, nil
 }

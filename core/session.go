@@ -186,7 +186,7 @@ func (s *Session) InitAPIClient() {
 	if s.IsGithubSession {
 		s.Client = gh.Client.NewClient(gh.Client{}, s.Github.AccessToken)
 	} else {
-		s.Client = gl.Client.NewClient(gl.Client{}, s.GitLab.AccessToken)
+		s.Client = gl.Client.NewClient(gl.Client{}, s.GitLab.AccessToken, s.Out)
 	}
 }
 
