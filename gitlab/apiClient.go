@@ -133,7 +133,7 @@ func (c Client) handleRateLimit(response *gitlab.Response) {
 		c.logRateLimitInfo(remaining, reset, true)
 		time.Sleep(reset)
 	case remaining >=11 && remaining <= 25:
-		wait, _ := time.ParseDuration("5s")
+		wait, _ := time.ParseDuration("5000ms")
 		c.logRateLimitInfo(remaining, wait, false)
 		time.Sleep(wait)
 	case remaining >= 26 && remaining <= 50:
