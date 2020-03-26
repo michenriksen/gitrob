@@ -115,7 +115,7 @@ func (c Client) logRateLimitInfo(remaining int, wait time.Duration, isResetTime 
 	if isResetTime {
 		resetTimeMsg = "(rate limit reset time)"
 	}
-	c.logger.Warn(" Remaining requests before GitLab rate limit: %d.  Waiting %f seconds. %s\n", remaining, wait.Seconds(), resetTimeMsg)
+	c.logger.Debug(" Remaining requests before GitLab rate limit: %d.  Waiting %f seconds. %s\n", remaining, wait.Seconds(), resetTimeMsg)
 }
 
 func (c Client) getRateLimitResetDuration(rateLimitReset string) time.Duration {
@@ -128,36 +128,34 @@ func (c Client) handleRateLimit(response *gitlab.Response) {
 	remaining, _ := strconv.Atoi(response.Header.Get("RateLimit-Remaining"))
 
 	switch {
-	case remaining >=1 && remaining <= 10:
+	case remaining >= 0 && remaining <= 25:
 		reset := c.getRateLimitResetDuration(response.Header.Get("RateLimit-ResetTime"))
 		c.logRateLimitInfo(remaining, reset, true)
 		time.Sleep(reset)
-	case remaining >=11 && remaining <= 25:
+	case remaining >= 26 && remaining <= 100:
 		wait, _ := time.ParseDuration("5000ms")
 		c.logRateLimitInfo(remaining, wait, false)
 		time.Sleep(wait)
-	case remaining >= 26 && remaining <= 50:
-		wait, _ := time.ParseDuration("2500ms")
-		c.logRateLimitInfo(remaining, wait, false)
-		time.Sleep(wait)
-	case remaining >= 51 && remaining <= 100:
-		wait, _ := time.ParseDuration("1250ms")
-		c.logRateLimitInfo(remaining, wait, false)
-		time.Sleep(wait)
 	case remaining >= 101 && remaining <= 200:
-		wait, _ := time.ParseDuration("750ms")
+		wait, _ := time.ParseDuration("3000ms")
 		c.logRateLimitInfo(remaining, wait, false)
 		time.Sleep(wait)
-	case remaining >= 201 && remaining <= 300:
+	case remaining >= 201 && remaining <= 250:
+		wait, _ := time.ParseDuration("2000ms")
+		c.logRateLimitInfo(remaining, wait, false)
+		time.Sleep(wait)
+	case remaining >= 251 && remaining <= 350:
+		wait, _ := time.ParseDuration("1000ms")
+		c.logRateLimitInfo(remaining, wait, false)
+		time.Sleep(wait)
+	case remaining >= 351 && remaining <= 400:
 		wait, _ := time.ParseDuration("500ms")
 		c.logRateLimitInfo(remaining, wait, false)
 		time.Sleep(wait)
-	case remaining >= 301 && remaining <= 400:
+	case remaining >= 401 && remaining <= 450:
 		wait, _ := time.ParseDuration("250ms")
 		c.logRateLimitInfo(remaining, wait, false)
 		time.Sleep(wait)
-	default:
-		c.logger.Debug("Rate limited requests remaining:  %d\n", remaining)
 	}
 
 }
