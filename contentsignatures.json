@@ -11,7 +11,7 @@
       "Comment": "An AWS access key ID needs a secret access key as well."
     },
     {
-      "MatchOn": "[a-zA-Z0-9/+]{40}",
+      "MatchOn": "[\\s][a-zA-Z0-9]{40}[\\s]",
       "Description": "AWS Secret Access Key",
       "Comment": "An AWS secret access key needs a access key ID as well."
     },
