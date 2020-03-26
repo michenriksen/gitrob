@@ -53,8 +53,8 @@ type Session struct {
 	sync.Mutex
 
 	Version         string
-	Options         Options `json:"-"` //do not unmarshal to json on save
-	Out             *Logger `json:"-"` //do not unmarshal to json on save
+	Options         Options        `json:"-"` //do not unmarshal to json on save
+	Out             *common.Logger `json:"-"` //do not unmarshal to json on save
 	Stats           *Stats
 	Github          Github         `json:"-"` //do not unmarshal to json on save
 	GitLab          GitLab         `json:"-"` //do not unmarshal to json on save
@@ -152,7 +152,7 @@ func (s *Session) InitStats() {
 }
 
 func (s *Session) InitLogger() {
-	s.Out = &Logger{}
+	s.Out = &common.Logger{}
 	s.Out.SetDebug(*s.Options.Debug)
 	s.Out.SetSilent(*s.Options.Silent)
 }
@@ -186,7 +186,7 @@ func (s *Session) InitAPIClient() {
 	if s.IsGithubSession {
 		s.Client = gh.Client.NewClient(gh.Client{}, s.Github.AccessToken)
 	} else {
-		s.Client = gl.Client.NewClient(gl.Client{}, s.GitLab.AccessToken)
+		s.Client = gl.Client.NewClient(gl.Client{}, s.GitLab.AccessToken, s.Out)
 	}
 }
 
