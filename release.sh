@@ -1,6 +1,6 @@
 #!/bin/bash
 
-CURRENT_VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
+CURRENT_VERSION=$(cat common/banner.go | grep Version | cut -d '"' -f 2)
 TO_UPDATE=(
   core/banner.go
 )

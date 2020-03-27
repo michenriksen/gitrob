@@ -1,7 +1,7 @@
 #!/bin/bash
 
 BUILD_FOLDER=build
-VERSION=$(cat core/banner.go | grep Version | cut -d '"' -f 2)
+VERSION=$(cat common/banner.go | grep Version | cut -d '"' -f 2)
 
 bin_dep() {
   BIN=$1
@@ -17,7 +17,7 @@ create_exe_archive() {
   OUTPUT=$1
 
   echo "[*] Creating archive $OUTPUT ..."
-  zip -j "$OUTPUT" gitrob.exe ../README.md ../LICENSE.txt >/dev/null
+  zip -j "$OUTPUT" gitrob.exe ../README.md ../LICENSE.txt ../contentsignatures.json ../filesignatures.json >/dev/null
   rm -rf gitrob gitrob.exe
 }
 
@@ -27,7 +27,7 @@ create_archive() {
   OUTPUT=$1
 
   echo "[*] Creating archive $OUTPUT ..."
-  zip -j "$OUTPUT" gitrob ../README.md ../LICENSE.md >/dev/null
+  zip -j "$OUTPUT" gitrob ../README.md ../LICENSE.md ../contentsignatures.json ../filesignatures.json >/dev/null
   rm -rf gitrob gitrob.exe
 }
 

@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 3.0.0-beta - 2018-06-08
 ### Added
 - Support for GitLab users and groups
-- Support for multiple modes of execution
+- Support for multiple modes of execution including content search
     - Mode 1 - Default mode to match on [file signatures](./filesignatures.json)
     - Mode 2 - Match on [file signatures](./filesignatures.json) then [content signatures](./contentsignatures.json) to constitute a result.
     - Mode 3 - Match on [content signatures](./contentsignatures.json) only without file signature matches.
