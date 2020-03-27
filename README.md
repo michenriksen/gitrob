@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://github.com/michenriksen/gitrob/raw/master/static/images/gopher_full.png" alt="Gitrob" width="200" />
+  <img src="./static/images/gopher_full.png" alt="Gitrob" width="200" />
 </p>
 <br />
 <br />
@@ -7,7 +7,7 @@
 
 # Gitrob: Putting the Open Source in OSINT
 
-Gitrob is a tool to help find potentially sensitive files pushed to public repositories on Github. Gitrob will clone repositories belonging to a user or organization down to a configurable depth and iterate through the commit history and flag files that match signatures for potentially sensitive files. The findings will be presented through a web interface for easy browsing and analysis.
+Gitrob is a tool to help find potentially sensitive files pushed to public repositories on Github. Gitrob will clone repositories belonging to a GitLab or Github user or group/organization down to a configurable depth and iterate through the commit history and flag files and/or commit content that match signatures for potentially sensitive information. The findings will be presented through a web interface for easy browsing and analysis.
 
 ## Usage
 
@@ -23,15 +23,21 @@ Gitrob is a tool to help find potentially sensitive files pushed to public repos
 -debug
     Print debugging information
 -github-access-token string
-    GitHub access token to use for API requests
+    Github access token to use for API requests (set one)
+-gitlab-access-token string
+    GitLab access token to use for API requests (set one)
+-in-mem-clone
+    Clone repositories into memory for faster analysis depending on your hardware
 -load string
-    Load session file
+    Load session file from specified path
+-mode int {1, 2, or 3}
+    Designate a mode for execution.  Mode 1 (default) searches for file signature matches.  Mode 2 (-mode 2) searches for file signature matches.  Given a file signature match, mode 2 then attempts to match on content in order to produce a result.  Mode 3 (-mode 3) searches by content matches only.  In mode 3, no file signature matches are performed.
 -no-expand-orgs
     Don't add members to targets when processing organizations
 -port int
     Port to run web server on (default 9393)
 -save string
-    Save session to file
+    Save session to a file at the given path
 -silent
     Suppress all output except for errors
 -threads int
@@ -64,10 +70,11 @@ Make sure you have a correctly configured **Go >= 1.8** environment and that `$G
 
 This command will download gitrob, install its dependencies, compile it and move the `gitrob` executable to `$GOPATH/bin`.
 
-### Github access token
+### Access Tokens
 
-Gitrob will need a Github access token in order to interact with the Github API.  [Create a personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) and save it in an environment variable in your `.bashrc` or similar shell configuration file:
+Gitrob will need either a GitLab or Github access token in order to interact with the appropriate API.  You can create a GitLab personal access token, or [a Github personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) and save it in an environment variable in your `.bashrc` or similar shell configuration file:
 
+    export GITROB_GITLAB_ACCESS_TOKEN=deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
     export GITROB_GITHUB_ACCESS_TOKEN=deadbeefdeadbeefdeadbeefdeadbeefdeadbeef
 
-Alternatively you can specify the access token with the `-github-access-token` option, but watch out for your command history!
+Alternatively you can specify the access token with the `-gitlab-access-token` or `-github-access-token` option on the command line, but watch out for your command history!
