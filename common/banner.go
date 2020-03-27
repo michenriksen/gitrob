@@ -2,7 +2,7 @@ package common
 
 const (
 	Name        = "gitrob"
-	Version     = "2.1.0-beta"
+	Version     = "3.0.0-alpha"
 	ASCIIBanner = "        _ __           __\n" +
 		"  ___ _(_) /________  / /\n" +
 		" / _ `/ / __/ __/ _ \\/ _ \\\n" +
