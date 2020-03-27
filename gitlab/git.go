@@ -2,20 +2,17 @@ package gitlab
 
 import (
 	"fmt"
-	"io/ioutil"
-
 	"github.com/codeEmitter/gitrob/common"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
+	"gopkg.in/src-d/go-git.v4/storage/memory"
+	"io/ioutil"
 )
 
 func CloneRepository(cloneConfig *common.CloneConfiguration) (*git.Repository, string, error) {
-	dir, err := ioutil.TempDir("", "gitrob")
-	if err != nil {
-		return nil, "", err
-	}
-	repository, err := git.PlainClone(dir, false, &git.CloneOptions{
+
+	cloneOptions := &git.CloneOptions{
 		URL:           *cloneConfig.Url,
 		Depth:         *cloneConfig.Depth,
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", *cloneConfig.Branch)),
@@ -25,9 +22,21 @@ func CloneRepository(cloneConfig *common.CloneConfiguration) (*git.Repository, s
 			Username: *cloneConfig.Username,
 			Password: *cloneConfig.Token,
 		},
-	})
-	if err != nil {
-		return nil, dir, err
 	}
+
+	var repository *git.Repository
+	var err error
+	var dir string
+	if !*cloneConfig.InMemClone {
+		dir, err = ioutil.TempDir("", "gitrob")
+		if err != nil {
+			return nil, "", err
+		}
+		repository, err = git.PlainClone(dir, false, cloneOptions)
+	} else {
+		repository, err = git.Clone(memory.NewStorage(), nil, cloneOptions)
+	}
+
 	return repository, dir, nil
+
 }
