@@ -5,8 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## 3.0.0-beta - 2018-06-08
 ### Added
+- Support for GitLab users and groups
+- Support for multiple modes of execution
+    - Mode 1 - Default mode to match on [file signatures](./filesignatures.json)
+    - Mode 2 - Match on [file signatures](./filesignatures.json) then [content signatures](./contentsignatures.json) to constitute a result.
+    - Mode 3 - Match on [content signatures](./contentsignatures.json) only without file signature matches.
+- Support for in-memory repository clones, which can result in significantly faster analysis times depending on your hardware.
+- File signatures for Google Cloud Platform credentials
+- Content signatures similar to [trufflehog](https://github.com/dxa4481/truffleHogRegexes/blob/master/truffleHogRegexes/regexes.json).
 - Dependency management with dep
 
 ### Changed
