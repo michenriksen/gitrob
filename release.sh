@@ -2,7 +2,7 @@
 
 CURRENT_VERSION=$(cat common/banner.go | grep Version | cut -d '"' -f 2)
 TO_UPDATE=(
-  core/banner.go
+  common/banner.go
 )
 
 read -p "[?] Did you remember to update CHANGELOG.md? "
