@@ -1,51 +1,303 @@
 {
   "FileSignatures": [
     {
-      "Part": "filename",
-      "MatchOn": "^.*_rsa$",
-      "Description": "Private SSH key",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^.*_dsa$",
-      "Description": "Private SSH key",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^.*_ed25519$",
-      "Description": "Private SSH key",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^.*_ecdsa$",
-      "Description": "Private SSH key",
-      "Comment": ""
+      "Part": "extension",
+      "MatchOn": ".agilekeychain",
+      "Description": "1Password password manager database file",
+      "Comment": "Feed it to Hashcat and see if you're lucky"
     },
     {
       "Part": "path",
-      "MatchOn": "\\.?ssh/config$",
-      "Description": "SSH configuration file",
+      "MatchOn": "\\.?aws/credentials$",
+      "Description": "AWS CLI credentials file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?htpasswd$",
+      "Description": "Apache htpasswd file",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": "^key(pair)?$",
-      "Description": "Potential cryptographic private key",
+      "MatchOn": ".keychain",
+      "Description": "Apple Keychain database file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".cscfg",
+      "Description": "Azure service configuration schema file",
       "Comment": ""
     },
     {
       "Part": "filename",
-      "MatchOn": "^\\.?(bash_|zsh_|sh_|z)?history$",
-      "Description": "Shell command history file",
+      "MatchOn": "carrierwave.rb",
+      "Description": "Carrierwave configuration file",
+      "Comment": "Can contain credentials for cloud storage systems such as Amazon S3 and Google Storage"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "knife.rb",
+      "Description": "Chef Knife configuration file",
+      "Comment": "Can contain references to Chef servers"
+    },
+    {
+      "Part": "path",
+      "MatchOn": "\\.?chef/(.*)\\.pem$",
+      "Description": "Chef private key",
+      "Comment": "Can be used to authenticate against Chef servers"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^(\\.|_)?netrc$",
+      "Description": "Configuration file for auto-login process",
+      "Comment": "Can contain username and password"
+    },
+    {
+      "Part": "path",
+      "MatchOn": "credential",
+      "Description": "Contains word: credential",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "password",
+      "Description": "Contains word: password",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?dbeaver-data-sources.xml$",
+      "Description": "DBeaver SQL database manager configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".dayone",
+      "Description": "Day One journal file",
+      "Comment": "Now it's getting creepy..."
+    },
+    {
+      "Part": "path",
+      "MatchOn": "doctl/config.yaml$",
+      "Description": "DigitalOcean doctl command-line client configuration file",
+      "Comment": "Contains DigitalOcean API key and other information"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "settings.py",
+      "Description": "Django configuration file",
+      "Comment": "Can contain database credentials, cloud storage system credentials, and other secrets"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?dockercfg$",
+      "Description": "Docker configuration file",
+      "Comment": "Can contain credentials for public or private Docker registries"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?env$",
+      "Description": "Environment configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "filezilla.xml",
+      "Description": "FileZilla FTP configuration file",
+      "Comment": "Can contain credentials for FTP servers"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "recentservers.xml",
+      "Description": "FileZilla FTP recent servers file",
+      "Comment": "Can contain credentials for FTP servers"
+    },
+    {
+      "Part": "extension",
+      "MatchOn": "^key(store|ring)$",
+      "Description": "GNOME Keyring database file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?gitconfig$",
+      "Description": "Git configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "config/hub$",
+      "Description": "GitHub Hub command-line client configuration file",
+      "Comment": "Can contain GitHub API access token"
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".gnucash",
+      "Description": "GnuCash database file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "credentials.db",
+      "Description": "Google Cloud Platform gcloud credential database",
+      "Comment": "sqlite database containing credentials used by the gcloud command from Google's Cloud SDK"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "credentials.json",
+      "Description": "Google Cloud Platform service account credentials keyfile",
+      "Comment": "GCP service account credentials can be activated using the gcloud command from Google's Cloud SDK (https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account)"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^.*-[a-f0-9]{12}\\.json$",
+      "Description": "Google Cloud Platform service account credentials keyfile",
+      "Comment": "GCP service account credentials can be activated using the gcloud command from Google's Cloud SDK (https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account)"
+    },
+    {
+      "Part": "path",
+      "MatchOn": "\\.?xchat2?/servlist_?\\.conf$",
+      "Description": "Hexchat/XChat IRC client server list configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "\\.?irssi/config$",
+      "Description": "Irssi IRC client configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".jks",
+      "Description": "Java keystore file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin.xml",
+      "Description": "Jenkins publish over SSH plugin file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".kwallet",
+      "Description": "KDE Wallet Manager database file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": "^kdbx?$",
+      "Description": "KeePass password manager database file",
+      "Comment": "Feed it to Hashcat and see if you're lucky"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": ".boto",
+      "Description": "Legacy Google Cloud Platform gcloud credential database",
+      "Comment": "File containing credentials used by the gcloud command from Google's Cloud SDK"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "adc.json",
+      "Description": "Legacy Google Cloud Platform service account credentials keyfile",
+      "Comment": "GCP service account credentials can be activated using the gcloud command from Google's Cloud SDK (https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account)"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "configuration.user.xpl",
+      "Description": "Little Snitch firewall configuration file",
+      "Comment": "Contains traffic rules for applications"
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".log",
+      "Description": "Log file",
+      "Comment": "Log files can contain secret HTTP endpoints, session IDs, API keys and other goodies"
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".tpm",
+      "Description": "Microsoft BitLocker Trusted Platform Module password file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".bek",
+      "Description": "Microsoft BitLocker recovery key file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".mdf",
+      "Description": "Microsoft SQL database file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".sdf",
+      "Description": "Microsoft SQL server compact database file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?muttrc$",
+      "Description": "Mutt e-mail client configuration file",
       "Comment": ""
     },
     {
       "Part": "filename",
       "MatchOn": "^\\.?mysql_history$",
       "Description": "MySQL client command history file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?npmrc$",
+      "Description": "NPM configuration file",
+      "Comment": "Can contain credentials for NPM registries"
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".pcap",
+      "Description": "Network traffic capture file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "omniauth.rb",
+      "Description": "OmniAuth configuration file",
+      "Comment": "The OmniAuth configuration file can contain client application secrets"
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".ovpn",
+      "Description": "OpenVPN client configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "config(\\.inc)?\\.php$",
+      "Description": "PHP configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".psafe3",
+      "Description": "Password Safe database file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "otr.private_key",
+      "Description": "Pidgin OTR private key",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "\\.?purple/accounts\\.xml$",
+      "Description": "Pidgin chat client account configuration file",
       "Comment": ""
     },
     {
@@ -62,177 +314,9 @@
     },
     {
       "Part": "filename",
-      "MatchOn": "^\\.?irb_history$",
-      "Description": "Ruby IRB console history file",
+      "MatchOn": "credentials.xml",
+      "Description": "Potential Jenkins credentials file",
       "Comment": ""
-    },
-    {
-      "Part": "path",
-      "MatchOn": "\\.?purple/accounts\\.xml$",
-      "Description": "Pidgin chat client account configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "path",
-      "MatchOn": "\\.?xchat2?/servlist_?\\.conf$",
-      "Description": "Hexchat/XChat IRC client server list configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "path",
-      "MatchOn": "\\.?irssi/config$",
-      "Description": "Irssi IRC client configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "path",
-      "MatchOn": "\\.?recon-ng/keys\\.db$",
-      "Description": "Recon-ng web reconnaissance framework API key database",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?dbeaver-data-sources.xml$",
-      "Description": "DBeaver SQL database manager configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?muttrc$",
-      "Description": "Mutt e-mail client configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?s3cfg$",
-      "Description": "S3cmd configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "path",
-      "MatchOn": "\\.?aws/credentials$",
-      "Description": "AWS CLI credentials file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^sftp-config(\\.json)?$",
-      "Description": "SFTP connection configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?trc$",
-      "Description": "T command-line Twitter client configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?gitrobrc$",
-      "Description": "Well, this is awkward... Gitrob configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?(bash|zsh|csh)rc$",
-      "Description": "Shell configuration file",
-      "Comment": "Shell configuration files can contain passwords, API keys, hostnames and other goodies"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?(bash_|zsh_)?profile$",
-      "Description": "Shell profile configuration file",
-      "Comment": "Shell configuration files can contain passwords, API keys, hostnames and other goodies"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "`^\\.?(bash_|zsh_)?aliases$",
-      "Description": "Shell command alias configuration file",
-      "Comment": "Shell configuration files can contain passwords, API keys, hostnames and other goodies"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "config(\\.inc)?\\.php$",
-      "Description": "PHP configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": "^key(store|ring)$",
-      "Description": "GNOME Keyring database file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": "^kdbx?$",
-      "Description": "KeePass password manager database file",
-      "Comment": "Feed it to Hashcat and see if you're lucky"
-    },
-    {
-      "Part": "extension",
-      "MatchOn": "^sql(dump)?$",
-      "Description": "SQL dump file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?htpasswd$",
-      "Description": "Apache htpasswd file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^(\\.|_)?netrc$",
-      "Description": "Configuration file for auto-login process",
-      "Comment": "Can contain username and password"
-    },
-    {
-      "Part": "path",
-      "MatchOn": "\\.?gem/credentials$",
-      "Description": "Rubygems credentials file",
-      "Comment": "Can contain API key for a rubygems.org account"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?tugboat$",
-      "Description": "Tugboat DigitalOcean management tool configuration",
-      "Comment": ""
-    },
-    {
-      "Part": "path",
-      "MatchOn": "doctl/config.yaml$",
-      "Description": "DigitalOcean doctl command-line client configuration file",
-      "Comment": "Contains DigitalOcean API key and other information"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?git-credentials$",
-      "Description": "git-credential-store helper credentials file",
-      "Comment": ""
-    },
-    {
-      "Part": "path",
-      "MatchOn": "config/hub$",
-      "Description": "GitHub Hub command-line client configuration file",
-      "Comment": "Can contain GitHub API access token"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?gitconfig$",
-      "Description": "Git configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "path",
-      "MatchOn": "\\.?chef/(.*)\\.pem$",
-      "Description": "Chef private key",
-      "Comment": "Can be used to authenticate against Chef servers"
-    },
-    {
-      "Part": "path",
-      "MatchOn": "etc/shadow$",
-      "Description": "Potential Linux shadow file",
-      "Comment": "Contains hashed passwords for system users"
     },
     {
       "Part": "path",
@@ -241,76 +325,22 @@
       "Comment": "Contains system user information"
     },
     {
-      "Part": "filename",
-      "MatchOn": "^\\.?dockercfg$",
-      "Description": "Docker configuration file",
-      "Comment": "Can contain credentials for public or private Docker registries"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?npmrc$",
-      "Description": "NPM configuration file",
-      "Comment": "Can contain credentials for NPM registries"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^\\.?env$",
-      "Description": "Environment configuration file",
-      "Comment": ""
-    },
-    {
       "Part": "path",
-      "MatchOn": "credential",
-      "Description": "Contains word: credential",
+      "MatchOn": "etc/shadow$",
+      "Description": "Potential Linux shadow file",
+      "Comment": "Contains hashed passwords for system users"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "LocalSettings.php",
+      "Description": "Potential MediaWiki configuration file",
       "Comment": ""
     },
     {
-      "Part": "path",
-      "MatchOn": "password",
-      "Description": "Contains word: password",
-      "Comment": ""
-    },
-    {
       "Part": "filename",
-      "MatchOn": "credentials.json",
-      "Description": "Google Cloud Platform service account credentials keyfile",
-      "Comment": "GCP service account credentials can be activated using the gcloud command from Google's Cloud SDK (https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account)"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "^.*-[a-f0-9]{12}\\.json$",
-      "Description": "Google Cloud Platform service account credentials keyfile",
-      "Comment": "GCP service account credentials can be activated using the gcloud command from Google's Cloud SDK (https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account)"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "adc.json",
-      "Description": "Legacy Google Cloud Platform service account credentials keyfile",
-      "Comment": "GCP service account credentials can be activated using the gcloud command from Google's Cloud SDK (https://cloud.google.com/sdk/gcloud/reference/auth/activate-service-account)"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "credentials.db",
-      "Description": "Google Cloud Platform gcloud credential database",
-      "Comment": "sqlite database containing credentials used by the gcloud command from Google's Cloud SDK"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": ".boto",
-      "Description": "Legacy Google Cloud Platform gcloud credential database",
-      "Comment": "File containing credentials used by the gcloud command from Google's Cloud SDK"
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".pem",
-      "Description": "Potential cryptographic private key",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".log",
-      "Description": "Log file",
-      "Comment": "Log files can contain secret HTTP endpoints, session IDs, API keys and other goodies"
+      "MatchOn": "database.yml",
+      "Description": "Potential Ruby On Rails database configuration file",
+      "Comment": "Can contain database credentials"
     },
     {
       "Part": "extension",
@@ -337,21 +367,51 @@
       "Comment": ""
     },
     {
+      "Part": "extension",
+      "MatchOn": "^key(pair)?$",
+      "Description": "Potential cryptographic private key",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".pem",
+      "Description": "Potential cryptographic private key",
+      "Comment": ""
+    },
+    {
       "Part": "filename",
-      "MatchOn": "otr.private_key",
-      "Description": "Pidgin OTR private key",
+      "MatchOn": "journal.txt",
+      "Description": "Potential jrnl journal file",
+      "Comment": "Now it's getting creepy..."
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^.*_rsa$",
+      "Description": "Private SSH key",
       "Comment": ""
     },
     {
-      "Part": "extension",
-      "MatchOn": ".ovpn",
-      "Description": "OpenVPN client configuration file",
+      "Part": "filename",
+      "MatchOn": "^.*_dsa$",
+      "Description": "Private SSH key",
       "Comment": ""
     },
     {
-      "Part": "extension",
-      "MatchOn": ".cscfg",
-      "Description": "Azure service configuration schema file",
+      "Part": "filename",
+      "MatchOn": "^.*_ed25519$",
+      "Description": "Private SSH key",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^.*_ecdsa$",
+      "Description": "Private SSH key",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "\\.?recon-ng/keys\\.db$",
+      "Description": "Recon-ng web reconnaissance framework API key database",
       "Comment": ""
     },
     {
@@ -361,51 +421,15 @@
       "Comment": ""
     },
     {
-      "Part": "extension",
-      "MatchOn": ".mdf",
-      "Description": "Microsoft SQL database file",
-      "Comment": ""
+      "Part": "filename",
+      "MatchOn": "robomongo.json",
+      "Description": "Robomongo MongoDB manager configuration file",
+      "Comment": "Can contain credentials for MongoDB databases"
     },
     {
-      "Part": "extension",
-      "MatchOn": ".sdf",
-      "Description": "Microsoft SQL server compact database file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".sqlite",
-      "Description": "SQLite database file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".bek",
-      "Description": "Microsoft BitLocker recovery key file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".tpm",
-      "Description": "Microsoft BitLocker Trusted Platform Module password file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".fve",
-      "Description": "Windows BitLocker full volume encrypted data file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".jks",
-      "Description": "Java keystore file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".psafe3",
-      "Description": "Password Safe database file",
+      "Part": "filename",
+      "MatchOn": "^\\.?irb_history$",
+      "Description": "Ruby IRB console history file",
       "Comment": ""
     },
     {
@@ -415,81 +439,39 @@
       "Comment": "If the Rails secret token is known, it can allow for remote code execution (http://www.exploit-db.com/exploits/27527/)"
     },
     {
-      "Part": "filename",
-      "MatchOn": "carrierwave.rb",
-      "Description": "Carrierwave configuration file",
-      "Comment": "Can contain credentials for cloud storage systems such as Amazon S3 and Google Storage"
+      "Part": "path",
+      "MatchOn": "\\.?gem/credentials$",
+      "Description": "Rubygems credentials file",
+      "Comment": "Can contain API key for a rubygems.org account"
     },
     {
       "Part": "filename",
-      "MatchOn": "database.yml",
-      "Description": "Potential Ruby On Rails database configuration file",
-      "Comment": "Can contain database credentials"
+      "MatchOn": "^\\.?s3cfg$",
+      "Description": "S3cmd configuration file",
+      "Comment": ""
     },
     {
       "Part": "filename",
-      "MatchOn": "omniauth.rb",
-      "Description": "OmniAuth configuration file",
-      "Comment": "The OmniAuth configuration file can contain client application secrets"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "settings.py",
-      "Description": "Django configuration file",
-      "Comment": "Can contain database credentials, cloud storage system credentials, and other secrets"
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".agilekeychain",
-      "Description": "1Password password manager database file",
-      "Comment": "Feed it to Hashcat and see if you're lucky"
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".keychain",
-      "Description": "Apple Keychain database file",
+      "MatchOn": "^sftp-config(\\.json)?$",
+      "Description": "SFTP connection configuration file",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": ".pcap",
-      "Description": "Network traffic capture file",
+      "MatchOn": "^sql(dump)?$",
+      "Description": "SQL dump file",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": ".gnucash",
-      "Description": "GnuCash database file",
+      "MatchOn": ".sqlite",
+      "Description": "SQLite database file",
       "Comment": ""
     },
     {
-      "Part": "filename",
-      "MatchOn": "jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin.xml",
-      "Description": "Jenkins publish over SSH plugin file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "credentials.xml",
-      "Description": "Potential Jenkins credentials file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".kwallet",
-      "Description": "KDE Wallet Manager database file",
-      "Comment": ""
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "LocalSettings.php",
-      "Description": "Potential MediaWiki configuration file",
-      "Comment": ""
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".tblk",
-      "Description": "Tunnelblick VPN configuration file",
+      "Part": "path",
+      "MatchOn": "\\.?ssh/config$",
+      "Description": "SSH configuration file",
       "Comment": ""
     },
     {
@@ -500,63 +482,21 @@
     },
     {
       "Part": "filename",
-      "MatchOn": "configuration.user.xpl",
-      "Description": "Little Snitch firewall configuration file",
-      "Comment": "Contains traffic rules for applications"
-    },
-    {
-      "Part": "extension",
-      "MatchOn": ".dayone",
-      "Description": "Day One journal file",
-      "Comment": "Now it's getting creepy..."
+      "MatchOn": "`^\\.?(bash_|zsh_)?aliases$",
+      "Description": "Shell command alias configuration file",
+      "Comment": "Shell configuration files can contain passwords, API keys, hostnames and other goodies"
     },
     {
       "Part": "filename",
-      "MatchOn": "journal.txt",
-      "Description": "Potential jrnl journal file",
-      "Comment": "Now it's getting creepy..."
+      "MatchOn": "^\\.?(bash_|zsh_|sh_|z)?history$",
+      "Description": "Shell command history file",
+      "Comment": ""
     },
     {
       "Part": "filename",
-      "MatchOn": "knife.rb",
-      "Description": "Chef Knife configuration file",
-      "Comment": "Can contain references to Chef servers"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "proftpdpasswd",
-      "Description": "cPanel backup ProFTPd credentials file",
-      "Comment": "Contains usernames and password hashes for FTP accounts"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "robomongo.json",
-      "Description": "Robomongo MongoDB manager configuration file",
-      "Comment": "Can contain credentials for MongoDB databases"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "filezilla.xml",
-      "Description": "FileZilla FTP configuration file",
-      "Comment": "Can contain credentials for FTP servers"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "recentservers.xml",
-      "Description": "FileZilla FTP recent servers file",
-      "Comment": "Can contain credentials for FTP servers"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "ventrilo_srv.ini",
-      "Description": "Ventrilo server configuration file",
-      "Comment": "Can contain passwords"
-    },
-    {
-      "Part": "filename",
-      "MatchOn": "terraform.tfvars",
-      "Description": "Terraform variable config file",
-      "Comment": "Can contain credentials for terraform providers"
+      "MatchOn": "^\\.?(bash|zsh|csh)rc$",
+      "Description": "Shell configuration file",
+      "Comment": "Shell configuration files can contain passwords, API keys, hostnames and other goodies"
     },
     {
       "Part": "filename",
@@ -575,6 +515,66 @@
       "MatchOn": ".extra",
       "Description": "Shell configuration file",
       "Comment": "Shell configuration files can contain passwords, API keys, hostnames and other goodies"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?(bash_|zsh_)?profile$",
+      "Description": "Shell profile configuration file",
+      "Comment": "Shell configuration files can contain passwords, API keys, hostnames and other goodies"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?trc$",
+      "Description": "T command-line Twitter client configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "terraform.tfvars",
+      "Description": "Terraform variable config file",
+      "Comment": "Can contain credentials for terraform providers"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?tugboat$",
+      "Description": "Tugboat DigitalOcean management tool configuration",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".tblk",
+      "Description": "Tunnelblick VPN configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "ventrilo_srv.ini",
+      "Description": "Ventrilo server configuration file",
+      "Comment": "Can contain passwords"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?gitrobrc$",
+      "Description": "Well, this is awkward... Gitrob configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "extension",
+      "MatchOn": ".fve",
+      "Description": "Windows BitLocker full volume encrypted data file",
+      "Comment": ""
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "proftpdpasswd",
+      "Description": "cPanel backup ProFTPd credentials file",
+      "Comment": "Contains usernames and password hashes for FTP accounts"
+    },
+    {
+      "Part": "filename",
+      "MatchOn": "^\\.?git-credentials$",
+      "Description": "git-credential-store helper credentials file",
+      "Comment": ""
     }
   ]
 }
