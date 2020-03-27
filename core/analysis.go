@@ -191,6 +191,7 @@ func cloneRepository(sess *Session, repo *common.Repository, threadId int) (*git
 		Branch: repo.DefaultBranch,
 		Depth:  sess.Options.CommitDepth,
 		Token:  &sess.GitLab.AccessToken,
+		InMemClone: sess.Options.InMemClone,
 	}
 
 	var clone *git.Repository
@@ -220,7 +221,9 @@ func getRepositoryHistory(sess *Session, clone *git.Repository, repo *common.Rep
 	history, err := common.GetRepositoryHistory(clone)
 	if err != nil {
 		sess.Out.Error("[THREAD #%d][%s] Error getting commit history: %s\n", threadId, *repo.CloneURL, err)
-		os.RemoveAll(path)
+		if *sess.Options.InMemClone {
+			os.RemoveAll(path)
+		}
 		sess.Stats.IncrementRepositories()
 		sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
 		return nil, err
@@ -279,7 +282,9 @@ func AnalyzeRepositories(sess *Session) {
 				}
 
 				sess.Out.Debug("[THREAD #%d][%s] Done analyzing commits\n", tid, *repo.CloneURL)
-				os.RemoveAll(path)
+				if *sess.Options.InMemClone {
+					os.RemoveAll(path)
+				}
 				sess.Out.Debug("[THREAD #%d][%s] Deleted %s\n", tid, *repo.CloneURL, path)
 				sess.Stats.IncrementRepositories()
 				sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))

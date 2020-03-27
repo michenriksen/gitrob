@@ -13,11 +13,12 @@ const (
 )
 
 type CloneConfiguration struct {
-	Url      *string
-	Username *string
-	Token    *string
-	Branch   *string
-	Depth    *int
+	InMemClone *bool
+	Url        *string
+	Username   *string
+	Token      *string
+	Branch     *string
+	Depth      *int
 }
 
 type Owner struct {

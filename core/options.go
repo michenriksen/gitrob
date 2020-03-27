@@ -10,9 +10,10 @@ type Options struct {
 	Debug             *bool
 	GitLabAccessToken *string `json:"-"`
 	GithubAccessToken *string `json:"-"`
+	InMemClone        *bool
 	Load              *string `json:"-"`
 	Logins            []string
-	Mode              *int    `json:"-"`
+	Mode              *int `json:"-"`
 	NoExpandOrgs      *bool
 	Port              *int
 	Save              *string `json:"-"`
@@ -27,6 +28,7 @@ func ParseOptions() (Options, error) {
 		Debug:             flag.Bool("debug", false, "Print debugging information"),
 		GitLabAccessToken: flag.String("gitlab-access-token", "", "GitLab access token to use for API requests"),
 		GithubAccessToken: flag.String("github-access-token", "", "GitHub access token to use for API requests"),
+		InMemClone:        flag.Bool("in-mem-clone", false, "Clone repositories into memory"),
 		Load:              flag.String("load", "", "Load session file"),
 		Mode:              flag.Int("mode", 1, "Secrets matching mode (see documentation)."),
 		NoExpandOrgs:      flag.Bool("no-expand-orgs", false, "Don't add members to targets when processing organizations"),
