@@ -167,7 +167,8 @@ func (c Client) getUser(login string) (*gitlab.User, error) {
 		return nil, err
 	}
 	if len(users) == 0 {
-		return nil, fmt.Errorf("No GitLab %s or %s %s was found.",
+		return nil, fmt.Errorf("No GitLab %s or %s %s was found.  If you are targeting a GitLab group, be sure to" +
+			" use an ID in place of a name.",
 			strings.ToLower(common.TargetTypeUser),
 			strings.ToLower(common.TargetTypeOrganization),
 			login)
