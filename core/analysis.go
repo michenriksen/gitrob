@@ -136,7 +136,7 @@ func matchContent(sess *Session,
 	for _, contentSignature := range sess.Signatures.ContentSignatures {
 		matched, err := contentSignature.Match(matchTarget)
 		if err != nil {
-			sess.Out.Error("Error while performing content match: %s\n", err)
+			sess.Out.Error("Error while performing content match with '%s': %s\n", contentSignature.Description, err)
 		}
 		if !matched {
 			continue
