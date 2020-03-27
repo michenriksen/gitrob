@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## 3.0.0-beta - 2018-06-08
+## 3.0.0-beta - 2020-03-27
 ### Added
 - Support for GitLab users and groups
 - Support for multiple modes of execution including content search
