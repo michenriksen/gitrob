@@ -5,35 +5,35 @@ import (
 )
 
 type Options struct {
+	BindAddress       *string
 	CommitDepth       *int
-	GithubAccessToken *string `json:"-"`
+	Debug             *bool
 	GitLabAccessToken *string `json:"-"`
+	GithubAccessToken *string `json:"-"`
+	Load              *string `json:"-"`
+	Logins            []string
 	Mode              *int    `json:"-"`
 	NoExpandOrgs      *bool
-	Threads           *int
-	Save              *string `json:"-"`
-	Load              *string `json:"-"`
-	BindAddress       *string
 	Port              *int
+	Save              *string `json:"-"`
 	Silent            *bool
-	Debug             *bool
-	Logins            []string
+	Threads           *int
 }
 
 func ParseOptions() (Options, error) {
 	options := Options{
+		BindAddress:       flag.String("bind-address", "127.0.0.1", "Address to bind web server to"),
 		CommitDepth:       flag.Int("commit-depth", 500, "Number of repository commits to process"),
-		GithubAccessToken: flag.String("github-access-token", "", "GitHub access token to use for API requests"),
+		Debug:             flag.Bool("debug", false, "Print debugging information"),
 		GitLabAccessToken: flag.String("gitlab-access-token", "", "GitLab access token to use for API requests"),
+		GithubAccessToken: flag.String("github-access-token", "", "GitHub access token to use for API requests"),
+		Load:              flag.String("load", "", "Load session file"),
 		Mode:              flag.Int("mode", 1, "Secrets matching mode (see documentation)."),
 		NoExpandOrgs:      flag.Bool("no-expand-orgs", false, "Don't add members to targets when processing organizations"),
-		Threads:           flag.Int("threads", 0, "Number of concurrent threads (default number of logical CPUs)"),
-		Save:              flag.String("save", "", "Save session to file"),
-		Load:              flag.String("load", "", "Load session file"),
-		BindAddress:       flag.String("bind-address", "127.0.0.1", "Address to bind web server to"),
 		Port:              flag.Int("port", 9393, "Port to run web server on"),
+		Save:              flag.String("save", "", "Save session to file"),
 		Silent:            flag.Bool("silent", false, "Suppress all output except for errors"),
-		Debug:             flag.Bool("debug", false, "Print debugging information"),
+		Threads:           flag.Int("threads", 0, "Number of concurrent threads (default number of logical CPUs)"),
 	}
 
 	flag.Parse()
