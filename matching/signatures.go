@@ -36,6 +36,7 @@ func (s *Signatures) Load(mode int) error {
 		}
 	}
 	if mode != 1 {
+		//source:  https://github.com/dxa4481/truffleHogRegexes/blob/master/truffleHogRegexes/regexes.json
 		e = s.loadSignatures("./contentsignatures.json")
 		if e != nil {
 			return e
