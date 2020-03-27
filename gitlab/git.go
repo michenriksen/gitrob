@@ -36,7 +36,9 @@ func CloneRepository(cloneConfig *common.CloneConfiguration) (*git.Repository, s
 	} else {
 		repository, err = git.Clone(memory.NewStorage(), nil, cloneOptions)
 	}
-
+	if err != nil {
+		return nil, dir, err
+	}
 	return repository, dir, nil
 
 }
