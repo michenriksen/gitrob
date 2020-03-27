@@ -5,19 +5,19 @@ import (
 )
 
 type Options struct {
-	BindAddress       *string
+	BindAddress       *string `json:"-"`
 	CommitDepth       *int
-	Debug             *bool
+	Debug             *bool   `json:"-"`
 	GitLabAccessToken *string `json:"-"`
 	GithubAccessToken *string `json:"-"`
 	InMemClone        *bool
 	Load              *string `json:"-"`
 	Logins            []string
-	Mode              *int `json:"-"`
+	Mode              *int
 	NoExpandOrgs      *bool
 	Port              *int
 	Save              *string `json:"-"`
-	Silent            *bool
+	Silent            *bool   `json:"-"`
 	Threads           *int
 }
 
