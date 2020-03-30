@@ -96,6 +96,8 @@ You can then run the container, optionally specifying how many logical CPUs to a
 
     docker run -p 9393:9393 --cpus <NUM_CPUS> gitrob:latest -bind-address 0.0.0.0 -github-access-token <token> -in-mem-clone -mode 2 <target1> <target2> ...
 
+With this container running, use your browser to hit the UI with:  http://localhost:9393.
+
 ## Access Tokens
 
 Gitrob will need either a GitLab or Github access token in order to interact with the appropriate API.  You can create a [GitLab personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html), or [a Github personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) and save it in an environment variable in your `.bashrc` or similar shell configuration file:
