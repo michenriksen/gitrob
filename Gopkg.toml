@@ -50,6 +50,10 @@
   version = "15.0.0"
 
 [[constraint]]
+  name = "github.com/xanzy/go-gitlab"
+  version = "v0.29.0"
+
+[[constraint]]
   branch = "master"
   name = "golang.org/x/oauth2"
 

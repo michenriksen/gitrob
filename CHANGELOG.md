@@ -5,7 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## 3.0.0-beta - 2020-03-27
+## 3.0.1-alpha 2020-03-30
+### Added
+- Docker support
+- Bug fix:  include go-gitlab in dep dependency .toml and .lock files.
+
+### Changed
+- Windows releases have been removed temporarily due to a platform build issue introduced with github.com/xanzy/go-gitlab
+
+## 3.0.0-alpha - 2020-03-27
 ### Added
 - Support for GitLab users and groups
 - Support for multiple modes of execution including content search

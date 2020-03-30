@@ -52,7 +52,8 @@ cd $BUILD_FOLDER
 
 build_linux_amd64 && create_archive gitrob_linux_amd64_$VERSION.zip
 build_macos_amd64 && create_archive gitrob_macos_amd64_$VERSION.zip
-build_windows_amd64 && create_exe_archive gitrob_windows_amd64_$VERSION.zip
+#windows builds are broken with the addition of go-gitlab
+#build_windows_amd64 && create_exe_archive gitrob_windows_amd64_$VERSION.zip
 shasum -a 256 * >checksums.txt
 
 echo
