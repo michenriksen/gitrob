@@ -51,7 +51,7 @@
 
 [[constraint]]
   name = "github.com/xanzy/go-gitlab"
-  version = "v0.29.0"
+  version = "v0.31.0"
 
 [[constraint]]
   branch = "master"
