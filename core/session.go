@@ -186,7 +186,11 @@ func (s *Session) InitAPIClient() {
 	if s.IsGithubSession {
 		s.Client = gh.Client.NewClient(gh.Client{}, s.Github.AccessToken)
 	} else {
-		s.Client = gl.Client.NewClient(gl.Client{}, s.GitLab.AccessToken, s.Out)
+		var err error
+		s.Client, err = gl.Client.NewClient(gl.Client{}, s.GitLab.AccessToken, s.Out)
+		if err != nil {
+			s.Out.Fatal("Error initializing GitLab client: %s", err)
+		}
 	}
 }
 
