@@ -2,7 +2,7 @@
   "FileSignatures": [
     {
       "Part": "extension",
-      "MatchOn": ".agilekeychain",
+      "MatchOn": "\\.agilekeychain$",
       "Description": "1Password password manager database file",
       "Comment": "Feed it to Hashcat and see if you're lucky"
     },
@@ -20,13 +20,13 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".keychain",
+      "MatchOn": "\\.keychain$",
       "Description": "Apple Keychain database file",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": ".cscfg",
+      "MatchOn": "\\.cscfg$",
       "Description": "Azure service configuration schema file",
       "Comment": ""
     },
@@ -74,7 +74,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".dayone",
+      "MatchOn": "\\.dayone$",
       "Description": "Day One journal file",
       "Comment": "Now it's getting creepy..."
     },
@@ -134,7 +134,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".gnucash",
+      "MatchOn": "\\.gnucash$",
       "Description": "GnuCash database file",
       "Comment": ""
     },
@@ -170,7 +170,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".jks",
+      "MatchOn": "\\.jks$",
       "Description": "Java keystore file",
       "Comment": ""
     },
@@ -182,7 +182,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".kwallet",
+      "MatchOn": "\\.kwallet$",
       "Description": "KDE Wallet Manager database file",
       "Comment": ""
     },
@@ -212,31 +212,31 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".log",
+      "MatchOn": "\\.log$",
       "Description": "Log file",
       "Comment": "Log files can contain secret HTTP endpoints, session IDs, API keys and other goodies"
     },
     {
       "Part": "extension",
-      "MatchOn": ".tpm",
+      "MatchOn": "\\.tpm$",
       "Description": "Microsoft BitLocker Trusted Platform Module password file",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": ".bek",
+      "MatchOn": "\\.bek$",
       "Description": "Microsoft BitLocker recovery key file",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": ".mdf",
+      "MatchOn": "\\.mdf$",
       "Description": "Microsoft SQL database file",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": ".sdf",
+      "MatchOn": "\\.sdf$",
       "Description": "Microsoft SQL server compact database file",
       "Comment": ""
     },
@@ -260,7 +260,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".pcap",
+      "MatchOn": "\\.pcap$",
       "Description": "Network traffic capture file",
       "Comment": ""
     },
@@ -272,7 +272,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".ovpn",
+      "MatchOn": "\\.ovpn$",
       "Description": "OpenVPN client configuration file",
       "Comment": ""
     },
@@ -284,7 +284,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".psafe3",
+      "MatchOn": "\\.psafe3$",
       "Description": "Password Safe database file",
       "Comment": ""
     },
@@ -344,25 +344,25 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".pkcs12",
+      "MatchOn": "\\.pkcs12$",
       "Description": "Potential cryptographic key bundle",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": ".p12",
+      "MatchOn": "\\.p12$",
       "Description": "Potential cryptographic key bundle",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": ".pfx",
+      "MatchOn": "\\.pfx$",
       "Description": "Potential cryptographic key bundle",
       "Comment": ""
     },
     {
       "Part": "extension",
-      "MatchOn": ".asc",
+      "MatchOn": "\\.asc$",
       "Description": "Potential cryptographic key bundle",
       "Comment": ""
     },
@@ -374,7 +374,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".pem",
+      "MatchOn": "\\.pem$",
       "Description": "Potential cryptographic private key",
       "Comment": ""
     },
@@ -416,7 +416,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".rdp",
+      "MatchOn": "\\.rdp$",
       "Description": "Remote Desktop connection file",
       "Comment": ""
     },
@@ -464,7 +464,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".sqlite",
+      "MatchOn": "\\.sqlite$",
       "Description": "SQLite database file",
       "Comment": ""
     },
@@ -542,7 +542,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".tblk",
+      "MatchOn": "\\.tblk$",
       "Description": "Tunnelblick VPN configuration file",
       "Comment": ""
     },
@@ -560,7 +560,7 @@
     },
     {
       "Part": "extension",
-      "MatchOn": ".fve",
+      "MatchOn": "\\.fve$",
       "Description": "Windows BitLocker full volume encrypted data file",
       "Comment": ""
     },
