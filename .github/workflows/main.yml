@@ -1,4 +1,4 @@
-name: Go
+name: Gitrob
 
 on:
   push:
@@ -19,16 +19,15 @@ jobs:
         go-version: ^1.13
       id: go
 
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
-
-    - name: Get dependencies
+    - name: Update platform
       run: |
-        go get -v -t -d ./...
-        if [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-        fi
+        sudo add-apt-repository ppa:longsleep/golang-backports
+        sudo apt-get update
+        sudo apt-get install golang-go go-dep -y
 
-    - name: Build binaries
-      run: sh ./build.sh
+    - name: Build gitrob
+      run: |
+        go get github.com/codeEmitter/gitrob
+        cd ~/go/src/github.com/codeEmitter/gitrob
+        dep ensure
+        go build
