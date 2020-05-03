@@ -19,7 +19,7 @@ jobs:
         go-version: ^1.13
       id: go
 
-    - name: Build gitrob
+    - name: Build gitrob binaries
       run: |
         go get github.com/codeEmitter/gitrob
         go get github.com/golang/dep/cmd/dep
