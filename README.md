@@ -2,6 +2,8 @@
   <img src="./static/images/gopher_full.png" alt="Gitrob" width="200" />
 </p>
 
+![Gitrob](https://github.com/codeEmitter/gitrob/workflows/Gitrob/badge.svg)
+
 # Gitrob: Putting the Open Source in OSINT
 
 Gitrob is a tool to help find potentially sensitive information pushed to repositories on GitLab or Github. Gitrob will clone repositories belonging to a user or group/organization down to a configurable depth and iterate through the commit history and flag files and/or commit content that match signatures for potentially sensitive information. The findings will be presented through a web interface for easy browsing and analysis.
@@ -77,11 +79,12 @@ Gitrob will start its web interface and serve the results for analysis.
 
 A [precompiled version is available](https://github.com/codeEmitter/gitrob/releases) for each release, alternatively you can use the latest version of the source code from this repository in order to build your own binary.
 
-Make sure you have a correctly configured **Go >= 1.8** environment and that `$GOPATH/bin` is in your `$PATH`
+To install from source, make sure you have a correctly configured **Go >= 1.8** environment and that `$GOPATH/bin` is in your `$PATH`.  Also, make sure you have installed [dep](https://github.com/golang/dep) locally.
 
     $ go get github.com/codeEmitter/gitrob
-
-This command will download gitrob, install its dependencies, compile it and move the `gitrob` executable to `$GOPATH/bin`.
+    $ cd ~/go/src/github.com/codeEmitter/gitrob
+    $ dep ensure
+    $ go build
 
 ## Using docker
 
