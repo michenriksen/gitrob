@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 3.1.2-alpha 2020-05-03
+- Bug fixes for UI:  results should now load in the modal properly
+- Added GitHub action for branch and master builds
+
 ## 3.1.1-alpha 2020-04-08
 ### Changed
 - Resolved a dependency problem where the locked version of github.com/xanzy/go-gitlab was incorrect.
