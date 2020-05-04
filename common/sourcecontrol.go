@@ -1,6 +1,8 @@
 package common
 
 import (
+	"errors"
+	"fmt"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
@@ -137,6 +139,13 @@ func GetChangePath(change *object.Change) string {
 }
 
 func GetChangeContent(change *object.Change) (string, error) {
+	//temporary response to:  https://github.com/sergi/go-diff/issues/89
+	defer func() error {
+		if err := recover(); err != nil {
+			return errors.New(fmt.Sprintf("Panic occurred while retrieving change content: %s", err))
+		}
+		return nil
+	}()
 	patch, err := change.Patch()
 	if err != nil {
 		return "", err
