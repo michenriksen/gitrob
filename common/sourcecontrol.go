@@ -1,7 +1,6 @@
 package common
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"gopkg.in/src-d/go-git.v4"
@@ -143,8 +142,7 @@ func GetChangeContent(change *object.Change) (result string, contentError error)
 	//temporary response to:  https://github.com/sergi/go-diff/issues/89
 	defer func() {
 		if err := recover(); err != nil {
-			changeJson, _ := json.Marshal(change)
-			contentError = errors.New(fmt.Sprintf("Panic occurred while retrieving change content: %s\n\n %s", err, changeJson))
+			contentError = errors.New(fmt.Sprintf("Panic occurred while retrieving change content: %s", err))
 		}
 	}()
 	patch, err := change.Patch()
