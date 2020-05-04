@@ -129,7 +129,7 @@ func matchContent(sess *Session,
 
 	content, err := common.GetChangeContent(change)
 	if err != nil {
-		sess.Out.Error("Error retrieving content in commit %s, change %s.", commit.String(), change.String())
+		sess.Out.Error("Error retrieving content in commit %s, change %s:  %s", commit.String(), change.String(), err)
 	}
 	matchTarget.Content = content
 	sess.Out.Debug("[THREAD #%d][%s] Matching content in %s...\n", threadId, *repo.CloneURL, commit.Hash)
