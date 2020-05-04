@@ -9,23 +9,10 @@ on:
 jobs:
 
   build:
-    name: Build binaries
+
     runs-on: ubuntu-latest
+
     steps:
-
-    - name: Set up Go 1.x
-      uses: actions/setup-go@v2
-      with:
-        go-version: ^1.13
-      id: go
-
-    - name: Install dependencies
-      run: |
-        go get github.com/codeEmitter/gitrob
-        go get github.com/golang/dep/cmd/dep
-
-    - name: Build gitrob binaries
-      run: |
-        cd ~/go/src/github.com/codeEmitter/gitrob
-        dep ensure
-        go build
+      - uses: actions/checkout@v2
+      - name: Build the Docker image
+        run: docker build . --tag gitrob:$(date +%s)
