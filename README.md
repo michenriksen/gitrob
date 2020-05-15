@@ -86,6 +86,8 @@ To install from source, make sure you have a correctly configured **Go >= 1.8** 
     $ dep ensure
     $ go build
 
+*Note that installing with `go install` will not work due to the static json file dependencies.  However, it was deemed more useful to have the files be adjustable without recompiling the binary than to have everything bundled into the binary itself.*
+
 ## Using docker
 
 The [included Dockerfile](./Dockerfile) can be used to build images needed to run gitrob.  You can build a basic image with:
