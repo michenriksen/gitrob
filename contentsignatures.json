@@ -42,23 +42,8 @@
       "Comment": ""
     },
     {
-      "MatchOn": "[\\s*](token:\\s*)[\\S]{20}",
-      "Description": "GitLab CI Registration Token",
-      "Comment": ""
-    },
-    {
-      "MatchOn": "gitlab.token[^a-z0-9_]*?[a-z0-9_]{20}([^a-z0-9_]|$)",
-      "Description": "GitLab Generic Token",
-      "Comment": ""
-    },
-    {
-      "MatchOn": "private.token[^a-z0-9_]*?[a-z0-9_]{20}([^a-z0-9_]|$)",
-      "Description": "GitLab PAT API-style",
-      "Comment": ""
-    },
-    {
-      "MatchOn": "access.token[^a-z0-9_]*?[a-z0-9_]{20}([^a-z0-9_]|$)",
-      "Description": "GitLab PAT generic-style",
+      "MatchOn": "(_|-?)([t|T][o|O][k|K][e|E][n|N])(:|=| )(.?)(\\S{20})(.?)",
+      "Description": "GitLab PAT",
       "Comment": ""
     },
     {

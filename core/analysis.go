@@ -146,8 +146,27 @@ func matchContent(sess *Session,
 	}
 }
 
+/*func saveChangeToJson(c *object.Change) error {
+	sessionJson, err := json.Marshal(c)
+	if err != nil {
+		return err
+	}
+	path := fmt.Sprintf("change-%s.json", strconv.FormatInt(int64(rand.Intn(10000)), 16))
+	file, err := os.Create(path)
+	defer file.Close()
+	file.Write(sessionJson)
+	if err != nil {
+		return err
+	}
+	return nil
+}*/
+
 func findSecrets(sess *Session, repo *common.Repository, commit *object.Commit, changes object.Changes, threadId int) {
 	for _, change := range changes {
+		/*err1 := saveChangeToJson(change)
+		if err1 != nil {
+			panic(err1)
+		}*/
 		path := common.GetChangePath(change)
 		matchTarget := matching.NewMatchTarget(path)
 		if matchTarget.IsSkippable() {
