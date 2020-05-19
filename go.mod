@@ -22,7 +22,7 @@ require (
 	github.com/sergi/go-diff v1.0.0
 	github.com/src-d/gcfg v1.3.0
 	github.com/ugorji/go v1.1.1
-	github.com/xanzy/ssh-agent v0.1.0
+	github.com/xanzy/ssh-agent v0.2.0
 	golang.org/x/crypto v0.0.0-20180608092829-8ac0e0d97ce4
 	golang.org/x/net v0.0.0-20180611182652-db08ff08e862
 	golang.org/x/oauth2 v0.0.0-20180603041954-1e0a3fa8ba9a
