@@ -53,8 +53,7 @@ func GetUserOrOrganization(login string, client *github.Client) (*GithubOwner, e
 	}, nil
 }
 
-<<<<<<< HEAD
-func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*GithubRepository, error) {
+func GetRepositoriesFromOwner(login *string, client *github.Client, includeForks *bool) ([]*GithubRepository, error) {
 	var allRepos []*GithubRepository
 	loginVal := *login
 	ctx := context.Background()
@@ -68,7 +67,7 @@ func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*GithubRe
 			return allRepos, err
 		}
 		for _, repo := range repos {
-			if !*repo.Fork {
+			if (*includeForks && *repo.Fork) || !*repo.Fork {
 				r := GithubRepository{
 					Owner:         repo.Owner.Login,
 					ID:            repo.ID,
@@ -88,42 +87,6 @@ func GetRepositoriesFromOwner(login *string, client *github.Client) ([]*GithubRe
 		}
 		opt.Page = resp.NextPage
 	}
-=======
-func GetRepositoriesFromOwner(login *string, client *github.Client, includeForks *bool) ([]*GithubRepository, error) {
-  var allRepos []*GithubRepository
-  loginVal := *login
-  ctx := context.Background()
-  opt := &github.RepositoryListOptions{
-    Type: "sources",
-  }
-
-  for {
-    repos, resp, err := client.Repositories.List(ctx, loginVal, opt)
-    if err != nil {
-      return allRepos, err
-    }
-    for _, repo := range repos {
-      if (*includeForks && *repo.Fork) || !*repo.Fork {
-        r := GithubRepository{
-          Owner:         repo.Owner.Login,
-          ID:            repo.ID,
-          Name:          repo.Name,
-          FullName:      repo.FullName,
-          CloneURL:      repo.CloneURL,
-          URL:           repo.HTMLURL,
-          DefaultBranch: repo.DefaultBranch,
-          Description:   repo.Description,
-          Homepage:      repo.Homepage,
-        }
-        allRepos = append(allRepos, &r)
-      }
-    }
-    if resp.NextPage == 0 {
-      break
-    }
-    opt.Page = resp.NextPage
-  }
->>>>>>> master
 
 	return allRepos, nil
 }
