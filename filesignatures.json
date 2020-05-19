@@ -49,6 +49,42 @@
       "Comment": "Can be used to authenticate against Chef servers"
     },
     {
+      "Part": "path",
+      "MatchOn": "gitlab/gitlab\\.rb$",
+      "Description": "GitLab Omnibus configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "gitaly/config\\.toml$",
+      "Description": "GitLab gitaly configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "config/gitlab\\.yml$",
+      "Description": "GitLab configuration file",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "config/secrets\\.yml$",
+      "Description": "GitLab secrets file",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "config/resque\\.yml$",
+      "Description": "GitLab redis config file",
+      "Comment": ""
+    },
+    {
+      "Part": "path",
+      "MatchOn": "config/database\\.yml$",
+      "Description": "GitLab database configuration file",
+      "Comment": ""
+    },
+    {
       "Part": "filename",
       "MatchOn": "^(\\.|_)?netrc$",
       "Description": "Configuration file for auto-login process",
