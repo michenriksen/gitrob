@@ -60,7 +60,7 @@ Gitrob will start its web interface and serve the results for analysis.
 
 A [precompiled version is available](https://github.com/michenriksen/gitrob/releases) for each release, alternatively you can use the latest version of the source code from this repository in order to build your own binary.
 
-Make sure you have a correctly configured **Go >= 1.8** environment and that `$GOPATH/bin` is in your `$PATH`
+Make sure you have a correctly configured **Go >= 1.11** environment and that `$GOPATH/bin` is in your `$PATH`
 
     $ go get github.com/michenriksen/gitrob
 
