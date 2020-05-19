@@ -19,6 +19,7 @@ for file in "${TO_UPDATE[@]}"; do
   git add $file
 done
 
+git add CHANGELOG.md
 git commit -m "Releasing v$NEW_VERSION"
 git push
 
