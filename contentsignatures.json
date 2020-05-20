@@ -42,7 +42,7 @@
       "Comment": ""
     },
     {
-      "MatchOn": "(_|-?)([t|T][o|O][k|K][e|E][n|N])(:|=| )(.?)(\\S{20})(.?)",
+      "MatchOn": "(_|-?)([t|T][o|O][k|K][e|E][n|N])(:|=| )(.{0,3})(\\S{20})(.?)(\\n|\\r|\\n\\r|$)",
       "Description": "GitLab PAT",
       "Comment": ""
     },
