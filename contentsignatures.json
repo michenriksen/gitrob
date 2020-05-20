@@ -12,12 +12,12 @@
       "Comment": "An AWS secret access key needs a access key ID as well."
     },
     {
-      "MatchOn": "aws_secret_access_key.*?[a-zA-Z0-9/\\\\+]{40}",
+      "MatchOn": "aws_secret_access_key.*?[a-zA-Z0-9/\\+]{40}",
       "Description": "AWS Secret Key",
       "Comment": ""
     },
     {
-      "MatchOn": "amzn\\\\.mws\\\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+      "MatchOn": "amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
       "Description": "Amazon MWS Auth Token",
       "Comment": ""
     },
@@ -27,17 +27,17 @@
       "Comment": ""
     },
     {
-      "MatchOn": "[f|F][a|A][c|C][e|E][b|B][o|O][o|O][k|K].*['|\\\"][0-9a-f]{32}['|\\\"]",
+      "MatchOn": "[f|F][a|A][c|C][e|E][b|B][o|O][o|O][k|K].*['|\"][0-9a-f]{32}['|\"]",
       "Description": "Facebook OAuth",
       "Comment": ""
     },
     {
-      "MatchOn": "[a|A][p|P][i|I][_]?[k|K][e|E][y|Y].*['|\\\"][0-9a-zA-Z]{32,45}['|\\\"]",
+      "MatchOn": "[a|A][p|P][i|I][_]?[k|K][e|E][y|Y].*['|\"][0-9a-zA-Z]{32,45}['|\"]",
       "Description": "Generic API Key",
       "Comment": ""
     },
     {
-      "MatchOn": "[s|S][e|E][c|C][r|R][e|E][t|T].*['|\\\"][0-9a-zA-Z]{32,45}['|\\\"]",
+      "MatchOn": "[s|S][e|E][c|C][r|R][e|E][t|T].*['|\"][0-9a-zA-Z]{32,45}['|\"]",
       "Description": "Generic Secret",
       "Comment": ""
     },
@@ -47,7 +47,7 @@
       "Comment": ""
     },
     {
-      "MatchOn": "[g|G][i|I][t|T][h|H][u|U][b|B].*['|\\\"][0-9a-zA-Z]{35,40}['|\\\"]",
+      "MatchOn": "[g|G][i|I][t|T][h|H][u|U][b|B].*['|\"][0-9a-zA-Z]{35,40}['|\"]",
       "Description": "Github Token",
       "Comment": ""
     },
@@ -67,7 +67,7 @@
       "Comment": ""
     },
     {
-      "MatchOn": "AIza[0-9A-Za-z\\\\-_]{35}",
+      "MatchOn": "AIza[0-9A-Za-z\\-_]{35}",
       "Description": "Google Token",
       "Comment": "Could be a Google Drive, Gmail, Cloud, or YouTube API key"
     },
@@ -102,7 +102,7 @@
       "Comment": ""
     },
     {
-      "MatchOn": "(-*)BEGIN [\\\\s\\\\S]{2,} PRIVATE KEY(-*)",
+      "MatchOn": "(-*)BEGIN [\\s\\S]{2,} PRIVATE KEY(-*)",
       "Description": "SSH Private Key",
       "Comment": ""
     },
@@ -127,12 +127,12 @@
       "Comment": ""
     },
     {
-      "MatchOn": "sq0atp-[0-9A-Za-z\\\\-_]{22}",
+      "MatchOn": "sq0atp-[0-9A-Za-z\\-_]{22}",
       "Description": "Square Access Token",
       "Comment": ""
     },
     {
-      "MatchOn": "sq0csp-[0-9A-Za-z\\\\-_]{43}",
+      "MatchOn": "sq0csp-[0-9A-Za-z\\-_]{43}",
       "Description": "Square OAuth Secret",
       "Comment": ""
     },
