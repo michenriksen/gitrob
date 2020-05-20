@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"strings"
 	"sync"
@@ -91,6 +92,52 @@ func GatherRepositories(sess *core.Session) {
 	wg.Wait()
 }
 
+func GatherReposConcurrent(sess *core.Session, thread_num int, start int64, end int64, wg *sync.WaitGroup) {
+	go func() {
+		sess.Out.Debug(" Thread [%d] for repository gathering: [%d:%d]\n", thread_num, start, end)
+		repos, err := core.GetAllRepositories(sess.GithubClient, start, end)
+		if err != nil {
+			sess.Out.Error(" Failed to retrieve all repositories %s\n", err)
+		}
+
+		for _, repo := range repos {
+			sess.Out.Debug(" Retrieved repository: %s\n", *repo.FullName)
+			sess.AddRepository(repo)
+		}
+
+		sess.Out.Info(" Thread [%d] Retrieved %d %s\n", thread_num, len(repos), core.Pluralize(len(repos), "repository", "repositories"))
+		wg.Done()
+	}()
+}
+
+func GatherAllRepositories(sess *core.Session) {
+	var wg sync.WaitGroup
+	var threadNum int
+
+	count, err := core.DetermineRepositoryCount(sess.GithubClient)
+	if err != nil {
+		sess.Out.Error("Failed to find upper limit on repositories. Setting threads to 1")
+		threadNum = 1
+		count = math.MaxInt64
+	} else {
+		threadNum = *sess.Options.Threads
+	}
+
+	sess.Out.Debug("Threads for repository gathering: %d\n", threadNum)
+
+	bounds := int(count) / threadNum
+
+	wg.Add(threadNum)
+	for i := 0; i < threadNum; i++ {
+		end := int64((i + 1) * bounds)
+		start := int64(end - int64(bounds))
+		GatherReposConcurrent(sess, i, start, end, &wg)
+	}
+
+	wg.Wait()
+	sess.Out.Info("Finished Pulling All Repos\n")
+}
+
 func AnalyzeRepositories(sess *core.Session) {
 	sess.Stats.Status = core.StatusAnalyzing
 	var ch = make(chan *core.GithubRepository, len(sess.Repositories))
@@ -108,8 +155,6 @@ func AnalyzeRepositories(sess *core.Session) {
 
 	sess.Out.Important("Analyzing %d %s...\n", len(sess.Repositories), core.Pluralize(len(sess.Repositories), "repository", "repositories"))
 
-	githubURL := sess.GithubURL()
-
 	for i := 0; i < threadNum; i++ {
 		go func(tid int) {
 			for {
@@ -122,7 +167,7 @@ func AnalyzeRepositories(sess *core.Session) {
 				}
 
 				sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", tid, *repo.FullName)
-				clone, path, err := core.CloneRepository(repo.CloneURL, repo.DefaultBranch, sess)
+				clone, path, err := core.CloneRepository(repo, *sess.Options.CommitDepth)
 				if err != nil {
 					if err.Error() != "remote repository is empty" {
 						sess.Out.Error("Error cloning repository %s: %s\n", *repo.FullName, err)
@@ -170,7 +215,7 @@ func AnalyzeRepositories(sess *core.Session) {
 									CommitMessage:   strings.TrimSpace(commit.Message),
 									CommitAuthor:    commit.Author.String(),
 								}
-								finding.Initialize(githubURL)
+								finding.Initialize()
 								sess.AddFinding(finding)
 
 								sess.Out.Warn(" %s: %s\n", strings.ToUpper(changeAction), finding.Description)
@@ -225,19 +270,22 @@ func main() {
 	sess.Out.Info("%s\n\n", core.ASCIIBanner)
 	sess.Out.Important("%s v%s started at %s\n", core.Name, core.Version, sess.Stats.StartedAt.Format(time.RFC3339))
 	sess.Out.Important("Loaded %d signatures\n", len(core.Signatures))
-	if !*sess.Options.NoServer {
-		sess.Out.Important("Web interface available at http://%s:%d\n", *sess.Options.BindAddress, *sess.Options.Port)
-	}
+	sess.Out.Important("Web interface available at http://%s:%d\n", *sess.Options.BindAddress, *sess.Options.Port)
 
 	if sess.Stats.Status == "finished" {
 		sess.Out.Important("Loaded session file: %s\n", *sess.Options.Load)
 	} else {
-		if len(sess.Options.Logins) == 0 {
+		if len(sess.Options.Logins) == 0 && !*sess.Options.GatherAll {
 			sess.Out.Fatal("Please provide at least one GitHub organization or user\n")
 		}
 
 		GatherTargets(sess)
 		GatherRepositories(sess)
+
+		if *sess.Options.GatherAll {
+			GatherAllRepositories(sess)
+		}
+
 		AnalyzeRepositories(sess)
 		sess.Finish()
 
@@ -251,8 +299,6 @@ func main() {
 	}
 
 	PrintSessionStats(sess)
-	if !*sess.Options.NoServer {
-		sess.Out.Important("Press Ctrl+C to stop web server and exit.\n\n")
-		select {}
-	}
+	sess.Out.Important("Press Ctrl+C to stop web server and exit.\n\n")
+	select {}
 }

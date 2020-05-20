@@ -46,6 +46,8 @@ Gitrob is a tool to help find potentially sensitive files pushed to public repos
     Suppress all output except for errors
 -threads int
     Number of concurrent threads (default number of logical CPUs)
+-gather-all
+    Specify whether to pull all repositories from the domain
 ```
 
 ### Saving session to a file

@@ -3,6 +3,7 @@ module github.com/michenriksen/gitrob
 go 1.13
 
 require (
+	github.com/alcortesm/tgz v0.0.0-20161220082320-9c5fe88206d7 // indirect
 	github.com/elazarl/go-bindata-assetfs v1.0.0
 	github.com/emirpasic/gods v1.9.0
 	github.com/fatih/color v1.7.0
@@ -31,6 +32,7 @@ require (
 	google.golang.org/appengine v1.0.0
 	gopkg.in/go-playground/validator.v8 v8.18.2
 	gopkg.in/src-d/go-billy.v4 v4.1.1
+	gopkg.in/src-d/go-git-fixtures.v3 v3.5.0 // indirect
 	gopkg.in/src-d/go-git.v4 v4.4.1
 	gopkg.in/warnings.v0 v0.1.2
 	gopkg.in/yaml.v2 v2.2.1

@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-
 	"github.com/google/go-github/github"
 )
 
@@ -148,4 +147,90 @@ func GetOrganizationMembers(login *string, client *github.Client) ([]*GithubOwne
 		opt.Page = resp.NextPage
 	}
 	return allMembers, nil
+}
+
+func DetermineRepositoryCount(client *github.Client) (int64, error) {
+	ctx := context.Background()
+	opt := &github.RepositoryListAllOptions{
+		Since: 0,
+	}
+
+	sinceValue := 0
+	lastValue := 0
+
+	for {
+		repos, _, err := client.Repositories.ListAll(ctx, opt)
+		if err != nil {
+			return -1, err
+		}
+		for _, repo := range repos {
+			if !*repo.Fork {
+				sinceValue = int(*repo.ID)
+			}
+		}
+		if len(repos) == 0 {
+			if sinceValue == lastValue {
+				return int64(sinceValue), nil
+			}
+			sinceValue = (lastValue + sinceValue) / 2
+		} else {
+			lastValue = sinceValue
+			sinceValue *= 2
+		}
+
+		opt = &github.RepositoryListAllOptions{
+			Since: int64(sinceValue),
+		}
+	}
+	return 0, nil
+}
+
+func GetAllRepositories(client *github.Client, start int64, end int64) ([]*GithubRepository, error) {
+	var allRepos []*GithubRepository
+	ctx := context.Background()
+	opt := &github.RepositoryListAllOptions{
+		Since: start,
+	}
+
+	hard_coded_branch := "master"
+
+	scraped := false
+	sinceValue := start
+
+	for scraped != true {
+		repos, _, err := client.Repositories.ListAll(ctx, opt)
+		if err != nil {
+			return allRepos, err
+		}
+		for _, repo := range repos {
+			if !*repo.Fork {
+				r := GithubRepository{
+					Owner:         repo.Owner.Login,
+					ID:            repo.ID,
+					Name:          repo.Name,
+					FullName:      repo.FullName,
+					CloneURL:      repo.CloneURL,
+					URL:           repo.HTMLURL,
+					DefaultBranch: &hard_coded_branch,
+					Description:   repo.Description,
+					Homepage:      repo.Homepage,
+				}
+				allRepos = append(allRepos, &r)
+
+				sinceValue = int64(*r.ID)
+
+				if sinceValue >= end {
+					return allRepos, nil
+				}
+			}
+		}
+		if len(repos) == 0 {
+			scraped = true
+		}
+		opt = &github.RepositoryListAllOptions{
+			Since: int64(sinceValue),
+		}
+	}
+
+	return allRepos, nil
 }

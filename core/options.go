@@ -22,6 +22,7 @@ type Options struct {
 	NoServer          *bool
 	IncludeForks      *bool
 	Logins            []string
+	GatherAll         *bool
 }
 
 func ParseOptions() (Options, error) {
@@ -41,6 +42,7 @@ func ParseOptions() (Options, error) {
 		Debug:             flag.Bool("debug", false, "Print debugging information"),
 		NoServer:          flag.Bool("no-server", false, "Disables web server"),
 		IncludeForks:      flag.Bool("include-forks", false, "Include forked repositories in scan"),
+		GatherAll:         flag.Bool("gather-all", false, "Gather all repositories on the domain"),
 	}
 
 	flag.Parse()
