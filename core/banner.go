@@ -2,7 +2,7 @@ package core
 
 const (
 	Name        = "gitrob"
-	Version     = "2.0.0-rc1"
+	Version     = "2.0.0-beta"
 	Website     = "https://github.com/mattyjones/gitrob"
 	ASCIIBanner = "        _ __           __\n" +
 		"  ___ _(_) /________  / /\n" +
