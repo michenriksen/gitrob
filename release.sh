@@ -20,12 +20,13 @@ do
   git add $file
 done
 
-git commit -m "Releasing v$NEW_VERSION"
+git commit -m "Releasing $NEW_VERSION"
 git push
 
-git tag -a v$NEW_VERSION -m "Release v$NEW_VERSION"
-git push origin v$NEW_VERSION
+git tag -a $NEW_VERSION -m "Release $NEW_VERSION"
+git push origin $NEW_VERSION
 
 echo
-echo "[*] All done, v$NEW_VERSION released."
+echo "[*] All done, $NEW_VERSION released."
+
 
