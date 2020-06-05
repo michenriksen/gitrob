@@ -2,13 +2,13 @@ package core
 
 import (
 	"fmt"
-	"github.com/codeEmitter/gitrob/common"
-	"github.com/codeEmitter/gitrob/github"
-	"github.com/codeEmitter/gitrob/gitlab"
-	"github.com/codeEmitter/gitrob/matching"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing/object"
 	"os"
+	"phantomSecrets/common"
+	"phantomSecrets/github"
+	"phantomSecrets/gitlab"
+	"phantomSecrets/matching"
 	"strings"
 	"sync"
 )
@@ -206,10 +206,10 @@ func cloneRepository(sess *Session, repo *common.Repository, threadId int) (*git
 	sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", threadId, *repo.CloneURL)
 
 	cloneConfig := common.CloneConfiguration{
-		Url:    repo.CloneURL,
-		Branch: repo.DefaultBranch,
-		Depth:  sess.Options.CommitDepth,
-		Token:  &sess.GitLab.AccessToken,
+		Url:        repo.CloneURL,
+		Branch:     repo.DefaultBranch,
+		Depth:      sess.Options.CommitDepth,
+		Token:      &sess.GitLab.AccessToken,
 		InMemClone: sess.Options.InMemClone,
 	}
 

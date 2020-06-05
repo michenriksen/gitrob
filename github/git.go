@@ -5,7 +5,7 @@ import (
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 	"io/ioutil"
 
-	"github.com/codeEmitter/gitrob/common"
+	"phantomSecrets/common"
 
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"

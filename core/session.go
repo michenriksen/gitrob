@@ -4,18 +4,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/codeEmitter/gitrob/matching"
 	"io/ioutil"
 	"os"
+	"phantomSecrets/matching"
 	"runtime"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/codeEmitter/gitrob/common"
-	gh "github.com/codeEmitter/gitrob/github"
-	gl "github.com/codeEmitter/gitrob/gitlab"
 	"github.com/gin-gonic/gin"
+	"phantomSecrets/common"
+	gh "phantomSecrets/github"
+	gl "phantomSecrets/gitlab"
 )
 
 const (
