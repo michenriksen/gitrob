@@ -35,7 +35,7 @@ func (f FileSignature) Match(target MatchTarget) (bool, error) {
 	case fileSignatureTypes.Extension:
 		haystack = &target.Extension
 	default:
-		return false, errors.New(fmt.Sprintf("Unrecognized 'Part' parameter: %f\n", f.Part))
+		return false , errors.New(fmt.Sprintf("Unrecognized 'Part' parameter: %s\n", f.Part))
 	}
 	return regexp.MatchString(f.MatchOn, *haystack)
 }
