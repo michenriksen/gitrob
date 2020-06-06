@@ -4,11 +4,12 @@
 *.dll
 *.so
 *.dylib
-phantomSecrets
+phantomSecrets-*
 phantomSecrets.exe
 
 vendor/
 build/
+bin/
 .vscode
 .idea
 __debug_bin
