@@ -5,7 +5,7 @@ import (
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 	"io/ioutil"
 
-	"github.com/codeEmitter/gitrob/common"
+	"phantomSecrets/common"
 
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
@@ -25,7 +25,7 @@ func CloneRepository(cloneConfig *common.CloneConfiguration) (*git.Repository, s
 	var err error
 	var dir string
 	if !*cloneConfig.InMemClone {
-		dir, err := ioutil.TempDir("", "gitrob")
+		dir, err := ioutil.TempDir("", "phantomSecrets")
 		if err != nil {
 			return nil, "", err
 		}

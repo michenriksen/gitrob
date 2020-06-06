@@ -6,6 +6,13 @@
 
 # Gitrob: Putting the Open Source in OSINT
 
+![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/phantomSecrets/phantomSecrets)![GitHub release (latest by date)](https://img.shields.io/github/v/release/phantomSecrets/phantomSecrets)![GitHub](https://img.shields.io/github/license/phantomSecrets/phantomSecrets)
+
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/phantomSecrets/phantomSecrets)![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/phantomSecrets/phantomSecrets)![Code Climate issues](https://img.shields.io/codeclimate/issues/phantomSecrets/phantomSecrets)
+
+[![Build Status](https://travis-ci.org/phantomSecrets/phantomSecrets.svg?branch=master)](https://travis-ci.org/phantomSecrets/phantomSecrets)
+
+
 Gitrob is a tool to help find potentially sensitive information pushed to repositories on GitLab or Github. Gitrob will clone repositories belonging to a user or group/organization down to a configurable depth and iterate through the commit history and flag files and/or commit content that match signatures for potentially sensitive information. The findings will be presented through a web interface for easy browsing and analysis.
 
 ## Usage

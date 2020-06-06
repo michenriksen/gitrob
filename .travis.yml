@@ -1,0 +1,18 @@
+language: go
+
+go:
+  - 1.13.x
+  - 1.14.x
+
+before_script:
+  - go get golang.org/x/lint
+  - go get
+
+script:
+  #- go vet ./...
+  #- golint ./...
+  - go test -v ./... -race -coverprofile=coverage.txt -covermode=atomic
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+

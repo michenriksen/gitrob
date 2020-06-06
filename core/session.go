@@ -4,23 +4,24 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/codeEmitter/gitrob/matching"
 	"io/ioutil"
 	"os"
+	"phantomSecrets/matching"
 	"runtime"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/codeEmitter/gitrob/common"
-	gh "github.com/codeEmitter/gitrob/github"
-	gl "github.com/codeEmitter/gitrob/gitlab"
+	"phantomSecrets/common"
+	gh "phantomSecrets/github"
+	gl "phantomSecrets/gitlab"
+
 	"github.com/gin-gonic/gin"
 )
 
 const (
-	GitHubAccessTokenEnvVariable = "GITROB_GITHUB_ACCESS_TOKEN"
-	GitLabAccessTokenEnvVariable = "GITROB_GITLAB_ACCESS_TOKEN"
+	GitHubAccessTokenEnvVariable = "PHANTOMSECRETS_GITHUB_ACCESS_TOKEN"
+	GitLabAccessTokenEnvVariable = "PHANTOMSECRETS_GITLAB_ACCESS_TOKEN"
 	StatusInitializing           = "initializing"
 	StatusGathering              = "gathering"
 	StatusAnalyzing              = "analyzing"

@@ -3,8 +3,8 @@ package matching
 import (
 	"crypto/sha1"
 	"fmt"
-	"github.com/codeEmitter/gitrob/common"
 	"io"
+	"phantomSecrets/common"
 )
 
 type Finding struct {

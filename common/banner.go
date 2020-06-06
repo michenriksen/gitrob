@@ -1,8 +1,8 @@
 package common
 
 const (
-	Name        = "gitrob"
-	Version     = "3.2.1-beta"
+	Name        = "phantomSecrets"
+	Version     = "0.0.1-rc1"
 	ASCIIBanner = "        _ __           __\n" +
 		"  ___ _(_) /________  / /\n" +
 		" / _ `/ / __/ __/ _ \\/ _ \\\n" +
