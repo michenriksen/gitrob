@@ -6,6 +6,7 @@
 *.dylib
 phantomSecrets-*
 phantomSecrets.exe
+coverage.txt
 
 vendor/
 build/
