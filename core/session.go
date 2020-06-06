@@ -12,15 +12,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"phantomSecrets/common"
 	gh "phantomSecrets/github"
 	gl "phantomSecrets/gitlab"
+
+	"github.com/gin-gonic/gin"
 )
 
 const (
-	GitHubAccessTokenEnvVariable = "GITROB_GITHUB_ACCESS_TOKEN"
-	GitLabAccessTokenEnvVariable = "GITROB_GITLAB_ACCESS_TOKEN"
+	GitHubAccessTokenEnvVariable = "PHANTOMSECRETS_GITHUB_ACCESS_TOKEN"
+	GitLabAccessTokenEnvVariable = "PHANTOMSECRETS_GITLAB_ACCESS_TOKEN"
 	StatusInitializing           = "initializing"
 	StatusGathering              = "gathering"
 	StatusAnalyzing              = "analyzing"
