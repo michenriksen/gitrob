@@ -8,6 +8,7 @@ phantomSecrets-*
 phantomSecrets.exe
 coverage.txt
 
+bin/
 vendor/
 build/
 bin/
