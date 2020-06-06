@@ -1,5 +1,3 @@
-![Gitrob](https://github.com/codeEmitter/gitrob/workflows/Gitrob/badge.svg)
-
 <p align="center">
   <img src="./static/images/gopher_full.png" alt="Gitrob" width="200" />
 </p>
