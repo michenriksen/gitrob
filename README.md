@@ -6,7 +6,7 @@
 
 ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/phantomSecrets/phantomSecrets)![GitHub release (latest by date)](https://img.shields.io/github/v/release/phantomSecrets/phantomSecrets)![GitHub](https://img.shields.io/github/license/phantomSecrets/phantomSecrets)
 
-![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/phantomSecrets/phantomSecrets)![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/phantomSecrets/phantomSecrets)![Code Climate issues](https://img.shields.io/codeclimate/issues/phantomSecrets/phantomSecrets)
+![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/phantomSecrets/phantomSecrets)![Code Climate technical debt](https://img.shields.io/codeclimate/tech-debt/phantomSecrets/phantomSecrets)![Code Climate issues](https://img.shields.io/codeclimate/issues/phantomSecrets/phantomSecrets)![Codecov](https://img.shields.io/codecov/c/github/phantomSecrets/phantomSecrets)
 
 [![Build Status](https://travis-ci.org/phantomSecrets/phantomSecrets.svg?branch=master)](https://travis-ci.org/phantomSecrets/phantomSecrets)
 
