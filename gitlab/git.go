@@ -2,12 +2,12 @@ package gitlab
 
 import (
 	"fmt"
-	"github.com/codeEmitter/gitrob/common"
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
 	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 	"io/ioutil"
+	"gitrob/common"
 )
 
 func CloneRepository(cloneConfig *common.CloneConfiguration) (*git.Repository, string, error) {

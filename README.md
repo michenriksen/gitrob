@@ -1,10 +1,10 @@
-![Gitrob](https://github.com/codeEmitter/gitrob/workflows/Gitrob/badge.svg)
-
 <p align="center">
   <img src="./static/images/gopher_full.png" alt="Gitrob" width="200" />
 </p>
 
 # Gitrob: Putting the Open Source in OSINT
+
+![Gitrob](https://github.com/codeEmitter/gitrob/workflows/Gitrob/badge.svg)
 
 Gitrob is a tool to help find potentially sensitive information pushed to repositories on GitLab or Github. Gitrob will clone repositories belonging to a user or group/organization down to a configurable depth and iterate through the commit history and flag files and/or commit content that match signatures for potentially sensitive information. The findings will be presented through a web interface for easy browsing and analysis.
 

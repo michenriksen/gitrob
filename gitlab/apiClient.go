@@ -2,15 +2,15 @@ package gitlab
 
 import (
 	"fmt"
-	"github.com/codeEmitter/gitrob/common"
 	"github.com/xanzy/go-gitlab"
+	"gitrob/common"
 	"strconv"
 	"strings"
 )
 
 type Client struct {
 	apiClient *gitlab.Client
-	logger *common.Logger
+	logger    *common.Logger
 }
 
 func (c Client) NewClient(token string, logger *common.Logger) (Client, error) {
@@ -118,7 +118,7 @@ func (c Client) getUser(login string) (*gitlab.User, error) {
 		return nil, err
 	}
 	if len(users) == 0 {
-		return nil, fmt.Errorf("No GitLab %s or %s %s was found.  If you are targeting a GitLab group, be sure to" +
+		return nil, fmt.Errorf("No GitLab %s or %s %s was found.  If you are targeting a GitLab group, be sure to"+
 			" use an ID in place of a name.",
 			strings.ToLower(common.TargetTypeUser),
 			strings.ToLower(common.TargetTypeOrganization),

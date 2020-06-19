@@ -6,8 +6,7 @@ const (
 	ASCIIBanner = "        _ __           __\n" +
 		"  ___ _(_) /________  / /\n" +
 		" / _ `/ / __/ __/ _ \\/ _ \\\n" +
-		" \\_, /_/\\__/_/  \\___/_.__/\n" +
-		"/___/ by @michenriksen & @codeEmitter"
+		" \\_, /_/\\__/_/  \\___/_.__/\n"
 )
 
 const GitLabTanuki = "\n" +

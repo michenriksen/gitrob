@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/codeEmitter/gitrob/common"
-	"github.com/codeEmitter/gitrob/core"
+	"gitrob/common"
+	"gitrob/core"
 )
 
 var (

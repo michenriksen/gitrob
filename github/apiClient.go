@@ -3,9 +3,9 @@ package github
 import (
 	"context"
 
-	"github.com/codeEmitter/gitrob/common"
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
+	"gitrob/common"
 )
 
 type Client struct {

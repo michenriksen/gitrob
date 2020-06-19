@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/codeEmitter/gitrob/common"
 	"io/ioutil"
+	"gitrob/common"
 )
 
 type Signatures struct {

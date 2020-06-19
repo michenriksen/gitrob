@@ -4,17 +4,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/codeEmitter/gitrob/matching"
 	"io/ioutil"
 	"os"
+	"gitrob/matching"
 	"runtime"
 	"strings"
 	"sync"
 	"time"
 
-	"github.com/codeEmitter/gitrob/common"
-	gh "github.com/codeEmitter/gitrob/github"
-	gl "github.com/codeEmitter/gitrob/gitlab"
+	"gitrob/common"
+	gh "gitrob/github"
+	gl "gitrob/gitlab"
+
 	"github.com/gin-gonic/gin"
 )
 
