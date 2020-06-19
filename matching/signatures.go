@@ -5,7 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"phantomSecrets/common"
+	"gitrob/common"
 )
 
 type Signatures struct {

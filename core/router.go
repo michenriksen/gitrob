@@ -10,7 +10,7 @@ import (
 	"github.com/gin-contrib/secure"
 	"github.com/gin-contrib/static"
 	"github.com/gin-gonic/gin"
-	"phantomSecrets/common"
+	"gitrob/common"
 )
 
 const (

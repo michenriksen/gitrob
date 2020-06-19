@@ -1,4 +1,4 @@
-module phantomSecrets
+module gitrob
 
 go 1.14
 

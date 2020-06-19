@@ -1,13 +1,12 @@
 package common
 
 const (
-	Name        = "phantomSecrets"
-	Version     = "0.0.1-rc1"
+	Name        = "gitrob"
+	Version     = "3.2.1-beta"
 	ASCIIBanner = "        _ __           __\n" +
 		"  ___ _(_) /________  / /\n" +
 		" / _ `/ / __/ __/ _ \\/ _ \\\n" +
-		" \\_, /_/\\__/_/  \\___/_.__/\n" +
-		"/___/ by @michenriksen & @codeEmitter"
+		" \\_, /_/\\__/_/  \\___/_.__/\n"
 )
 
 const GitLabTanuki = "\n" +

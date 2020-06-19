@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"phantomSecrets/common"
-	"phantomSecrets/core"
+	"gitrob/common"
+	"gitrob/core"
 )
 
 var (

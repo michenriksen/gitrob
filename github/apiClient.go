@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/go-github/github"
 	"golang.org/x/oauth2"
-	"phantomSecrets/common"
+	"gitrob/common"
 )
 
 type Client struct {

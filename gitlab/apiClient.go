@@ -3,7 +3,7 @@ package gitlab
 import (
 	"fmt"
 	"github.com/xanzy/go-gitlab"
-	"phantomSecrets/common"
+	"gitrob/common"
 	"strconv"
 	"strings"
 )

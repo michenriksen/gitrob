@@ -6,22 +6,22 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"phantomSecrets/matching"
+	"gitrob/matching"
 	"runtime"
 	"strings"
 	"sync"
 	"time"
 
-	"phantomSecrets/common"
-	gh "phantomSecrets/github"
-	gl "phantomSecrets/gitlab"
+	"gitrob/common"
+	gh "gitrob/github"
+	gl "gitrob/gitlab"
 
 	"github.com/gin-gonic/gin"
 )
 
 const (
-	GitHubAccessTokenEnvVariable = "PHANTOMSECRETS_GITHUB_ACCESS_TOKEN"
-	GitLabAccessTokenEnvVariable = "PHANTOMSECRETS_GITLAB_ACCESS_TOKEN"
+	GitHubAccessTokenEnvVariable = "GITROB_GITHUB_ACCESS_TOKEN"
+	GitLabAccessTokenEnvVariable = "GITROB_GITLAB_ACCESS_TOKEN"
 	StatusInitializing           = "initializing"
 	StatusGathering              = "gathering"
 	StatusAnalyzing              = "analyzing"

@@ -4,7 +4,7 @@ import (
 	"crypto/sha1"
 	"fmt"
 	"io"
-	"phantomSecrets/common"
+	"gitrob/common"
 )
 
 type Finding struct {

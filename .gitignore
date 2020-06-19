@@ -4,8 +4,8 @@
 *.dll
 *.so
 *.dylib
-phantomSecrets-*
-phantomSecrets.exe
+gitrob-*
+gitrob.exe
 coverage.txt
 
 bin/
@@ -15,8 +15,8 @@ bin/
 .vscode
 .idea
 __debug_bin
-go_build_phantomSecrets_
-phantomSecrets-script.sh
+go_build_gitrob_
+gitrob-script.sh
 
 # Test binary, build with `go test -c`
 *.test
