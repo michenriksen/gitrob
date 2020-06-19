@@ -4,7 +4,7 @@
 *.dll
 *.so
 *.dylib
-gitrob-*
+gitrob*
 gitrob.exe
 coverage.txt
 
