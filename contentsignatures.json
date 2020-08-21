@@ -122,11 +122,6 @@
       "Comment": ""
     },
     {
-      "MatchOn": "(xox[p|b|o|a]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
-      "Description": "Slack Token",
-      "Comment": ""
-    },
-    {
       "MatchOn": "https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}",
       "Description": "Slack Webhook",
       "Comment": ""
