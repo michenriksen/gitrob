@@ -2,7 +2,7 @@
 {
   "ContentSignatures": [
     {
-      "MatchOn": "([^A-Z0-9]|)AKIA[A-Z0-9]{12}([^A-Z0-9]|)",
+      "MatchOn": "((\\\"|'|`)?((?i)aws)?_?((?i)account)_?((?i)id)?(\\\"|'|`)?\\\\s{0,50}(:|=>|=)\\\\s{0,50}(\\\"|'|`)?[0-9]{4}-?[0-9]{4}-?[0-9]{4}(\\\"|'|`)?)",
       "Description": "AWS Access Key ID",
       "Comment": "An AWS access key ID needs a secret access key as well."
     },
@@ -14,6 +14,11 @@
     {
       "MatchOn": "aws_secret_access_key.*?[a-zA-Z0-9/\\+]{40}",
       "Description": "AWS Secret Key",
+      "Comment": ""
+    },
+    {
+      "MatchOn": "(?i)(aws_access_key_id|aws_secret_access_key)(.{0,20})?=.[0-9a-zA-Z\/+]{20,40}",
+      "Description": "AWS cred file info",
       "Comment": ""
     },
     {
@@ -109,11 +114,6 @@
     {
       "MatchOn": "SG\\.[a-zA-Z0-9]{22}\\.[a-zA-Z0-9]{43}",
       "Description": "Send Grid API",
-      "Comment": ""
-    },
-    {
-      "MatchOn": "(xox[p|b|o|a]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
-      "Description": "Slack Token",
       "Comment": ""
     },
     {

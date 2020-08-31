@@ -379,6 +379,12 @@
       "Comment": "Can contain database credentials"
     },
     {
+      "Part": "path",
+      "MatchOn": "web[\\\/]ruby[\\\/]secrets\\.yml",
+      "Description": "Ruby on rails secrets.yml file (contains passwords)",
+      "Comment": ""
+    },
+    {
       "Part": "extension",
       "MatchOn": "\\.pkcs12$",
       "Description": "Potential cryptographic key bundle",
