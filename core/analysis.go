@@ -2,13 +2,13 @@ package core
 
 import (
 	"fmt"
-	"gopkg.in/src-d/go-git.v4"
-	"gopkg.in/src-d/go-git.v4/plumbing/object"
-	"os"
 	"gitrob/common"
 	"gitrob/github"
 	"gitrob/gitlab"
 	"gitrob/matching"
+	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/plumbing/object"
+	"os"
 	"strings"
 	"sync"
 )
@@ -91,6 +91,17 @@ func GatherRepositories(sess *Session) {
 	}
 	close(ch)
 	wg.Wait()
+}
+
+func deletePath(path string, cloneUrl string, threadId int, sess *Session) {
+	if path != "" {
+		err := os.RemoveAll(path)
+		if err != nil {
+			sess.Out.Error("[THREAD #%d][%s] Unable to delete path %s\n", threadId, cloneUrl, path)
+		} else {
+			sess.Out.Debug("[THREAD #%d][%s] Deleted clone path %s\n", threadId, cloneUrl, path)
+		}
+	}
 }
 
 func createFinding(repo common.Repository,
@@ -240,9 +251,7 @@ func getRepositoryHistory(sess *Session, clone *git.Repository, repo *common.Rep
 	history, err := common.GetRepositoryHistory(clone)
 	if err != nil {
 		sess.Out.Error("[THREAD #%d][%s] Error getting commit history: %s\n", threadId, *repo.CloneURL, err)
-		if *sess.Options.InMemClone {
-			os.RemoveAll(path)
-		}
+		deletePath(path, *repo.CloneURL, threadId, sess)
 		sess.Stats.IncrementRepositories()
 		sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
 		return nil, err
@@ -301,9 +310,7 @@ func AnalyzeRepositories(sess *Session) {
 				}
 
 				sess.Out.Debug("[THREAD #%d][%s] Done analyzing commits\n", tid, *repo.CloneURL)
-				if *sess.Options.InMemClone {
-					os.RemoveAll(path)
-				}
+				deletePath(path, *repo.CloneURL, tid, sess)
 				sess.Out.Debug("[THREAD #%d][%s] Deleted %s\n", tid, *repo.CloneURL, path)
 				sess.Stats.IncrementRepositories()
 				sess.Stats.UpdateProgress(sess.Stats.Repositories, len(sess.Repositories))
