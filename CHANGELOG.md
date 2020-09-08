@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 3.4.0-beta 2020-06-18
+- Update/fix file and content signatures
+- Fix bug where repo clones weren't properly deleted from the temp directory
+- Add new signatures for zoom meeting links, google meet links, and ngrok reverse tunnels
+
 ## 3.3.2-beta 2020-06-18
 ### Changed
 - Re-add build and release scripts after merge from phantomSecrets
