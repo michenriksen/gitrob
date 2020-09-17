@@ -71,7 +71,6 @@ func GatherRepositories(sess *Session) {
 					wg.Done()
 					return
 				}
-				//repos, err := sess.Client.GetRepositoriesFromOwner(*target)
 				if *target.Type == "Organization" {
 					repos, err = sess.Client.GetRepositoriesFromOrganization(*target)
 				} else {
