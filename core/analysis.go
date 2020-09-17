@@ -64,12 +64,19 @@ func GatherRepositories(sess *Session) {
 	for i := 0; i < threadNum; i++ {
 		go func() {
 			for {
+				var repos []*common.Repository
+				var err error
 				target, ok := <-ch
 				if !ok {
 					wg.Done()
 					return
 				}
-				repos, err := sess.Client.GetRepositoriesFromOwner(*target)
+				//repos, err := sess.Client.GetRepositoriesFromOwner(*target)
+				if *target.Type == "Organization" {
+					repos, err = sess.Client.GetRepositoriesFromOrganization(*target)
+				} else {
+					repos, err = sess.Client.GetRepositoriesFromOwner(*target)
+				}
 				if err != nil {
 					sess.Out.Error(" Failed to retrieve repositories from %s: %s\n", *target.Login, err)
 				}
@@ -216,12 +223,14 @@ func findSecrets(sess *Session, repo *common.Repository, commit *object.Commit, 
 func cloneRepository(sess *Session, repo *common.Repository, threadId int) (*git.Repository, string, error) {
 	sess.Out.Debug("[THREAD #%d][%s] Cloning repository...\n", threadId, *repo.CloneURL)
 
+	userName := "oauth2"
+
 	cloneConfig := common.CloneConfiguration{
 		Url:        repo.CloneURL,
 		Branch:     repo.DefaultBranch,
 		Depth:      sess.Options.CommitDepth,
-		Token:      &sess.GitLab.AccessToken,
 		InMemClone: sess.Options.InMemClone,
+		Username: &userName,
 	}
 
 	var clone *git.Repository
@@ -229,10 +238,10 @@ func cloneRepository(sess *Session, repo *common.Repository, threadId int) (*git
 	var err error
 
 	if sess.IsGithubSession {
+		cloneConfig.Token = &sess.Github.AccessToken
 		clone, path, err = github.CloneRepository(&cloneConfig)
 	} else {
-		userName := "oauth2"
-		cloneConfig.Username = &userName
+		cloneConfig.Token = &sess.GitLab.AccessToken
 		clone, path, err = gitlab.CloneRepository(&cloneConfig)
 	}
 	if err != nil {

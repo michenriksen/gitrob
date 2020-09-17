@@ -112,6 +112,29 @@ func (c Client) GetRepositoriesFromOwner(target common.Owner) ([]*common.Reposit
 	return allProjects, nil
 }
 
+func (c Client) GetRepositoriesFromOrganization(target common.Owner) ([]*common.Repository, error) {
+        var allProjects []*common.Repository
+        id := int(*target.ID)
+        if *target.Type == common.TargetTypeUser {
+                userProjects, err := c.getUserProjects(id)
+                if err != nil {
+                        return nil, err
+                }
+                for _, project := range userProjects {
+                        allProjects = append(allProjects, project)
+                }
+        } else {
+                groupProjects, err := c.getGroupProjects(target)
+                if err != nil {
+                        return nil, err
+                }
+                for _, project := range groupProjects {
+                        allProjects = append(allProjects, project)
+                }
+        }
+        return allProjects, nil
+}
+
 func (c Client) getUser(login string) (*gitlab.User, error) {
 	users, _, err := c.apiClient.Users.ListUsers(&gitlab.ListUsersOptions{Username: gitlab.String(login)})
 	if err != nil {

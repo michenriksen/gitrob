@@ -81,6 +81,43 @@ func (c Client) GetRepositoriesFromOwner(target common.Owner) ([]*common.Reposit
 	return allRepos, nil
 }
 
+func (c Client) GetRepositoriesFromOrganization(target common.Owner) ([]*common.Repository, error) {
+	var allRepos []*common.Repository
+	ctx := context.Background()
+	opt := &github.RepositoryListByOrgOptions{
+		Type: "sources",
+	}
+
+	for {
+		repos, resp, err := c.apiClient.Repositories.ListByOrg(ctx, *target.Login, opt)
+		if err != nil {
+			return allRepos, err
+		}
+		for _, repo := range repos {
+			if !*repo.Fork {
+				r := common.Repository{
+					Owner:         repo.Owner.Login,
+					ID:            repo.ID,
+					Name:          repo.Name,
+					FullName:      repo.FullName,
+					CloneURL:      repo.SSHURL,
+					URL:           repo.HTMLURL,
+					DefaultBranch: repo.DefaultBranch,
+					Description:   repo.Description,
+					Homepage:      repo.Homepage,
+				}
+				allRepos = append(allRepos, &r)
+			}
+		}
+		if resp.NextPage == 0 {
+			break
+		}
+		opt.Page = resp.NextPage
+	}
+
+	return allRepos, nil
+}
+
 func (c Client) GetOrganizationMembers(target common.Owner) ([]*common.Owner, error) {
 	var allMembers []*common.Owner
 	ctx := context.Background()
