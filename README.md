@@ -5,7 +5,8 @@
 <br />
 <br />
 
-# Gitrob: Putting the Open Source in OSINT
+# Gitrob: Putting the Open Source in OSINT 
+# Simplified GitHub Recon ! 
 
 Gitrob is a tool to help find potentially sensitive files pushed to public repositories on Github. Gitrob will clone repositories belonging to a user or organization down to a configurable depth and iterate through the commit history and flag files that match signatures for potentially sensitive files. The findings will be presented through a web interface for easy browsing and analysis.
 
