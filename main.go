@@ -57,6 +57,10 @@ func main() {
 	if !sess.IsGithubSession {
 		sess.Out.Error("%s", common.GitLabTanuki)
 	}
-	sess.Out.Important("Press Ctrl+C to stop web server and exit.\n\n")
-	select {}
+	if !*sess.Options.ExitOnFinish {
+		sess.Out.Important("Press Ctrl+C to stop web server and exit.\n\n")
+		select {}
+	} else {
+		sess.Out.Important("Scan complete.  Exiting.\n")
+	}
 }

@@ -8,6 +8,7 @@ type Options struct {
 	BindAddress       *string `json:"-"`
 	CommitDepth       *int
 	Debug             *bool   `json:"-"`
+	ExitOnFinish	  *bool
 	GitLabAccessToken *string `json:"-"`
 	GithubAccessToken *string `json:"-"`
 	InMemClone        *bool
@@ -26,6 +27,7 @@ func ParseOptions() (Options, error) {
 		BindAddress:       flag.String("bind-address", "127.0.0.1", "Address to bind web server to"),
 		CommitDepth:       flag.Int("commit-depth", 500, "Number of repository commits to process"),
 		Debug:             flag.Bool("debug", false, "Print debugging information"),
+		ExitOnFinish:	   flag.Bool("exit-on-finish", false, "Let the program exit on finish.  Useful for automated scans."),
 		GitLabAccessToken: flag.String("gitlab-access-token", "", "GitLab access token to use for API requests"),
 		GithubAccessToken: flag.String("github-access-token", "", "GitHub access token to use for API requests"),
 		InMemClone:        flag.Bool("in-mem-clone", false, "Clone repositories into memory"),
