@@ -23,6 +23,8 @@ Gitrob is a tool to help find potentially sensitive information pushed to reposi
     Number of repository commits to process (default 500)
 -debug
     Print debugging information
+-exit-on-finish
+    Let the program exit on finish.  Useful for automated scans.
 -github-access-token string
     Github access token to use for API requests (set one)
 -gitlab-access-token string
