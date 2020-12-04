@@ -2,6 +2,7 @@ package github
 
 import (
 	"fmt"
+	"strings"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 	"io/ioutil"
 
@@ -9,6 +10,7 @@ import (
 
 	"gopkg.in/src-d/go-git.v4"
 	"gopkg.in/src-d/go-git.v4/plumbing"
+	"gopkg.in/src-d/go-git.v4/plumbing/transport/http"
 )
 
 func CloneRepository(cloneConfig *common.CloneConfiguration) (*git.Repository, string, error) {
@@ -19,7 +21,14 @@ func CloneRepository(cloneConfig *common.CloneConfiguration) (*git.Repository, s
 		ReferenceName: plumbing.ReferenceName(fmt.Sprintf("refs/heads/%s", *cloneConfig.Branch)),
 		SingleBranch:  true,
 		Tags:          git.NoTags,
+		Auth: &http.BasicAuth{
+			Username: *cloneConfig.Username,
+			Password: *cloneConfig.Token,
+		},
 	}
+
+	cloneOptions.URL = strings.Replace(cloneOptions.URL, "git@github.com:", "https://github.com/", -1)
+
 
 	var repository *git.Repository
 	var err error
