@@ -92,15 +92,18 @@ func (c Client) GetOrganizationMembers(target common.Owner) ([]*common.Owner, er
 func (c Client) GetRepositoriesFromOwner(target common.Owner) ([]*common.Repository, error) {
 	var allProjects []*common.Repository
 	id := int(*target.ID)
-	if *target.Type == common.TargetTypeUser {
-		userProjects, err := c.getUserProjects(id)
-		if err != nil {
-			return nil, err
-		}
-		for _, project := range userProjects {
-			allProjects = append(allProjects, project)
-		}
-	} else {
+	userProjects, err := c.getUserProjects(id)
+	if err != nil {
+		return nil, err
+	}
+	for _, project := range userProjects {
+		allProjects = append(allProjects, project)
+	}
+	return allProjects, nil
+}
+
+func (c Client) GetRepositoriesFromOrganization(target common.Owner) ([]*common.Repository, error) {
+        var allProjects []*common.Repository
 		groupProjects, err := c.getGroupProjects(target)
 		if err != nil {
 			return nil, err
@@ -108,30 +111,6 @@ func (c Client) GetRepositoriesFromOwner(target common.Owner) ([]*common.Reposit
 		for _, project := range groupProjects {
 			allProjects = append(allProjects, project)
 		}
-	}
-	return allProjects, nil
-}
-
-func (c Client) GetRepositoriesFromOrganization(target common.Owner) ([]*common.Repository, error) {
-        var allProjects []*common.Repository
-        id := int(*target.ID)
-        if *target.Type == common.TargetTypeUser {
-                userProjects, err := c.getUserProjects(id)
-                if err != nil {
-                        return nil, err
-                }
-                for _, project := range userProjects {
-                        allProjects = append(allProjects, project)
-                }
-        } else {
-                groupProjects, err := c.getGroupProjects(target)
-                if err != nil {
-                        return nil, err
-                }
-                for _, project := range groupProjects {
-                        allProjects = append(allProjects, project)
-                }
-        }
         return allProjects, nil
 }
 
