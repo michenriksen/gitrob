@@ -177,7 +177,8 @@ func (c Client) getUserProjects(id int) ([]*common.Repository, error) {
 
 func (c Client) getGroupProjects(target common.Owner) ([]*common.Repository, error) {
 	var allGroupProjects []*common.Repository
-	listGroupProjectsOps := &gitlab.ListGroupProjectsOptions{}
+	includeSubGroups := true
+	listGroupProjectsOps := &gitlab.ListGroupProjectsOptions{IncludeSubgroups: &includeSubGroups}
 	id := strconv.FormatInt(*target.ID, 10)
 	for {
 		projects, response, err := c.apiClient.Groups.ListGroupProjects(id, listGroupProjectsOps)
