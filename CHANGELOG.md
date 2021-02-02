@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## 3.4.3-beta 2020-02-02
+- When a GitLab group is specified, include projects from subgroups by default
+
 ## 3.4.2-beta 2020-12-04
 - Merged PR that [fixed a bug](https://gitlab.com/gitlab-com/gl-security/security-operations/gl-redteam/gitrob/-/issues/3) causing private repos not to be scanned even if the token provided had access
 - Improved implementation of IClient interface for GitLab as a result of previous merge
