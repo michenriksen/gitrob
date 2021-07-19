@@ -127,7 +127,7 @@
           "Comment": ""
       },
       {
-          "MatchOn": "(xox[p|b|o|a]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32})",
+          "MatchOn": "xox[baprs]-([0-9a-zA-Z]{10,48})?",
           "Description": "Slack Token",
           "Comment": ""
       },
