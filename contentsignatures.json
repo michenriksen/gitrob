@@ -47,7 +47,7 @@
           "Comment": ""
       },
       {
-          "MatchOn": "glpat-[0-9a-zA-Z\\-]{20}",
+          "MatchOn": "glpat-[0-9a-zA-Z\\-\\_]{20}",
           "Description": "GitLab PAT",
           "Comment": ""
       },
