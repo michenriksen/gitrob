@@ -47,7 +47,7 @@
           "Comment": ""
       },
       {
-          "MatchOn": "(_|-?)([t|T][o|O][k|K][e|E][n|N])(:|=| )(.{0,3})(\\S{20})(.?)(\\n|\\r|\\n\\r|$)",
+          "MatchOn": "glpat-[0-9a-zA-Z\\-\\_]{20}",
           "Description": "GitLab PAT",
           "Comment": ""
       },
