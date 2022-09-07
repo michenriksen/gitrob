@@ -102,6 +102,17 @@ You can then run the container, optionally specifying how many logical CPUs to a
 
 With this container running, use your browser to hit the UI with:  http://localhost:9393.
 
+
+Alternatively, the [included docker-compose.yml](./docker-compose.yml) can be used with `docker-compose`. Make sure to set either `GITROB_GITHUB_ACCESS_TOKEN` or `GITROB_GITLAB_ACCESS_TOKEN` in the `docker-compose.yml` file. Do not set both the environment variables as Gitrob only supports one at a time. After that, you can create a file `targets.txt` in the repo directory with targets in every line:
+
+    target1
+    target2
+
+And then execute the following command to run gitrob on the targets specified:
+    docker-compose up --build
+
+The UI can be accessed at http://localhost:9393.
+
 ## Access Tokens
 
 Gitrob will need either a GitLab or Github access token in order to interact with the appropriate API.  You can create a [GitLab personal access token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html), or [a Github personal access token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/) and save it in an environment variable in your `.bashrc` or similar shell configuration file:
