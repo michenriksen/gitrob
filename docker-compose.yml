@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+    gitrob:
+        build: .
+        container_name: "gitrob"
+        ports:
+          - 0.0.0.0:9393:9393/tcp
+        environment:
+          - GITROB_GITLAB_ACCESS_TOKEN="deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+        entrypoint: "/bin/sh"
+        command: "./docker_compose_entrypoint.sh"
+        volumes:
+          - ./targets.txt:/tmp/targets.txt
