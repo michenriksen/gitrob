@@ -1,0 +1,180 @@
+
+{
+  "ContentSignatures": [
+      {
+          "MatchOn": "((\\\"|'|`)?((?i)aws)?_?((?i)account)_?((?i)id)?(\\\"|'|`)?\\\\s{0,50}(:|=>|=)\\\\s{0,50}(\\\"|'|`)?[0-9]{4}-?[0-9]{4}-?[0-9]{4}(\\\"|'|`)?)",
+          "Description": "AWS Access Key ID",
+          "Comment": "An AWS access key ID needs a secret access key as well."
+      },
+      {
+          "MatchOn": "[\\s][a-zA-Z0-9]{40}[\\s]",
+          "Description": "AWS Secret Access Key",
+          "Comment": "An AWS secret access key needs a access key ID as well."
+      },
+      {
+          "MatchOn": "aws_secret_access_key.*?[a-zA-Z0-9/\\+]{40}",
+          "Description": "AWS Secret Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "(?i)(aws_access_key_id|aws_secret_access_key)(.{0,20})?=.[0-9a-zA-Z/+]{20,40}",
+          "Description": "AWS cred file info",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "amzn\\.mws\\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+          "Description": "Amazon MWS Auth Token",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "EAACEdEose0cBA[0-9A-Za-z]+",
+          "Description": "Facebook Access Token",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[f|F][a|A][c|C][e|E][b|B][o|O][o|O][k|K].*['|\"][0-9a-f]{32}['|\"]",
+          "Description": "Facebook OAuth",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[a|A][p|P][i|I][_]?[k|K][e|E][y|Y].*['|\"][0-9a-zA-Z]{32,45}['|\"]",
+          "Description": "Generic API Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[s|S][e|E][c|C][r|R][e|E][t|T].*['|\"][0-9a-zA-Z]{32,45}['|\"]",
+          "Description": "Generic Secret",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "glpat-[0-9a-zA-Z\\-\\_]{20}",
+          "Description": "GitLab PAT",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[g|G][i|I][t|T][h|H][u|U][b|B].*['|\"][0-9a-zA-Z]{35,40}['|\"]",
+          "Description": "Github Token",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "\"type\": \"service_account\"",
+          "Description": "Google (GCP) Service-account",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "meet.google.com/[a-z]{3}-[a-z]{4}-[a-z]{3}",
+          "Description": "Google Meet Meeting Link",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[0-9]+-[0-9A-Za-z_]{32}\\.apps\\.googleusercontent\\.com",
+          "Description": "Google OAuth",
+          "Comment": "Could be a Google Drive, Gmail, Cloud (GCP), or YouTube OAuth token"
+      },
+      {
+          "MatchOn": "ya29\\.[0-9A-Za-z\\-_]+",
+          "Description": "Google OAuth Access Token",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "AIza[0-9A-Za-z\\-_]{35}",
+          "Description": "Google Token",
+          "Comment": "Could be a Google Drive, Gmail, Cloud, or YouTube API key"
+      },
+      {
+          "MatchOn": "[h|H][e|E][r|R][o|O][k|K][u|U].*[0-9A-F]{8}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{4}-[0-9A-F]{12}",
+          "Description": "Heroku API Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[0-9a-f]{32}-us[0-9]{1,2}",
+          "Description": "MailChimp API Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "key-[0-9a-zA-Z]{32}",
+          "Description": "Mailgun API Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[a-f0-9]+\\.ngrok\\.io",
+          "Description": "Ngrok reverse tunnels",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[a-zA-Z]{3,10}://[^/\\s:@]{3,20}:[^/\\s:@]{3,20}@.{1,100}[\"'\\s]",
+          "Description": "Password in URL",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "access_token\\$production\\$[0-9a-z]{16}\\$[0-9a-f]{32}",
+          "Description": "PayPal Braintree Access Token",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "sk_live_[0-9a-z]{32}",
+          "Description": "Picatic API Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "(-*)BEGIN [\\s\\S]{2,} PRIVATE KEY(-*)",
+          "Description": "SSH Private Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "SG\\.[a-zA-Z0-9]{22}\\.[a-zA-Z0-9]{43}",
+          "Description": "Send Grid API",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "xox[baprs]-([0-9a-zA-Z]{10,48})?",
+          "Description": "Slack Token",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "https://hooks.slack.com/services/T[a-zA-Z0-9_]{8}/B[a-zA-Z0-9_]{8}/[a-zA-Z0-9_]{24}",
+          "Description": "Slack Webhook",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "sq0atp-[0-9A-Za-z\\-_]{22}",
+          "Description": "Square Access Token",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "sq0csp-[0-9A-Za-z\\-_]{43}",
+          "Description": "Square OAuth Secret",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "sk_live_[0-9a-zA-Z]{24}",
+          "Description": "Stripe API Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "rk_live_[0-9a-zA-Z]{24}",
+          "Description": "Stripe Restricted API Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "SK[0-9a-fA-F]{32}",
+          "Description": "Twilio API Key",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[t|T][w|W][i|I][t|T][t|T][e|E][r|R].*[1-9][0-9]+-[0-9a-zA-Z]{40}",
+          "Description": "Twitter Access Token",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[t|T][w|W][i|I][t|T][t|T][e|E][r|R].*['|\"][0-9a-zA-Z]{35,44}['|\"]",
+          "Description": "Twitter OAuth",
+          "Comment": ""
+      },
+      {
+          "MatchOn": "[a-zA-Z0-9._-]*zoom.us/(?:j|my)/[a-zA-Z0-9.?=]+",
+          "Description": "Zoom Meeting Link",
+          "Comment": ""
+      }
+  ]
+}

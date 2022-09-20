@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="Gitrob: Putting the Open Source in OSINT">
@@ -12,192 +12,207 @@
     <link href="/stylesheets/openiconic.css" rel="stylesheet">
     <link href="/stylesheets/highlight.css" rel="stylesheet">
     <link href="/stylesheets/application.css" rel="stylesheet">
-  </head>
+</head>
 
-  <body>
+<body>
 
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-      <div class="container">
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+    <div class="container">
         <a class="navbar-brand" href="/">
-        <img src="/images/gopher_head.png" width="30" height="20" class="d-inline-block" alt="">
-        Gitrob</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+            <img src="/images/gopher_head.png" width="30" height="20" class="d-inline-block" alt="">
+            Gitrob</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
         </button>
-      </div>
-    </nav>
+    </div>
+</nav>
 
-    <main role="main" class="container">
-      <br />
-      <div id="stats_container">
+<main role="main" class="container">
+    <br/>
+    <div id="stats_container">
         <div class="progress" style="height: 30px;">
-          <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="progress_bar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Initializing...</div>
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" id="progress_bar"
+                 style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">Initializing...
+            </div>
         </div>
-        <br />
+        <br/>
         <div class="row">
-          <div class="col-sm">
-            <div class="card text-center" id="card_findings">
-              <div class="card-body">
-                <h3 class="card-title" id="card_findings_value">0</h3>
-                <p class="card-text" id="card_findings_desc">Findings</p>
-              </div>
+            <div class="col-sm">
+                <div class="card text-center" id="card_findings">
+                    <div class="card-body">
+                        <h3 class="card-title" id="card_findings_value">0</h3>
+                        <p class="card-text" id="card_findings_desc">Findings</p>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-sm">
-            <div class="card text-center" id="card_files">
-              <div class="card-body">
-                <h3 class="card-title" id="card_files_value">0</h3>
-                <p class="card-text" id="card_files_desc">Files</p>
-              </div>
+            <div class="col-sm">
+                <div class="card text-center" id="card_files">
+                    <div class="card-body">
+                        <h3 class="card-title" id="card_files_value">0</h3>
+                        <p class="card-text" id="card_files_desc">Files</p>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-sm">
-            <div class="card text-center" id="card_commits">
-              <div class="card-body">
-                <h3 class="card-title" id="card_commits_value">0</h3>
-                <p class="card-text" id="card_commits_desc">Commits</p>
-              </div>
+            <div class="col-sm">
+                <div class="card text-center" id="card_commits">
+                    <div class="card-body">
+                        <h3 class="card-title" id="card_commits_value">0</h3>
+                        <p class="card-text" id="card_commits_desc">Commits</p>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-sm">
-            <div class="card text-center" id="card_repositories">
-              <div class="card-body">
-                <h3 class="card-title" id="card_repositories_value">0</h3>
-                <p class="card-text" id="card_repositories_desc">Repositories</p>
-              </div>
+            <div class="col-sm">
+                <div class="card text-center" id="card_repositories">
+                    <div class="card-body">
+                        <h3 class="card-title" id="card_repositories_value">0</h3>
+                        <p class="card-text" id="card_repositories_desc">Repositories</p>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-sm">
-            <div class="card text-center" id="card_targets">
-              <div class="card-body">
-                <h3 class="card-title" id="card_targets_value">0</h3>
-                <p class="card-text" id="card_targets_desc">Targets</p>
-              </div>
+            <div class="col-sm">
+                <div class="card text-center" id="card_targets">
+                    <div class="card-body">
+                        <h3 class="card-title" id="card_targets_value">0</h3>
+                        <p class="card-text" id="card_targets_desc">Targets</p>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div class="col-sm">
-            <div class="card text-center" id="card_duration">
-              <div class="card-body">
-                <h3 class="card-title" id="card_duration_value">00:00:00</h3>
-                <p class="card-text" id="card_duration_desc">Duration</p>
-              </div>
+            <div class="col-sm">
+                <div class="card text-center" id="card_duration">
+                    <div class="card-body">
+                        <h3 class="card-title" id="card_duration_value">00:00:00</h3>
+                        <p class="card-text" id="card_duration_desc">Duration</p>
+                    </div>
+                </div>
             </div>
-          </div>
         </div>
-      </div>
+    </div>
 
-      <br />
+    <br/>
 
-      <section id="page_findings">
+    <section id="page_findings">
         <h3>
-          Findings
-          <input class="form-control form-control-sm float-right" type="text" placeholder="Search..." id="findings_search">
+            Findings
+            <input class="form-control form-control-sm float-right" type="text" placeholder="Search..."
+                   id="findings_search">
         </h3>
 
         <table class="table table-sm table-hover table-striped" id="table_findings">
-          <thead>
+            <thead>
             <tr>
-              <th scope="col" class="col-action">Action</th>
-              <th scope="col" class="col-path">Path</th>
-              <th scope="col" class="col-commit">Commit</th>
-              <th scope="col" class="col-repository">Repository</th>
+                <th scope="col" class="col-action">Action</th>
+                <th scope="col" class="col-path">Path</th>
+                <th scope="col" class="col-commit">Commit</th>
+                <th scope="col" class="col-repository">Repository</th>
             </tr>
-          </thead>
-          <tbody>
-          </tbody>
+            </thead>
+            <tbody>
+            </tbody>
         </table>
-      </section>
-    </main><!-- /.container -->
+    </section>
+</main><!-- /.container -->
 
-    <footer>
-      <div class="container text-center text-muted">
-        <a href="https://github.com/michenriksen/gitrob" target="_blank">Gitrob</a> is a project by <a href="http://michenriksen.com" target="_blank">Michael Henriksen</a> &middot; <a href="https://github.com/michenriksen/gitrob/issues/new" target="_blank">Report an issue</a>
-      </div>
-    </footer>
+<footer>
+    <div class="container text-center text-muted">
+        <a href="https://github.com/michenriksen/gitrob" target="_blank">Gitrob</a> is a project by <a
+                href="http://michenriksen.com" target="_blank">Michael Henriksen</a> &middot; <a
+                href="https://github.com/michenriksen/gitrob/issues/new" target="_blank">Report an issue</a>
+    </div>
+</footer>
 
-    <script type="text/template" id="template_finding">
-      <td class="col-action">
+<script type="text/template" id="template_finding">
+    <td class="col-action">
         <% if (Action == "Modify") { %>
-          <span class="badge badge-primary">MODIFY</span>
+        <span class="badge badge-primary">MODIFY</span>
         <% } else if (Action == "Insert") { %>
-          <span class="badge badge-success">CREATE</span>
+        <span class="badge badge-success">CREATE</span>
         <% } else if (Action == "Delete") { %>
-          <span class="badge badge-danger">DELETE</span>
+        <span class="badge badge-danger">DELETE</span>
         <% } %>
-      </td>
-      <td class="col-path"><code>
-        <a href="#"><%= this.formattedFilePath() %></a>
-      </code></td>
-      <td class="col-commit"><code><a href="<%- CommitUrl %>" rel="noopener noreferer" target="_blank"><%= this.model.shortCommitHash() %></a></code></th>
-      <td class="col-repository"><a href="<%- RepositoryUrl %>" rel="noopener noreferer" target="_blank"><%- RepositoryOwner %>/<%- RepositoryName %></a></th>
-    </script>
+    </td>
+    <td class="col-path"><code>
+            <a href="#"><%= this.formattedFilePath() %></a>
+        </code></td>
+    <td class="col-commit"><code><a href="<%- CommitUrl %>" rel="noopener noreferer" target="_blank"><%=
+                this.model.shortCommitHash() %></a></code></th>
+    <td class="col-repository"><a href="<%- RepositoryUrl %>" rel="noopener noreferer" target="_blank"><%-
+            RepositoryOwner %>/<%- RepositoryName %></a></th>
+</script>
 
-    <script type="text/template" id="template_finding_modal">
-      <div class="modal-header">
-        <h5 class="modal-title"><%- Description %></h5>
+<script type="text/template" id="template_finding_modal">
+    <div class="modal-header">
+        <h6 class="modal-title">File Signature Match: <%- FileSignatureDescription %> <br/> Content Signature Match: <%-
+            ContentSignatureDescription %></h6>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">&times;</span>
         </button>
-      </div>
-      <div class="modal-body">
+    </div>
+    <div class="modal-body">
         <% if (this.isTestRelated()) { %>
-          <div class="alert alert-warning" role="alert"><strong>Notice:</strong> This file looks to be testing related.</div>
+        <div class="alert alert-warning" role="alert"><strong>Notice:</strong> This file looks to be testing related.
+        </div>
         <% } %>
         <div class="btn-group btn-group-sm float-right">
-          <button type="button" id="finding_view_raw" class="btn btn-secondary">Raw</button>
-          <button type="button" id="finding_view_hexdump" class="btn btn-secondary">Hex dump</button>
+            <button type="button" id="finding_view_raw" class="btn btn-secondary">Raw</button>
+            <button type="button" id="finding_view_hexdump" class="btn btn-secondary">Hex dump</button>
         </div>
         <table class="finding-meta-table">
-          <tr>
-            <th>Path:</th>
-            <td><code><strong><%- RepositoryOwner %></strong>/<strong><%- RepositoryName %></strong>/<%- FilePath %></code></td>
-          </tr>
-          <tr>
-            <th>Author:</th>
-            <td><%- CommitAuthor %></td>
-          </tr>
-          <tr>
-            <th>Message:</th>
-            <td class="font-italic"><%= this.truncatedCommitMessage() %></td>
-          </tr>
-          <tr>
-            <th>ID:</th>
-            <td>
-              <code><%- Id %></code>
-              <button id="finding_id_clipboard" class="btn btn-outline-secondary btn-sm" data-clipboard-text="<%- Id %>"><span class="oi oi-clipboard"></span></button>
-            </td>
-          </tr>
+            <tr>
+                <th>Path:</th>
+                <td><code><strong><%- RepositoryOwner %></strong>/<strong><%- RepositoryName %></strong>/<%- FilePath %></code>
+                </td>
+            </tr>
+            <tr>
+                <th>Author:</th>
+                <td><%- CommitAuthor %></td>
+            </tr>
+            <tr>
+                <th>Message:</th>
+                <td class="font-italic"><%= this.truncatedCommitMessage() %></td>
+            </tr>
+            <tr>
+                <th>ID:</th>
+                <td>
+                    <code><%- Id %></code>
+                    <button id="finding_id_clipboard" class="btn btn-outline-secondary btn-sm"
+                            data-clipboard-text="<%- Id %>"><span class="oi oi-clipboard"></span></button>
+                </td>
+            </tr>
         </table>
-        <hr />
+        <hr/>
         <div class="text-center" id="modal_file_spinner_container">
-          <img class="spinner" src="/images/spinner.gif" alt="Loading file contents..." id="modal_file_spinner" />
-          <p>Loading file contents...</p>
+            <img class="spinner" src="/images/spinner.gif" alt="Loading file contents..." id="modal_file_spinner"/>
+            <p>Loading file contents...</p>
         </div>
         <div id="modal_file_contents_container">
-          <pre id="modal_file_contents"></pre>
-          <pre id="modal_file_hexdump"></pre>
+            <pre id="modal_file_contents"></pre>
+            <pre id="modal_file_hexdump"></pre>
         </div>
-      </div>
-      <div class="modal-footer">
-          <span class="text-muted font-italic font-weight-light"><span class="oi oi-lightbulb"></span> Tip: Browse findings by using the <span class="oi oi-arrow-left"></span> and <span class="oi oi-arrow-right"></span> arrow keys.</span>
-          <a href="<%- FileUrl %>" rel="noopener noreferrer" target="_blank" class="btn btn-primary" role="button">View file on GitHub</a>
-          <a href="<%- CommitUrl %>" rel="noopener noreferrer" target="_blank" class="btn btn-secondary" role="button">View commit on GitHub</a>
-      </div>
-    </script>
-
-    <div class="modal" tabindex="-1" role="dialog" id="finding_modal">
-      <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content"></div>
-      </div>
     </div>
+    <div class="modal-footer">
+        <span class="text-muted font-italic font-weight-light"><span class="oi oi-lightbulb"></span> Tip: Browse findings by using the <span
+                    class="oi oi-arrow-left"></span> and <span class="oi oi-arrow-right"></span> arrow keys.</span>
+        <a id="view-file" href="<%- FileUrl %>" rel="noopener noreferrer" target="_blank" class="btn btn-primary"
+           role="button">View file on <span><%= this.getHostName() %></span></a>
+        <a id="view-commit" href="<%- CommitUrl %>" rel="noopener noreferrer" target="_blank" class="btn btn-secondary"
+           role="button">View commit on <span><%= this.getHostName() %></a>
+    </div>
+</script>
 
-    <script src="/javascripts/jquery-3.3.1.js"></script>
-    <script src="/javascripts/underscore.js"></script>
-    <script src="/javascripts/backbone.js"></script>
-    <script src="/javascripts/popper.js"></script>
-    <script src="/javascripts/bootstrap.js"></script>
-    <script src="/javascripts/clipboard.js"></script>
-    <script src="/javascripts/hexdump.js"></script>
-    <script src="/javascripts/application.js"></script>
-  </body>
+<div class="modal" tabindex="-1" role="dialog" id="finding_modal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content"></div>
+    </div>
+</div>
+
+<script src="/javascripts/jquery-3.3.1.js"></script>
+<script src="/javascripts/underscore.js"></script>
+<script src="/javascripts/backbone.js"></script>
+<script src="/javascripts/popper.js"></script>
+<script src="/javascripts/bootstrap.js"></script>
+<script src="/javascripts/clipboard.js"></script>
+<script src="/javascripts/hexdump.js"></script>
+<script src="/javascripts/application.js"></script>
+</body>
 </html>
